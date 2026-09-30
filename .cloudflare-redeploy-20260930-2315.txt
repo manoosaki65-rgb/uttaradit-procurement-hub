@@ -1,0 +1,1 @@
+Trigger Cloudflare Pages redeploy after reconnecting GitHub integration on 2026-09-30.
