@@ -167,7 +167,7 @@ export default function HomePage() {
           </div>
           <div className={`hero-slide hero-p4p ${heroSlide === 2 ? "is-active" : ""}`} aria-hidden={heroSlide !== 2}>
             <div className="hero-message">
-              <span className="hero-eyebrow">แจ้ง OT เดือนกันยายน 2569</span>
+              <span className="hero-eyebrow">แจ้งลง OT เดือนกันยายน 2569</span>
               <h2>แจ้งลง OT เดือนกันยายนได้ตั้งแต่วันนี้</h2>
               <p>สามารถเข้าไปบันทึก OT เดือนกันยายนได้แล้ว</p>
               <a href="https://uttaradit-ot.netlify.app/" target="_blank" rel="noopener noreferrer" tabIndex={heroSlide === 2 ? 0 : -1}>เปิดระบบ OT <ChevronRight size={18} /></a>
