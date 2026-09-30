@@ -19,4 +19,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build existing site
-        run: pnpm build
+        run: npm run build
