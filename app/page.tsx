@@ -25,7 +25,6 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 const inventoryUrl = "https://inventory-mwjjut.v2.appdeploy.ai/";
@@ -160,11 +159,11 @@ export default function HomePage() {
 
         <section className="hero-banner" aria-label="ประกาศกลุ่มงานพัสดุ" aria-roledescription="สไลด์">
           <div className={`hero-slide hero-original ${heroSlide === 0 ? "is-active" : ""}`} aria-hidden={heroSlide !== 0}>
-            <Image src="/procurement-home-design.jpg" alt="อาคารพัสดุ โรงพยาบาลอุตรดิตถ์" width={1536} height={1024} priority />
+            <img src="https://uttaradit-procurement-hub.manoosaki65.chatgpt.site/procurement-home-design.jpg" alt="อาคารพัสดุ โรงพยาบาลอุตรดิตถ์" />
             <div className="mobile-hero-copy"><span>SMART PROCUREMENT</span><h2>อาคารพัสดุ โรงพยาบาลอุตรดิตถ์</h2></div>
           </div>
           <div className={`hero-slide hero-welcome ${heroSlide === 1 ? "is-active" : ""}`} aria-hidden={heroSlide !== 1}>
-            <Image src="/welcome-director-latest.jpg" alt="แบนเนอร์ยินดีต้อนรับนายแพทย์วรเชษฐ เต๋ชะรัก ผู้อำนวยการโรงพยาบาลอุตรดิตถ์" width={2048} height={768} />
+            <img src="https://uttaradit-procurement-hub.manoosaki65.chatgpt.site/welcome-director-latest.jpg" alt="แบนเนอร์ยินดีต้อนรับนายแพทย์วรเชษฐ เต๋ชะรัก ผู้อำนวยการโรงพยาบาลอุตรดิตถ์" />
           </div>
           <div className={`hero-slide hero-p4p ${heroSlide === 2 ? "is-active" : ""}`} aria-hidden={heroSlide !== 2}>
             <div className="hero-message">
