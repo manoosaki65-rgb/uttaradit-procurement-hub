@@ -46,7 +46,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   height: var(--seal-size);
   flex: 0 0 var(--seal-size);
   border-radius: 50%;
-  background-image: url('/procurement-home-design.jpg');
+  background-image: url('https://uttaradit-procurement-hub.manoosaki65.chatgpt.site/procurement-home-design.jpg');
   background-size: calc(var(--seal-size) * 12) calc(var(--seal-size) * 8);
   background-position: calc(var(--seal-size) * -.359375) calc(var(--seal-size) * -.015625);
   background-repeat: no-repeat;
