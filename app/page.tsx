@@ -56,7 +56,7 @@ const modules: ModuleItem[] = [
   { title: "งานเดินแฟ้ม", subtitle: "ติดตามเอกสารประจำวัน", icon: FolderKanban, tone: "cyan", href: "https://project-lh6o.hatchable.site/" },
   { title: "P4P / รายงานผลงาน", subtitle: "รายงานและระบบ P4P", icon: ChartNoAxesCombined, tone: "sky", href: "https://uttaradit-p4p-demo-ytznqm.v2.appdeploy.ai/" },
   { title: "ทะเบียนส่งจดหมาย / BMS", subtitle: "ทะเบียนจดหมาย / พิมพ์ซอง", href: "https://bms.hatchable.site/", icon: Mail, tone: "violet" },
-  { title: "รายงานการประชุม", subtitle: "ปฏิทินประชุม / รายงานและไฟล์แนบ", icon: CalendarDays, tone: "blue", href: "https://meeting-report.hatchable.site/" },
+  { title: "รายงานการประชุม", subtitle: "ปฏิทินประชุม / รายงานและไฟล์แนบ", icon: CalendarDays, tone: "blue", href: "https://uttaradit-meeting-report.manoosaki65.workers.dev/" },
   { title: "รายงานความเสี่ยง / HA", subtitle: "ทบทวนความเสี่ยงและเอกสารคุณภาพ", icon: ShieldCheck, tone: "orange", href: "https://project-5h2m.hatchable.site/" },
   { title: "ข่าวพัสดุและ AI", subtitle: "Smart Procurement News", icon: BookOpen, tone: "indigo", href: "https://smart-procurement.hatchable.site/" },
   { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
