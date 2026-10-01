@@ -4,7 +4,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "ระบบงานพัสดุ โรงพยาบาลอุตรดิตถ์",
   description: "ศูนย์รวมระบบงานพัสดุ โรงพยาบาลอุตรดิตถ์",
-  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: ["/favicon.svg"],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
