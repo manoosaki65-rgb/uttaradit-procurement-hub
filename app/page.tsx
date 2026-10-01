@@ -52,7 +52,7 @@ const modules: ModuleItem[] = [
   { title: "ว804", subtitle: "ระบบทดสอบ — แยกจากทะเบียนจริง", href: "https://w804-test-7lro75.v2.appdeploy.ai/", icon: WalletCards, tone: "green" },
   { title: "หนังสือตรวจสอบ / Inspection", subtitle: "หนังสือขอความร่วมมือตรวจสอบ", href: "https://project-r3a4.hatchable.site/inspection/", icon: FileSearch2, tone: "orange" },
   { title: "คืนหลักประกัน", subtitle: "ค้นสัญญา / จัดทำหนังสือคืนหลักประกัน", icon: ShieldCheck, tone: "purple", href: "https://project-r3a4.hatchable.site/" },
-  { title: "ขอ / เบิก OT", subtitle: "บันทึกงานล่วงเวลา", icon: Clock3, tone: "rose", href: "https://uttaradit-ot.netlify.app/" },
+  { title: "ขอ / เบิก OT", subtitle: "บันทึกงานล่วงเวลา", icon: Clock3, tone: "rose", href: "https://uttaradit-ot.pages.dev/" },
   { title: "งานเดินแฟ้ม", subtitle: "ติดตามเอกสารประจำวัน", icon: FolderKanban, tone: "cyan", href: "https://project-lh6o.hatchable.site/" },
   { title: "P4P / รายงานผลงาน", subtitle: "รายงานและระบบ P4P", icon: ChartNoAxesCombined, tone: "sky", href: "https://uttaradit-p4p-demo-ytznqm.v2.appdeploy.ai/" },
   { title: "ทะเบียนส่งจดหมาย / BMS", subtitle: "ทะเบียนจดหมาย / พิมพ์ซอง", href: "https://bms.hatchable.site/", icon: Mail, tone: "violet" },
@@ -170,7 +170,7 @@ export default function HomePage() {
               <span className="hero-eyebrow">แจ้งลง OT เดือนกันยายน 2569</span>
               <h2>แจ้งลง OT เดือนกันยายนได้ตั้งแต่วันนี้</h2>
               <p>สามารถเข้าไปบันทึก OT เดือนกันยายนได้แล้ว</p>
-              <a href="https://uttaradit-ot.netlify.app/" target="_blank" rel="noopener noreferrer" tabIndex={heroSlide === 2 ? 0 : -1}>เปิดระบบ OT <ChevronRight size={18} /></a>
+              <a href="https://uttaradit-ot.pages.dev/" target="_blank" rel="noopener noreferrer" tabIndex={heroSlide === 2 ? 0 : -1}>เปิดระบบ OT <ChevronRight size={18} /></a>
             </div>
           </div>
           <div className="hero-dots" role="group" aria-label="เลือกสไลด์ประกาศ">
@@ -231,7 +231,7 @@ export default function HomePage() {
               <section className="notice-panel" aria-labelledby="notice-title">
                 <div className="panel-heading compact"><div><span className="heading-icon orange"><Bell size={18} /></span><h2 id="notice-title">ประกาศ / แจ้งเตือน</h2></div></div>
                 <ul>
-                  <li className="ok">OT เปิดที่ระบบเดิมของกลุ่มงานพัสดุ</li>
+                  <li className="ok">OT เปิดใช้งานผ่านระบบใหม่บน Cloudflare</li>
                   <li className="wait">แผนเงินบำรุง: อยู่ระหว่างปรับการเลื่อนตารางและ Export</li>
                   <li className="ok">เชื่อม ว804 และรายงานการประชุมแล้ว</li>
                   <li className="ok">เชื่อมงานเดินแฟ้มและทะเบียนจดหมาย BMS แล้ว</li>
