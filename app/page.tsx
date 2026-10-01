@@ -61,7 +61,7 @@ const modules: ModuleItem[] = [
   { title: "ข่าวพัสดุและ AI", subtitle: "Smart Procurement News", icon: BookOpen, tone: "indigo", href: "https://smart-procurement.hatchable.site/" },
   { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
   { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://app-m7e6r6.v2.appdeploy.ai/", menuOnly: true },
-  { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://project-auu7.hatchable.site/", menuOnly: true },
+  { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-contract-number.manoosaki65.workers.dev/", menuOnly: true },
 ];
 
 const sidebarItems: Array<{ label: string; icon: LucideIcon; href?: string }> = [
