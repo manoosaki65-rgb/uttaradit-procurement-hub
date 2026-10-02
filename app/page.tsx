@@ -17,6 +17,8 @@ import {
   Home,
   Landmark,
   Mail,
+  Megaphone,
+  FileSignature,
   Menu,
   Search,
   ShieldCheck,
@@ -181,6 +183,14 @@ export default function HomePage() {
         </section>
 
         <div className="dashboard-body">
+          <section className="quick-panel" aria-label="งานออกเลขที่ใช้งานบ่อย">
+            <div className="panel-heading compact"><div><span className="heading-icon"><FileCheck2 size={18} /></span><h2>ออกเลขงานพัสดุ</h2></div></div>
+            <div className="quick-grid">
+              <a className="quick-card primary" href="https://app-m7e6r6.v2.appdeploy.ai/" target="_blank" rel="noopener noreferrer"><span className="quick-icon orange"><Megaphone size={32} /></span><strong>ออกเลขที่ประกาศ</strong><small>ทะเบียนเลขประกาศจังหวัด</small></a>
+              <a className="quick-card primary" href="https://uttaradit-contract-number.manoosaki65.workers.dev/?v=20261002" target="_blank" rel="noopener noreferrer"><span className="quick-icon sky"><FileSignature size={32} /></span><strong>ออกเลขที่สัญญา</strong><small>ทะเบียนออกเลขที่สัญญาจังหวัด</small></a>
+            </div>
+          </section>
+
           <section className="overview-strip" aria-label="ภาพรวมระบบ">
             <div className="overview-card blue"><span><FilePlus2 size={26} /></span><p><small>เมนูหลัก</small><strong>Inventory</strong><em>พร้อมใช้งาน</em></p></div>
             <div className="overview-card green"><span><FileCheck2 size={26} /></span><p><small>ประวัติเดิม</small><strong>3,857</strong><em>รายการ Master</em></p></div>
