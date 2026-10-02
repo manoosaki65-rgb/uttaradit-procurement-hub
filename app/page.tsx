@@ -241,7 +241,7 @@ export default function HomePage() {
               <section className="notice-panel" aria-labelledby="notice-title">
                 <div className="panel-heading compact"><div><span className="heading-icon orange"><Bell size={18} /></span><h2 id="notice-title">ประกาศ / แจ้งเตือน</h2></div></div>
                 <ul>
-                  <li className="ok">OT เปิดที่ระบบเดิมของกลุ่มงานพัสดุ</li>
+                  <li className="ok">OT ใช้งานผ่าน Cloudflare (ระบบปัจจุบัน)</li>
                   <li className="wait">แผนเงินบำรุง: อยู่ระหว่างปรับการเลื่อนตารางและ Export</li>
                   <li className="ok">เชื่อม ว804 และรายงานการประชุมแล้ว</li>
                   <li className="ok">เชื่อมงานเดินแฟ้มและทะเบียนจดหมาย BMS แล้ว</li>
