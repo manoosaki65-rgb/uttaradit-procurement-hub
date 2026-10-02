@@ -180,6 +180,39 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="mx-auto grid w-full max-w-[1460px] grid-cols-1 gap-3 px-[14px] pt-[10px] sm:grid-cols-2" aria-label="งานออกเลขจังหวัด">
+          <a
+            href="https://app-m7e6r6.v2.appdeploy.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex min-h-[108px] items-center gap-4 rounded-2xl border border-sky-200 bg-gradient-to-br from-white via-sky-50 to-blue-100 px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-sky-600 text-white shadow-sm transition group-hover:scale-105">
+              <FileCheck2 size={34} />
+            </span>
+            <span className="grid gap-1">
+              <strong className="text-xl font-extrabold text-sky-950">ออกเลขที่ประกาศ</strong>
+              <small className="text-sm text-sky-700">ทะเบียนเลขประกาศจังหวัด</small>
+            </span>
+            <ChevronRight className="ml-auto shrink-0 text-sky-600" size={26} />
+          </a>
+          <a
+            href="https://uttaradit-contract-number.manoosaki65.workers.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex min-h-[108px] items-center gap-4 rounded-2xl border border-emerald-200 bg-gradient-to-br from-white via-emerald-50 to-teal-100 px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-emerald-600 text-white shadow-sm transition group-hover:scale-105">
+              <ClipboardCheck size={34} />
+            </span>
+            <span className="grid gap-1">
+              <strong className="text-xl font-extrabold text-emerald-950">ออกเลขที่สัญญา</strong>
+              <small className="text-sm text-emerald-700">ทะเบียนออกเลขที่สัญญาจังหวัด</small>
+            </span>
+            <ChevronRight className="ml-auto shrink-0 text-emerald-600" size={26} />
+          </a>
+        </section>
+
         <div className="dashboard-body">
           <section className="overview-strip" aria-label="ภาพรวมระบบ">
             <div className="overview-card blue"><span><FilePlus2 size={26} /></span><p><small>เมนูหลัก</small><strong>Inventory</strong><em>พร้อมใช้งาน</em></p></div>
