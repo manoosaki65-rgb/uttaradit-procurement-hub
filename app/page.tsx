@@ -80,12 +80,58 @@ const systemRows = modules.filter((item) => item.href && !item.menuOnly).map((it
 
 type NewsItem = { id: string; category: "procurement" | "ai"; title: string; summary: string; publishedAt: string; sourceUrl: string };
 
+type PendingSystem = "announcement" | "contract";
+type PendingStatus = { count: number | null; failed: boolean };
+const pendingSystemFor = (href?: string): PendingSystem | null => href === "https://uttaradit-announcement-register.onrender.com/" ? "announcement" : href === "https://uttaradit-contract-number.manoosaki65.workers.dev/" ? "contract" : null;
+
+function PendingBadge({ status }: { status: PendingStatus }) {
+  if (status.count === null || status.count === 0) return null;
+  return <span role="status" aria-label={`รอออกเลข ${status.count} รายการ${status.failed ? " (จำนวนล่าสุดที่อ่านได้)" : ""}`} title={status.failed ? "เชื่อมต่อไม่สำเร็จ แสดงจำนวนล่าสุดที่อ่านได้" : `รอออกเลข ${status.count} รายการ`} style={{ position: "absolute", top: -7, right: -9, minWidth: 24, height: 24, padding: "0 6px", borderRadius: 999, background: "#dc2626", color: "white", fontSize: 13, fontWeight: 800, lineHeight: "20px", textAlign: "center", border: "2px solid white", boxShadow: "0 1px 4px #0002", zIndex: 1 }}>{status.count}</span>;
+}
+
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
   const [query, setQuery] = useState("");
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsError, setNewsError] = useState(false);
+  const [pending, setPending] = useState<Record<PendingSystem, PendingStatus>>({ announcement: { count: null, failed: false }, contract: { count: null, failed: false } });
+
+  useEffect(() => {
+    let disposed = false;
+    const controllers = new Map<PendingSystem, AbortController>();
+    const refresh = () => {
+      if (document.visibilityState === "hidden") return;
+      for (const system of ["announcement", "contract"] as const) {
+        if (controllers.has(system)) continue;
+        const controller = new AbortController();
+        controllers.set(system, controller);
+        fetch(`/api/pending-count?system=${system}`, { cache: "no-store", signal: controller.signal })
+          .then(async (response) => {
+            if (!response.ok) throw new Error("Register unavailable");
+            const data = await response.json() as { system?: unknown; count?: unknown };
+            if (data.system !== system || typeof data.count !== "number" || !Number.isSafeInteger(data.count) || data.count < 0) throw new Error("Invalid count");
+            const count = data.count;
+            if (!disposed) setPending((previous) => ({ ...previous, [system]: { count, failed: false } }));
+          })
+          .catch((error) => {
+            if (!disposed && error.name !== "AbortError") setPending((previous) => ({ ...previous, [system]: { ...previous[system], failed: true } }));
+          })
+          .finally(() => controllers.delete(system));
+      }
+    };
+    refresh();
+    const timer = window.setInterval(refresh, 15000);
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      disposed = true;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+      controllers.forEach((controller) => controller.abort());
+    };
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => setHeroSlide((current) => (current + 1) % 3), 3000);
@@ -129,7 +175,8 @@ export default function HomePage() {
         <nav className="nav-list">
           {sidebarItems.map((item, index) => {
             const Icon = item.icon;
-            const inner = <><Icon size={20} /><span>{item.label}</span>{!item.href && <small>เร็ว ๆ นี้</small>}</>;
+            const system = pendingSystemFor(item.href);
+            const inner = <>{system ? <span style={{ position: "relative", display: "inline-flex", flexShrink: 0 }}><Icon size={20} /><PendingBadge status={pending[system]} /></span> : <Icon size={20} />}<span>{item.label}</span>{!item.href && <small>เร็ว ๆ นี้</small>}</>;
             return item.href ? (
               <a className={`nav-item ${index === 0 ? "active" : ""} ${index === 1 ? "inventory-nav" : ""}`} href={item.href} target={item.href.startsWith("https://") ? "_blank" : undefined} rel={item.href.startsWith("https://") ? "noopener noreferrer" : undefined} key={item.label} onClick={() => setMenuOpen(false)}>{inner}</a>
             ) : <span className="nav-item nav-disabled" key={item.label} aria-disabled="true">{inner}</span>;
@@ -187,8 +234,9 @@ export default function HomePage() {
             rel="noopener noreferrer"
             className="group flex min-h-[108px] items-center gap-4 rounded-2xl border border-sky-200 bg-gradient-to-br from-white via-sky-50 to-blue-100 px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
-            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-sky-600 text-white shadow-sm transition group-hover:scale-105">
+            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-sky-600 text-white shadow-sm transition group-hover:scale-105" style={{ position: "relative" }}>
               <FileCheck2 size={34} />
+              <PendingBadge status={pending.announcement} />
             </span>
             <span className="grid gap-1">
               <strong className="text-xl font-extrabold text-sky-950">ออกเลขที่ประกาศ</strong>
@@ -202,8 +250,9 @@ export default function HomePage() {
             rel="noopener noreferrer"
             className="group flex min-h-[108px] items-center gap-4 rounded-2xl border border-emerald-200 bg-gradient-to-br from-white via-emerald-50 to-teal-100 px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
-            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-emerald-600 text-white shadow-sm transition group-hover:scale-105">
+            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-emerald-600 text-white shadow-sm transition group-hover:scale-105" style={{ position: "relative" }}>
               <ClipboardCheck size={34} />
+              <PendingBadge status={pending.contract} />
             </span>
             <span className="grid gap-1">
               <strong className="text-xl font-extrabold text-emerald-950">ออกเลขที่สัญญา</strong>
@@ -231,7 +280,8 @@ export default function HomePage() {
             <div className="quick-grid">
               {visibleModules.map((item) => {
                 const Icon = item.icon;
-                const content = <><span className={`quick-icon ${item.tone}`}><Icon size={26} /></span><strong>{item.title}</strong><small>{item.subtitle}</small>{!item.href && <em>เร็ว ๆ นี้</em>}</>;
+                const system = pendingSystemFor(item.href);
+                const content = <><span className={`quick-icon ${item.tone}`} style={system ? { position: "relative" } : undefined}><Icon size={26} />{system && <PendingBadge status={pending[system]} />}</span><strong>{item.title}</strong><small>{item.subtitle}</small>{!item.href && <em>เร็ว ๆ นี้</em>}</>;
                 return item.href ? (
                   <a className={`quick-card ${item.primary ? "primary" : ""} ${item.fund ? "fund-card" : ""}`} href={item.href} target="_blank" rel="noopener noreferrer" key={item.title}>{content}</a>
                 ) : <div className="quick-card disabled" key={item.title} aria-disabled="true">{content}</div>;
