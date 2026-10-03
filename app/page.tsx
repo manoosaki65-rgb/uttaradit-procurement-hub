@@ -60,7 +60,7 @@ const modules: ModuleItem[] = [
   { title: "รายงานความเสี่ยง / HA", subtitle: "ทบทวนความเสี่ยงและเอกสารคุณภาพ", icon: ShieldCheck, tone: "orange", href: "https://uttaradit-risk-report.manoosaki65.workers.dev/" },
   { title: "ข่าวพัสดุและ AI", subtitle: "Smart Procurement News", icon: BookOpen, tone: "indigo", href: "https://smart-procurement.hatchable.site/" },
   { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
-  { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://app-m7e6r6.v2.appdeploy.ai/", menuOnly: true },
+  { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-announcement-register.onrender.com/", menuOnly: true },
   { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-contract-number.manoosaki65.workers.dev/", menuOnly: true },
 ];
 
@@ -182,7 +182,7 @@ export default function HomePage() {
 
         <section className="mx-auto grid w-full max-w-[1460px] grid-cols-1 gap-3 px-[14px] pt-[10px] sm:grid-cols-2" aria-label="งานออกเลขจังหวัด">
           <a
-            href="https://app-m7e6r6.v2.appdeploy.ai/"
+            href="https://uttaradit-announcement-register.onrender.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex min-h-[108px] items-center gap-4 rounded-2xl border border-sky-200 bg-gradient-to-br from-white via-sky-50 to-blue-100 px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
