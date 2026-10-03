@@ -30,7 +30,7 @@ export async function onRequestGet({ request }) {
   try {
     const response = await fetch(config.url, {
       headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
-      redirect: 'error',
+      redirect: 'manual',
       signal: controller.signal,
     });
     if (!response.ok) throw new Error(`Register unavailable (HTTP ${response.status})`);
@@ -38,7 +38,7 @@ export async function onRequestGet({ request }) {
     return Response.json({ system, count, checkedAt: new Date().toISOString() }, { headers });
   } catch (error) {
     console.error('Pending count upstream failed', system, error.name, error.message);
-    return Response.json({ system, error: 'อ่านจำนวนรายการรอออกเลขไม่สำเร็จ', diagnostic: `${error.name}: ${error.message}` }, { status: 502, headers });
+    return Response.json({ system, error: 'อ่านจำนวนรายการรอออกเลขไม่สำเร็จ' }, { status: 502, headers });
   } finally {
     clearTimeout(timer);
   }

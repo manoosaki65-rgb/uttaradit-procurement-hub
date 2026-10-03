@@ -33,6 +33,10 @@ test('uses separate fixed read-only upstreams and never caches counts', async ()
     assert.match(calls[0].url, /^https:\/\/uttaradit-announcement-register\.onrender\.com\/api\/announcements$/);
     assert.match(calls[1].url, /^https:\/\/uttaradit-contract-number\.manoosaki65\.workers\.dev\/api\/contracts\?year=2570$/);
     assert.ok(calls.every(({ options }) => !options.method || options.method === 'GET'));
+    assert.ok(calls.every(({ options }) => options.redirect === 'manual'));
+    globalThis.fetch = async () => new Response(null, { status: 302, headers: { Location: 'https://other.example/' } });
+    const redirected = await onRequestGet({ request: new Request('https://hub.example/api/pending-count?system=announcement') });
+    assert.equal(redirected.status, 502);
     globalThis.fetch = async () => Response.json({ error: 'offline' }, { status: 503 });
     const unavailable = await onRequestGet({ request: new Request('https://hub.example/api/pending-count?system=contract') });
     assert.equal(unavailable.status, 502);
