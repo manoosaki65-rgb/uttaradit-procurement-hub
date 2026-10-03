@@ -25,16 +25,21 @@ export async function onRequestGet({ request }) {
   const config = systems[system];
   const headers = { 'Cache-Control': 'no-store, max-age=0', 'X-Content-Type-Options': 'nosniff' };
   if (!Object.hasOwn(systems, system)) return Response.json({ error: 'Unknown system' }, { status: 400, headers });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 60000);
   try {
     const response = await fetch(config.url, {
       headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
       redirect: 'error',
-      signal: AbortSignal.timeout(60000),
+      signal: controller.signal,
     });
     if (!response.ok) throw new Error('Register unavailable');
     const count = countPending(await response.json(), config.field);
     return Response.json({ system, count, checkedAt: new Date().toISOString() }, { headers });
-  } catch {
+  } catch (error) {
+    console.error('Pending count upstream failed', system, error.name, error.message);
     return Response.json({ system, error: 'อ่านจำนวนรายการรอออกเลขไม่สำเร็จ' }, { status: 502, headers });
+  } finally {
+    clearTimeout(timer);
   }
 }
