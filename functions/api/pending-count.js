@@ -33,12 +33,12 @@ export async function onRequestGet({ request }) {
       redirect: 'error',
       signal: controller.signal,
     });
-    if (!response.ok) throw new Error('Register unavailable');
+    if (!response.ok) throw new Error(`Register unavailable (HTTP ${response.status})`);
     const count = countPending(await response.json(), config.field);
     return Response.json({ system, count, checkedAt: new Date().toISOString() }, { headers });
   } catch (error) {
     console.error('Pending count upstream failed', system, error.name, error.message);
-    return Response.json({ system, error: 'อ่านจำนวนรายการรอออกเลขไม่สำเร็จ' }, { status: 502, headers });
+    return Response.json({ system, error: 'อ่านจำนวนรายการรอออกเลขไม่สำเร็จ', diagnostic: `${error.name}: ${error.message}` }, { status: 502, headers });
   } finally {
     clearTimeout(timer);
   }
