@@ -49,7 +49,7 @@ const modules: ModuleItem[] = [
   { title: "งบค่าเสื่อม (UC)", subtitle: "ติดตามรายการจัดซื้อจากงบค่าเสื่อม", icon: WalletCards, tone: "green", href: ucUrl, fund: true },
   { title: "แผนเงินบำรุง", subtitle: "แผนจัดซื้อครุภัณฑ์แยกตามปีงบประมาณ", icon: ClipboardCheck, tone: "orange", href: planUrl, fund: true },
   { title: "ติดตามสัญญา", subtitle: "สัญญาและสถานะงาน", icon: FileCheck2, tone: "pink", href: "https://tula-contract-guarantee-2569.manoosaki65.chatgpt.site/" },
-  { title: "ว804", subtitle: "ระบบทดสอบ — แยกจากทะเบียนจริง", href: "https://w804-test-7lro75.v2.appdeploy.ai/", icon: WalletCards, tone: "green" },
+  { title: "ว804", subtitle: "ระบบทดสอบ — แยกจากทะเบียนจริง", href: "https://uttaradit-w804-register.onrender.com/", icon: WalletCards, tone: "green" },
   { title: "หนังสือตรวจสอบ / Inspection", subtitle: "หนังสือขอความร่วมมือตรวจสอบ", href: "https://project-r3a4.hatchable.site/inspection/", icon: FileSearch2, tone: "orange" },
   { title: "คืนหลักประกัน", subtitle: "ค้นสัญญา / จัดทำหนังสือคืนหลักประกัน", icon: ShieldCheck, tone: "purple", href: "https://project-r3a4.hatchable.site/" },
   { title: "ขอ / เบิก OT", subtitle: "บันทึกงานล่วงเวลา", icon: Clock3, tone: "rose", href: "https://uttaradit-ot.pages.dev/" },
