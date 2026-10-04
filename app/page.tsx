@@ -55,7 +55,7 @@ const modules: ModuleItem[] = [
   { title: "คืนหลักประกัน", subtitle: "ค้นสัญญา / จัดทำหนังสือคืนหลักประกัน", icon: ShieldCheck, tone: "purple", href: "https://project-r3a4.hatchable.site/" },
   { title: "ขอ / เบิก OT", subtitle: "บันทึกงานล่วงเวลา", icon: Clock3, tone: "rose", href: "https://uttaradit-ot.pages.dev/" },
   { title: "งานเดินแฟ้ม", subtitle: "ติดตามเอกสารประจำวัน", icon: FolderKanban, tone: "cyan", href: "https://project-lh6o.hatchable.site/" },
-  { title: "P4P / รายงานผลงาน", subtitle: "รายงานและระบบ P4P", icon: ChartNoAxesCombined, tone: "sky", href: "https://uttaradit-p4p-demo-ytznqm.v2.appdeploy.ai/" },
+  { title: "P4P / รายงานผลงาน", subtitle: "รายงานและระบบ P4P", icon: ChartNoAxesCombined, tone: "sky", href: "https://uttaradit-p4p.manoosaki65.deno.net/" },
   { title: "HR Master / บุคลากร", subtitle: "ทะเบียนบุคลากรและลายเซ็นเจ้าหน้าที่", icon: UserRound, tone: "indigo", href: hrUrl },
   { title: "ทะเบียนส่งจดหมาย / BMS", subtitle: "ทะเบียนจดหมาย / พิมพ์ซอง", href: "https://bms.hatchable.site/", icon: Mail, tone: "violet" },
   { title: "รายงานการประชุม", subtitle: "ปฏิทินประชุม / รายงานและไฟล์แนบ", icon: CalendarDays, tone: "blue", href: "https://uttaradit-meeting-report.manoosaki65.workers.dev/" },
