@@ -7,6 +7,19 @@
   z-index: 8 !important;
 }
 
+.hero-banner.hero-night .hero-original > img {
+  filter: brightness(.40) saturate(.72) contrast(1.08) hue-rotate(8deg);
+}
+.hero-banner.hero-night .hero-original::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(3,18,42,.38), rgba(4,20,45,.18) 55%, rgba(2,12,30,.32));
+  box-shadow: inset 0 0 90px rgba(0,8,25,.35);
+}
+
 .hero-banner.weather-rain::before,
 .hero-banner.weather-storm::before {
   content: "";
@@ -28,18 +41,20 @@
   pointer-events: none;
   background: linear-gradient(rgba(18,45,66,.16), rgba(18,45,66,.24));
 }
+.hero-banner.hero-night.weather-rain::after { background: rgba(3,14,32,.28); }
+.hero-banner.hero-night.weather-storm::after { background: rgba(2,10,25,.42); }
 .hero-banner.weather-storm::before { opacity: .92; animation-duration: .36s; }
-.hero-banner.weather-storm::after { background: rgba(12,27,43,.34); animation: procurement-flash 5s ease-in-out infinite; }
+.hero-banner.weather-storm::after { animation: procurement-flash 5s ease-in-out infinite; }
 
 @keyframes procurement-rain {
   from { transform: translate3d(-18px,-110px,0); }
   to { transform: translate3d(18px,110px,0); }
 }
 @keyframes procurement-flash {
-  0%, 88%, 92%, 100% { background: rgba(12,27,43,.34); }
-  89% { background: rgba(225,240,255,.08); }
-  90% { background: rgba(12,27,43,.34); }
-  91% { background: rgba(235,245,255,.13); }
+  0%, 88%, 92%, 100% { opacity: 1; }
+  89% { opacity: .45; }
+  90% { opacity: 1; }
+  91% { opacity: .58; }
 }
 
 @media (max-width: 640px) {
