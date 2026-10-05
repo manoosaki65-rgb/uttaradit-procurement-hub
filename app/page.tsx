@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-const inventoryUrl = "https://uttaradit-inventory.pages.dev/";
+const inventoryUrl = "https://inventory-mwjjut.v2.appdeploy.ai/";
 const budgetUrl = "https://2570-8iw897.v2.appdeploy.ai/#budget";
 const ucUrl = "https://2570-8iw897.v2.appdeploy.ai/#uc";
 const planUrl = "https://2570-8iw897.v2.appdeploy.ai/#plan";
