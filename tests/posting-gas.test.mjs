@@ -12,5 +12,10 @@ test('Apps Script roundtrip updates the same XLSX, retains PDFs/photos, retries 
  const second=request({...base,id:'test-row-00002',requestId:'request-two'});assert.equal(second.row.sequence,2);
  result=request({action:'movePhoto',id:base.id,revision:1,targetId:second.row.id,targetRevision:1,photoId:'asset-2',requestId:'move-one'});assert.equal(result.error,undefined);const rows=request({action:'list'}).rows;assert.equal(rows[0].photos.length,1);assert.equal(rows[1].photos.length,1);
  assert.equal(request({...base,revision:1,requestId:'stale'}).error.includes('เครื่องอื่น'),true);
- const reread=XLSX.read(bytes);assert.deepEqual(reread.SheetNames,KINDS);const sheet=XLSX.utils.sheet_to_json(reread.Sheets[KINDS[0]]);assert.equal(sheet.length,2);assert.ok(sheet.some(r=>r['ลิงก์ PDF ใน Drive'].includes('asset-1')));assert.equal(locked,false);
+ const update={...base,revision:2,requestId:'replace-existing',pdfUpload:{key:'asset-pdf-0000002',name:'replacement.pdf',type:'application/pdf',base64:'YWJj'},photoUploads:[{key:'asset-photo-00003',name:'three.png',type:'image/png',base64:'YWJj'}]};
+ result=request(update);assert.equal(result.error,undefined);assert.equal(result.row.pdf.name,'replacement.pdf');assert.equal(result.row.photos.length,2);assert.equal(result.row.revision,3);
+ assert.equal(request(update).row.revision,3);assert.equal(creates,5);
+ result=request({...base,revision:3,requestId:'remove-photo',keepPhotoIds:['asset-5']});assert.equal(result.error,undefined);assert.equal(result.row.photos.length,1);assert.equal(result.row.photos[0].name,'three.png');
+ const reread=XLSX.read(bytes);assert.deepEqual(reread.SheetNames,KINDS);const sheet=XLSX.utils.sheet_to_json(reread.Sheets[KINDS[0]]);assert.equal(sheet.length,2);assert.ok(sheet.some(r=>r['ลิงก์ PDF ใน Drive'].includes('asset-4')));assert.equal(locked,false);
 });
+
