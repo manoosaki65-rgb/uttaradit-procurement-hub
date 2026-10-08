@@ -18,3 +18,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+public/posting-assets/
+google-apps-script/Posting.gs
+google-apps-script/original-backup.gs
+*.tsbuildinfo
+next-env.d.ts
