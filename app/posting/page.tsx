@@ -1,0 +1,20 @@
+"use client";
+import { useMemo, useState } from "react";
+
+type Kind = "ประกาศประกวดราคา"|"ประกาศเผยแพร่แผน"|"ประกาศผลผู้ชนะ"|"ประกาศยกเลิก";
+type Row={id:number;kind:Kind;title:string;photos:File[]};
+const seed:Row[]=[...Array(9)].map((_,i)=>({id:i+1,kind:"ประกาศประกวดราคา" as Kind,title:"",photos:[]})).concat([{id:10,kind:"ประกาศเผยแพร่แผน",title:"",photos:[]}], [...Array(19)].map((_,i)=>({id:i+11,kind:"ประกาศผลผู้ชนะ" as Kind,title:"",photos:[]})));
+export default function PostingPage(){
+ const [rows,setRows]=useState<Row[]>(seed); const [pdf,setPdf]=useState<File|null>(null); const [q,setQ]=useState("");
+ const visible=useMemo(()=>rows.filter(r=>(r.title+r.kind).includes(q)),[rows,q]);
+ const setTitle=(id:number,title:string)=>setRows(x=>x.map(r=>r.id===id?{...r,title}:r));
+ const addPhotos=(id:number,files:FileList|null)=>{if(!files)return;setRows(x=>x.map(r=>r.id===id?{...r,photos:[...r.photos,...Array.from(files)]}:r))};
+ return <main style={{maxWidth:1180,margin:"0 auto",padding:24,fontFamily:"system-ui, sans-serif",color:"#172033"}}>
+  <div style={{display:"flex",justifyContent:"space-between",gap:16,alignItems:"center",flexWrap:"wrap"}}><div><h1 style={{marginBottom:4}}>ทะเบียนติดประกาศ</h1><div>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์ · 8 ต.ค. 2569</div></div><a href="/" style={{color:"#2563eb"}}>← กลับหน้าหลัก</a></div>
+  <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,margin:"22px 0"}}>{[["ทั้งหมด",29],["ประกวดราคา",9],["เผยแพร่แผน",1],["ผลผู้ชนะ",19],["ยกเลิก",0]].map(([a,b])=><div key={String(a)} style={{padding:16,border:"1px solid #dbe3ef",borderRadius:14,background:"white"}}><b style={{fontSize:24}}>{b}</b><div>{a}</div></div>)}</section>
+  <section style={{padding:18,border:"1px solid #dbe3ef",borderRadius:14,background:"#f8fafc",marginBottom:18}}><b>1) อัปโหลด PDF สแกนรวม</b><p style={{margin:"6px 0 12px"}}>รุ่นทดลองวันนี้: รับ PDF ไว้ก่อน แล้วกรอก/ตรวจชื่อรายการในตาราง ด้านถัดไปจะต่อการอ่านชื่อจาก PDF อัตโนมัติ</p><input type="file" accept="application/pdf" onChange={e=>setPdf(e.target.files?.[0]||null)}/>{pdf&&<span style={{marginLeft:10}}>เลือกแล้ว: {pdf.name}</span>}</section>
+  <section style={{padding:18,border:"1px solid #dbe3ef",borderRadius:14,background:"white"}}><div style={{display:"flex",justifyContent:"space-between",gap:12,flexWrap:"wrap",alignItems:"center"}}><div><b>2) รายการติดประกาศ + หลักฐานภาพถ่าย</b><div style={{fontSize:14,color:"#64748b"}}>หนึ่งรายการแนบได้หลายรูป เจ้าหน้าที่จัดซื้อสามารถเปิด/ดาวน์โหลดรูปจากรายการได้</div></div><input placeholder="ค้นหาชื่อหรือประเภท" value={q} onChange={e=>setQ(e.target.value)} style={{padding:10,border:"1px solid #cbd5e1",borderRadius:10}}/></div>
+  <div style={{overflowX:"auto",marginTop:14}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:850}}><thead><tr>{["ลำดับ","ประเภท","ชื่อเรื่อง/รายการ","แนบรูปหลักฐาน","สถานะ"].map(h=><th key={h} style={{textAlign:"left",padding:10,borderBottom:"2px solid #e2e8f0"}}>{h}</th>)}</tr></thead><tbody>{visible.map(r=><tr key={r.id}><td style={{padding:10,borderBottom:"1px solid #eef2f7"}}>{r.id}</td><td style={{padding:10,borderBottom:"1px solid #eef2f7"}}>{r.kind}</td><td style={{padding:10,borderBottom:"1px solid #eef2f7"}}><input value={r.title} onChange={e=>setTitle(r.id,e.target.value)} placeholder="ชื่อรายการจาก PDF" style={{width:"100%",padding:8,border:"1px solid #cbd5e1",borderRadius:8}}/></td><td style={{padding:10,borderBottom:"1px solid #eef2f7"}}><input type="file" accept="image/*" multiple onChange={e=>addPhotos(r.id,e.target.files)}/>{r.photos.map((p,i)=><div key={i} style={{fontSize:12}}><a href={URL.createObjectURL(p)} download={p.name}>{p.name}</a></div>)}</td><td style={{padding:10,borderBottom:"1px solid #eef2f7"}}>{r.photos.length?`มีหลักฐาน ${r.photos.length} รูป`:"รอหลักฐาน"}</td></tr>)}</tbody></table></div></section>
+  <p style={{fontSize:13,color:"#64748b",marginTop:14}}>หมายเหตุ: หน้านี้เป็นรุ่นใช้งานเร่งด่วนเพื่อเตรียมส่งงานวันนี้ การเก็บไฟล์ถาวรและจับคู่รูปอัตโนมัติจากข้อความในภาพจะต่อเข้าฐานข้อมูล/ที่เก็บไฟล์ในขั้นถัดไป</p>
+ </main>
+}
