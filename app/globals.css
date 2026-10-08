@@ -252,3 +252,16 @@ footer { display: flex; justify-content: space-between; gap: 20px; padding: 12px
 
 .navigation-hint { margin: 0; padding: 10px 12px; font-size: 14px; line-height: 1.6; color: #526e85; }
 .navigation-hint a { color: #075da9; text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .hero-weather-card { width: 170px !important; right: 8px !important; top: 8px !important; padding: 7px 9px !important; border-radius: 12px !important; }
+  .hero-weather-card > div:first-child > div:first-child > div:first-child,
+  .hero-weather-card > div:first-child > div:first-child > div:nth-child(2),
+  .hero-weather-card > div:first-child > div:first-child > div:nth-child(3),
+  .hero-weather-card > div:nth-child(n+2) { display: none !important; }
+  .hero-weather-card > div:first-child { justify-content: flex-end !important; }
+  .hero-weather-card > div:first-child > div:last-child { display:flex; align-items:center; gap:6px; }
+  .hero-weather-card > div:first-child > div:last-child > div:first-child { font-size:22px !important; }
+  .hero-weather-card > div:first-child > div:last-child > div:nth-child(2) { font-size:22px !important; }
+  .hero-weather-card > div:first-child > div:last-child > div:nth-child(3) { font-size:11px !important; }
+}
