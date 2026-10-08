@@ -3,7 +3,7 @@
 import {
   Bell, BookOpen, CalendarDays, ChartNoAxesCombined, ChevronRight, CircleCheckBig,
   ClipboardCheck, Clock3, FileCheck2, FilePlus2, FileSearch2, FolderKanban,
-  Headphones, Home, Landmark, Mail, Menu, Search, ShieldCheck, UserRound,
+  Home, Landmark, Mail, Menu, Search, ShieldCheck, UserRound,
   WalletCards, X, type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -34,7 +34,7 @@ const modules: ModuleItem[] = [
   { title: "ข่าวพัสดุและ AI", subtitle: "Smart Procurement News", icon: BookOpen, tone: "indigo", href: "https://smart-procurement.hatchable.site/" },
   { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
   { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-announcement-register.onrender.com/", menuOnly: true },
-  { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-contract-number.manoosaki65.workers.dev/", menuOnly: true },
+  { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-contract-number.manoosaki65.workers.dev/", menuOnly: true },\n  { title: "รูปติดประกาศหน้าอาคารพัสดุ", subtitle: "ค้นหาและดาวน์โหลดหลักฐานการติดประกาศ", icon: FileSearch2, tone: "violet", href: "/posting", menuOnly: true },
 ];
 
 const sidebarItems: Array<{ label: string; icon: LucideIcon; href?: string }> = [
@@ -149,7 +149,7 @@ export default function HomePage() {
       </section>
 
       <div className="dashboard-body">
-        <section className="overview-strip" aria-label="ภาพรวมระบบ"><div className="overview-card blue"><span><FilePlus2 size={26} /></span><p><small>เมนูหลัก</small><strong>Inventory</strong><em>พร้อมใช้งาน</em></p></div><div className="overview-card green"><span><FileCheck2 size={26} /></span><p><small>ประวัติเดิม</small><strong>3,857</strong><em>รายการ Master</em></p></div><div className="overview-card violet"><span><CalendarDays size={26} /></span><p><small>งานปัจจุบัน</small><strong>10 ก.ย. 69</strong><em>เป็นต้นไป</em></p></div><div className="overview-card amber"><span><CircleCheckBig size={26} /></span><p><small>การทำงาน</small><strong>ครบขั้นตอน</strong><em>นำเข้า–พิมพ์</em></p></div><div className="overview-card cyan"><span><Headphones size={26} /></span><p><small>ศูนย์รวม</small><strong>หน้าเดียว</strong><em>พร้อมเพิ่มเมนู</em></p></div></section>
+        
         <section className="quick-panel" id="quick-menu" aria-labelledby="quick-title"><div className="panel-heading"><div><span className="heading-icon"><FolderKanban size={18} /></span><h2 id="quick-title">เมนูลัด <b>(Quick Menu)</b></h2></div><label className="menu-search"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ค้นหาเมนู" aria-label="ค้นหาเมนู" /></label></div><p className="navigation-hint">แต่ละระบบเปิดในแท็บใหม่ — กลับมาเลือกงานอื่นได้ที่แท็บหน้าอาคารพัสดุ บางระบบต้องเข้าสู่ระบบด้วยบัญชีที่ได้รับสิทธิ์</p><div className="quick-grid">{visibleModules.map((item) => { const Icon = item.icon; const system = pendingSystemFor(item.href); const content = <><span className={`quick-icon ${item.tone}`} style={system ? { position: "relative" } : undefined}><Icon size={26} />{system && <PendingBadge status={pending[system]} />}</span><strong>{item.title}</strong><small>{item.subtitle}</small>{!item.href && <em>เร็ว ๆ นี้</em>}</>; return item.href ? <a className={`quick-card ${item.primary ? "primary" : ""} ${item.fund ? "fund-card" : ""}`} href={item.href} target="_blank" rel="noopener noreferrer" key={item.title}>{content}</a> : <div className="quick-card disabled" key={item.title} aria-disabled="true">{content}</div>; })}{visibleModules.length === 0 && <p className="empty-search">ไม่พบเมนูที่ค้นหา</p>}</div></section>
         <div className="content-grid">
           <section className="work-panel" aria-labelledby="work-title"><div className="panel-heading compact"><div><span className="heading-icon red"><Bell size={18} /></span><h2 id="work-title">ระบบงานพัสดุ</h2></div><a href={inventoryUrl} target="_blank" rel="noopener noreferrer">เปิด Inventory <ChevronRight size={16} /></a></div><div className="system-table" role="table" aria-label="สถานะระบบงานพัสดุ"><div className="system-row table-head" role="row"><span>ระบบ</span><span>รายละเอียด</span><span>สถานะ</span></div>{systemRows.map((row) => <a className="system-row" href={row.href} target="_blank" rel="noopener noreferrer" key={row.title} role="row"><strong>{row.title}</strong><span>{row.detail}</span><em>{row.badge}</em></a>)}</div></section>
