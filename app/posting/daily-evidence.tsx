@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useState} from 'react';
 import type {PostingRow,Asset} from '../../lib/posting-media';
 import {dailyGroups,dailyId,appendNotes,uploadBatches,photoThumbnail,photoDownload} from '../../lib/posting-daily.js';
+import webEvidence from '../../lib/posting-web-evidence.json';
 type Pending={file:File;key:string;preview:string};
 const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 const thaiDate=(date:string)=>new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Bangkok'}).format(new Date(date+'T12:00:00+07:00'));
@@ -10,7 +11,11 @@ async function upload(item:Pending){const type=item.file.type||(/\.hei[cf]$/i.te
 function EvidencePhoto({photo,index}:{photo:Asset;index:number}){const [failed,setFailed]=useState(false);return <figure className="evidence-photo"><a href={photo.url} target="_blank" rel="noreferrer" aria-label={'ดูรูป '+(index+1)}>{failed?<span className="photo-fallback">📷 รูป {index+1}<small>เปิดดูใน Google Drive</small></span>:<img src={photoThumbnail(photo)} alt={'หลักฐานรูป '+(index+1)} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)}/>}</a><figcaption><span>รูป {index+1}</span><a href={photo.url} target="_blank" rel="noreferrer">ดูรูปใหญ่</a><a href={photoDownload(photo)} target="_blank" rel="noreferrer">ดาวน์โหลดต้นฉบับ</a></figcaption></figure>;}
 export default function DailyEvidence(){
  const [code,setCode]=useState(''),[connected,setConnected]=useState(false),[busy,setBusy]=useState(false),[rows,setRows]=useState<PostingRow[]>([]),[date,setDate]=useState(today),[notes,setNotes]=useState(''),[pending,setPending]=useState<Pending[]>([]),[message,setMessage]=useState('ใส่รหัสเจ้าหน้าที่เดิมแล้วเชื่อม Google Drive เพื่อเริ่มบันทึก'),[open,setOpen]=useState<Record<string,boolean>>({});
- const groups=useMemo(()=>dailyGroups(rows),[rows]);
+ const groups=useMemo(()=>{
+  const displayRows=rows.map(row=>({...row,photos:(row.photos||[]).map(photo=>{const original=webEvidence.find(day=>day.date===row.postedDate)?.photos.find(p=>p.name===photo.name);return original?{...photo,url:original.url}:photo;})}));
+  const previews=webEvidence.map(day=>({id:'web-evidence-'+day.date,postedDate:day.date,title:'หลักฐานการติดประกาศรายวัน',notes:'',photos:day.photos.filter(photo=>!rows.some(row=>row.postedDate===day.date&&(row.photos||[]).some(p=>p.name===photo.name)))}));
+  return dailyGroups([...displayRows,...previews]);
+ },[rows]);
  async function api(body?:unknown,access=code){if(!access.trim())throw Error('กรุณาใส่รหัสเจ้าหน้าที่เดิม');const response=await fetch('/api/posting',{method:body?'POST':'GET',cache:'no-store',signal:AbortSignal.timeout(120000),headers:{'Content-Type':'application/json','X-Posting-Code':access.trim()},...(body?{body:JSON.stringify(body)}:{})});const data=await response.json().catch(()=>({error:'บริการตอบกลับไม่ถูกต้อง กรุณาลองใหม่'}));if(response.status===401){setConnected(false);try{sessionStorage.removeItem('posting-access');}catch{}}if(!response.ok||data.error)throw Error(data.error||'เชื่อม Google Drive ไม่สำเร็จ');return data;}
  async function run(action:()=>Promise<void>){setBusy(true);try{await action();}catch(e){setMessage(e instanceof Error?e.message:String(e));}finally{setBusy(false);}}
  async function connect(access=code){setMessage('กำลังเชื่อม Google Drive เดิม กรุณารอสักครู่');const data=await api(undefined,access);if(!Array.isArray(data.rows))throw Error('โหลดข้อมูลจาก Master เดิมไม่สำเร็จ');setRows(data.rows);setConnected(true);try{sessionStorage.setItem('posting-access',access.trim());}catch{}setMessage('เชื่อม Google Drive เดิมแล้ว พร้อมบันทึกรูปตามวันที่');}
