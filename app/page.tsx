@@ -35,7 +35,7 @@ const modules: ModuleItem[] = [
   { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
   { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-announcement-register.onrender.com/", menuOnly: true },
   { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-contract-number.manoosaki65.workers.dev/", menuOnly: true },
-  { title: "ติดประกาศหน้าอาคารพัสดุ", subtitle: "ค้นหาและดาวน์โหลดหลักฐานการติดประกาศ", icon: FileSearch2, tone: "violet", href: "/posting", menuOnly: true },
+  { title: "ติดประกาศหน้าอาคารพัสดุ", subtitle: "อัปโหลดและดูหลักฐานการติดประกาศรายวัน", icon: FileSearch2, tone: "violet", href: "/posting", menuOnly: true },
 ];
 
 const sidebarItems: Array<{ label: string; icon: LucideIcon; href?: string }> = [
@@ -117,7 +117,7 @@ export default function HomePage() {
 
   const today = useMemo(() => new Intl.DateTimeFormat("th-TH", { timeZone: "Asia/Bangkok", weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(now), [now]);
   const timeNow = useMemo(() => new Intl.DateTimeFormat("th-TH", { timeZone: "Asia/Bangkok", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(now), [now]);
-  const visibleModules = useMemo(() => { const keyword = query.trim().toLocaleLowerCase("th"); return keyword ? modules.filter((item) => `${item.title} ${item.subtitle}`.toLocaleLowerCase("th").includes(keyword)) : modules; }, [query]);
+  const visibleModules = useMemo(() => { const keyword = query.trim().toLocaleLowerCase("th"); return keyword ? modules.filter(item=>item.href!=='/posting').filter((item) => `${item.title} ${item.subtitle}`.toLocaleLowerCase("th").includes(keyword)) : modules.filter(item=>item.href!=='/posting'); }, [query]);
   const weatherNow = weather ? weatherLabel(weather.code) : null;
 
   return <div className="app-shell" id="home">
@@ -144,9 +144,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid w-full max-w-[1460px] grid-cols-1 gap-3 px-[14px] pt-[10px] sm:grid-cols-2" aria-label="งานออกเลขจังหวัด">
+      <section className="mx-auto grid w-full max-w-[1460px] grid-cols-1 gap-3 px-[14px] pt-[10px] sm:grid-cols-2" aria-label="เมนูงานพัสดุ">
         <a href="https://uttaradit-announcement-register.onrender.com/" target="_blank" rel="noopener noreferrer" className="group relative block overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><img src="/มอเตอร์ไซค์_ออกเลขที่ประกาศ.png" alt="ออกเลขที่ประกาศ ทะเบียนเลขประกาศจังหวัด" className="block h-auto w-full" /><PendingBadge status={pending.announcement} /></a>
         <a href="https://uttaradit-contract-number.manoosaki65.workers.dev/" target="_blank" rel="noopener noreferrer" className="group relative block overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><img src="/มอเตอร์ไซค์_ออกเลขที่สัญญา.png" alt="ออกเลขที่สัญญา ทะเบียนออกเลขที่สัญญาจังหวัด" className="block h-auto w-full" /><PendingBadge status={pending.contract} /></a>
+        <a href="/posting" aria-label="ติดประกาศหน้าอาคารพัสดุ อัปโหลดและดูหลักฐานการติดประกาศรายวัน" className="group relative block overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><img src="/posting-daily-menu.png" alt="เจ้าหน้าที่ติดประกาศหน้าอาคารพัสดุ" className="block h-auto w-full" /><div style={{position:"absolute",bottom:0,left:0,right:0,padding:"24px 14px 12px",background:"linear-gradient(transparent,rgba(8,30,55,.88))",color:"white"}}><strong style={{fontSize:18}}>ติดประกาศหน้าอาคารพัสดุ</strong><small style={{display:"block",fontSize:13}}>อัปโหลดและดูหลักฐานการติดประกาศรายวัน</small></div></a>
       </section>
 
       <div className="dashboard-body">
