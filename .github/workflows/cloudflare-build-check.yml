@@ -18,5 +18,7 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install
+      - name: Test posting integration
+        run: node --test tests/posting.test.mjs tests/posting-gas.test.mjs
       - name: Build existing site
         run: npm run build

@@ -9,7 +9,11 @@ test('Apps Script roundtrip updates the same XLSX, retains PDFs/photos, retries 
  const base={action:'save',id:'test-row-00001',kind:KINDS[0],title:'ทดสอบจ้างตรวจ MRI',postedDate:'2026-10-08',requestId:'request-one'};
  let result=request({...base,pdfUpload:{key:'asset-pdf-0000001',name:'test.pdf',type:'application/pdf',base64:'YWJj'},photoUploads:[{key:'asset-photo-00001',name:'one.png',type:'image/png',base64:'YWJj'},{key:'asset-photo-00002',name:'two.png',type:'image/png',base64:'YWJj'}]});assert.equal(result.error,undefined);assert.equal(result.row.photos.length,2);assert.equal(result.row.sequence,1);assert.equal(creates,3);
  assert.equal(request(base).row.revision,1);assert.equal(creates,3);assert.equal(request({action:'list'}).rows.length,1);
- const second=request({...base,id:'test-row-00002',requestId:'request-two'});assert.equal(second.row.sequence,2);
+ const annotated=XLSX.read(bytes);annotated.Sheets[KINDS[0]].L1={t:'s',v:'ผู้ตรวจสอบ'};annotated.Sheets[KINDS[0]].L2={t:'s',v:'ข้อมูลเดิมห้ามทับ'};annotated.Sheets[KINDS[0]]['!ref']='A1:L2';bytes=XLSX.write(annotated,{type:'buffer',bookType:'xlsx'});
+ const duplicate=request({...base,id:'test-duplicate',requestId:'duplicate-request'});assert.match(duplicate.error,/รายการเดิม/);
+ const second=request({...base,id:'test-row-00002',title:'ทดสอบรายการที่สอง',requestId:'request-two'});assert.equal(second.row.sequence,2);
+ assert.equal(XLSX.read(bytes).Sheets[KINDS[0]].L2.v,'ข้อมูลเดิมห้ามทับ');
+ const appended=XLSX.utils.sheet_to_json(XLSX.read(bytes).Sheets[KINDS[0]]);assert.deepEqual(appended.map(r=>r['ลำดับ']),[1,2]);
  result=request({action:'movePhoto',id:base.id,revision:1,targetId:second.row.id,targetRevision:1,photoId:'asset-2',requestId:'move-one'});assert.equal(result.error,undefined);const rows=request({action:'list'}).rows;assert.equal(rows[0].photos.length,1);assert.equal(rows[1].photos.length,1);
  assert.equal(request({...base,revision:1,requestId:'stale'}).error.includes('เครื่องอื่น'),true);
  const update={...base,revision:2,requestId:'replace-existing',pdfUpload:{key:'asset-pdf-0000002',name:'replacement.pdf',type:'application/pdf',base64:'YWJj'},photoUploads:[{key:'asset-photo-00003',name:'three.png',type:'image/png',base64:'YWJj'}]};

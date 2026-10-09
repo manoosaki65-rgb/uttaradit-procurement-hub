@@ -35,7 +35,7 @@ const modules: ModuleItem[] = [
   { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
   { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-announcement-register.onrender.com/", menuOnly: true },
   { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-contract-number.manoosaki65.workers.dev/", menuOnly: true },
-  { title: "รูปติดประกาศหน้าอาคารพัสดุ", subtitle: "ค้นหาและดาวน์โหลดหลักฐานการติดประกาศ", icon: FileSearch2, tone: "violet", href: "/posting", menuOnly: true },
+  { title: "ติดประกาศหน้าอาคารพัสดุ", subtitle: "ค้นหาและดาวน์โหลดหลักฐานการติดประกาศ", icon: FileSearch2, tone: "violet", href: "/posting", menuOnly: true },
 ];
 
 const sidebarItems: Array<{ label: string; icon: LucideIcon; href?: string }> = [

@@ -26,9 +26,24 @@ function load_(){
 }
 function save_(wb,rows){
   KINDS.forEach(kind=>{
-    const old=wb.Sheets[kind]; const all=rows.filter(r=>r.kind===kind).sort((a,b)=>b.postedDate.localeCompare(a.postedDate)||b.sequence-a.sequence);
-    const cells=[HEADERS,...all.map(r=>[r.sequence,r.postedDate,r.title,r.kind,r.pdf?.name||'',r.photos.map(p=>p.name).join('\n'),r.pdf?.url||'',r.photos.map(p=>p.url).join('\n'),r.savedAt,r.notes,JSON.stringify(r)])];
-    const sheet=XLSX.utils.aoa_to_sheet(cells);sheet['!cols']=old['!cols']||HEADERS.map((_,i)=>({wch:i===2?60:24}));sheet['!cols'][10]={hidden:true};wb.Sheets[kind]=sheet;
+    const sheet=wb.Sheets[kind], positions=new Map();
+    XLSX.utils.sheet_to_json(sheet,{defval:''}).forEach((v,index)=>{
+      if(!v['ชื่อรายการ'])return;
+      const meta=JSON.parse(v['ข้อมูลระบบ']||'{}');
+      const id=meta.id||'legacy-'+kind+'-'+index;
+      positions.set(id,v.__rowNum__);
+      // Moving a record clears only its managed cells; unrelated columns survive.
+      if(!rows.some(r=>r.id===id&&r.kind===kind))for(let c=0;c<HEADERS.length;c++)delete sheet[XLSX.utils.encode_cell({r:v.__rowNum__,c})];
+    });
+    let range=XLSX.utils.decode_range(sheet['!ref']||'A1:K1');
+    rows.filter(r=>r.kind===kind).forEach(r=>{
+      // New records append after all existing rows. Sorting belongs to the UI.
+      const index=positions.has(r.id)?positions.get(r.id):++range.e.r;
+      const values=[r.sequence,r.postedDate,r.title,r.kind,r.pdf?.name||'',r.photos.map(p=>p.name).join('\n'),r.pdf?.url||'',r.photos.map(p=>p.url).join('\n'),r.savedAt,r.notes||'',JSON.stringify(r)];
+      values.forEach((v,c)=>{const key=XLSX.utils.encode_cell({r:index,c}),old=sheet[key];if(old?.v===v)return;sheet[key]={...(old?.s?{s:old.s}:{}),t:typeof v==='number'?'n':'s',v};});
+    });
+    range.e.c=Math.max(range.e.c,HEADERS.length-1);sheet['!ref']=XLSX.utils.encode_range(range);
+    sheet['!cols']=sheet['!cols']||HEADERS.map((_,i)=>({wch:i===2?60:24}));sheet['!cols'][10]={...sheet['!cols'][10],hidden:true};
   });
   const data=XLSX.write(wb,{type:'base64',bookType:'xlsx'});
   const res=UrlFetchApp.fetch('https://www.googleapis.com/upload/drive/v3/files/'+MASTER+'?uploadType=media',{method:'patch',contentType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',payload:Utilities.base64Decode(data),headers:{Authorization:'Bearer '+ScriptApp.getOAuthToken()},muteHttpExceptions:true});
