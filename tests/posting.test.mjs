@@ -13,6 +13,8 @@ test('sequences stay stable, are scoped by day/type, and survive deletion/move',
 test('multi-page document boundaries and coverage',()=>{
  const pages=documentStarts(['ประกาศโรงพยาบาล\nเรื่อง จ้างตรวจ MRI ประจำปี','รายละเอียดต่อจากหน้าแรก','ประกาศโรงพยาบาล\nเรื่อง ซื้อวัสดุการแพทย์']);assert.deepEqual(pages.filter(p=>p.start).map(p=>p.page),[1,3]);
  validateRanges([{start:1,end:2},{start:3,end:3}],3);assert.throws(()=>validateRanges([{start:1,end:1},{start:3,end:3}],3));assert.throws(()=>validateRanges([{start:1,end:2},{start:2,end:3}],3));
+ const repeated=documentStarts(['ประกาศประกวดราคา\nเรื่อง จ้างตรวจ MRI ประจำปี','ประกาศประกวดราคา\nเรื่อง จ้างตรวจ MRI ประจำปี\nรายละเอียดหน้าสอง','ประกาศประกวดราคา\nเรื่อง ซื้อวัสดุการแพทย์']);assert.deepEqual(repeated.filter(p=>p.start).map(p=>p.page),[1,3]);
+ const differentKind=documentStarts(['ประกาศประกวดราคา\nเรื่อง จ้างตรวจ MRI ประจำปี','ประกาศผู้ชนะ\nเรื่อง จ้างตรวจ MRI ประจำปี']);assert.deepEqual(differentKind.filter(p=>p.start).map(p=>p.page),[1,2]);
 });
 test('ambiguous or short OCR never gets an automatic match',()=>{
  const rows=[{id:'1',title:'จ้างตรวจด้วยเครื่อง MRI ประจำปี'},{id:'2',title:'ซื้อวัสดุการแพทย์สำหรับห้องผ่าตัด'}];assert.equal(suggest('ประกาศ เรื่อง จ้างตรวจด้วยเครื่อง MRI ประจำปี',rows),'1');assert.equal(suggest('ไม่สามารถอ่านได้',rows),'');assert.equal(suggest(rows.map(r=>r.title).join(' '),rows),'');
