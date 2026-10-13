@@ -13,7 +13,7 @@ export default function EditAnnouncement({row,initialCount,busy,connected,api,ru
  const progress=useRef({revision:row.revision,requestId:crypto.randomUUID(),pdfKey:crypto.randomUUID(),metadataSaved:false});
  const urls=useRef(new Set<string>());
  useEffect(()=>()=>{for(const url of urls.current)URL.revokeObjectURL(url);},[]);
- const disabled=busy||reading||started;
+ const disabled=busy||reading||started||!connected;
  const changes:string[]=[];
  if(title.trim()!==row.title)changes.push('ชื่อรายการ: '+row.title+' → '+title.trim());
  if(kind!==row.kind)changes.push('ประเภท: '+row.kind+' → '+kind);
@@ -57,6 +57,7 @@ export default function EditAnnouncement({row,initialCount,busy,connected,api,ru
  });}
  return <section className="new-announcement edit-announcement" aria-label="แก้ไขประกาศ">
   <div className="form-heading"><h3>แก้ไข: {row.title}</h3><span>วันที่ {row.postedDate}</span></div>
+  {!connected&&<div className="close-form-confirm" role="status"><b>เปิดแบบฟอร์มแล้ว — ต้องเชื่อมข้อมูลเดิมก่อนแก้ไขและบันทึก</b><p>ใส่รหัสเจ้าหน้าที่เดิม แล้วกด “เชื่อม / โหลดข้อมูลเดิม” ด้านบน จากนั้นเลือกแก้ไขรายการที่โหลดจาก Master</p><button onClick={()=>{document.querySelector<HTMLInputElement>('input[aria-label="รหัสเจ้าหน้าที่เดิม"]')?.focus();document.querySelector('.connection')?.scrollIntoView({behavior:'smooth',block:'start'});}}>ไปช่องรหัสเจ้าหน้าที่</button></div>}
   <div className="form-fields"><label>ชื่อรายการ<input aria-label="แก้ชื่อรายการ" value={title} disabled={disabled} onChange={e=>setTitle(e.target.value)}/></label><label>ประเภท<select aria-label="แก้ประเภทประกาศ" value={kind} disabled={disabled} onChange={e=>setKind(e.target.value)}>{KINDS.map(k=><option key={k}>{k}</option>)}</select></label></div>
   <label>จำนวนหน้า <input aria-label="แก้จำนวนหน้า" type="number" min={1} max={500} value={count} disabled={disabled} onChange={e=>setCount(Number(e.target.value))}/></label>
   <label className="pdf-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length===1)void choosePdf(e.dataTransfer.files[0]);else setMessage('เลือก PDF หนึ่งไฟล์');}}>เปลี่ยน PDF — คลิกเลือกหรือลากวาง<input aria-label="เปลี่ยน PDF" type="file" accept="application/pdf,.pdf" disabled={disabled} onChange={e=>{void choosePdf(e.target.files?.[0]);e.target.value='';}}/>{row.pdf&&<a href={row.pdf.url} target="_blank" rel="noreferrer">ดู PDF เดิม</a>}{pdf&&<small>รอบันทึก: {pdf.name}</small>}</label>
