@@ -1,6 +1,5 @@
-import DailyEvidence from './daily-evidence';
-import PostingMatches from './posting-matches';
+import DashboardView from './dashboard-view';
 
 export default function PostingPage(){
- return <><DailyEvidence/><PostingMatches/></>;
+ return <DashboardView/>;
 }
