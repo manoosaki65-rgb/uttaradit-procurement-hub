@@ -55,7 +55,7 @@ const pendingSystemFor = (href?: string): PendingSystem | null => href === "http
 
 function PendingBadge({ status }: { status: PendingStatus }) {
   if (status.count === null || status.count === 0) return null;
-  return <span role="status" aria-label={`รอออกเลข ${status.count} รายการ`} style={{ position: "absolute", top: -7, right: -9, minWidth: 24, height: 24, padding: "0 6px", borderRadius: 999, background: "#dc2626", color: "white", fontSize: 13, fontWeight: 800, lineHeight: "20px", textAlign: "center", border: "2px solid white", boxShadow: "0 1px 4px #0002", zIndex: 1 }}>{status.count}</span>;
+  return <span role="status" aria-label={`รอออกเลข ${status.count} รายการ`} style={{ position: "absolute", top: 10, right: 10, minWidth: 24, height: 24, padding: "0 6px", borderRadius: 999, background: "#dc2626", color: "white", fontSize: 13, fontWeight: 800, lineHeight: "20px", textAlign: "center", border: "2px solid white", boxShadow: "0 1px 4px #0002", zIndex: 1 }}>{status.count}</span>;
 }
 
 function weatherLabel(code: number) {
