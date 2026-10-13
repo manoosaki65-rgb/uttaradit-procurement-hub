@@ -8,6 +8,7 @@ import './dashboard.css';
 import {photoPage as pageOf,preservePhotoPages,documentPageCount} from '../../lib/posting-photo-pages.js';
 import AnnouncementUpload from './announcement-upload';
 import {validatePhoto,imageType} from '../../lib/posting-upload.js';
+import EditAnnouncement from './edit-announcement';
 
 const titles=['Compliance Balloon Catheter จำนวน 1,000 เส้น','Drug Eluting Stent ขนาดใหญ่ จำนวน 60 เส้น','ชุดเครื่องมือเจาะตัดกระดูกชนิดเปลี่ยนหัวได้ จำนวน 2 ชุด','เครื่องพร้อมน้ำยาตรวจ CD4 จำนวน 2,000 Test','วัสดุวิทยาศาสตร์การแพทย์ จำนวน 3 รายการ','เครื่องพร้อมน้ำยาตรวจชุดทดสอบความไวของสารต้านจุลชีพ จำนวน 6,000 Test','เผยแพร่แผนการจัดซื้อจัดจ้าง ประจำปีงบประมาณ 2570 · หน้านำเรื่อง','Tissue mitral valve 25–33 mm. (เนื้อเยื่อหมู ชนิดมีโครง)'];
 type Row=PostingRow & {previewOnly?:boolean};
@@ -19,6 +20,7 @@ export default function DashboardView(){
  const [rows,setRows]=useState<Row[]>(seed),[date,setDate]=useState('2026-10-09'),[month,setMonth]=useState('2026-10'),[kind,setKind]=useState('ทั้งหมด'),[q,setQ]=useState(''),[code,setCode]=useState(''),[connected,setConnected]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('เชื่อมด้วยรหัสเจ้าหน้าที่เดิมเพื่อโหลดรายการ PDF และบันทึกรูปลง Master เดิม'),[counts,setCounts]=useState<Record<string,number>>({}),[showAll,setShowAll]=useState(false);
  const lock=useRef(false);
  const [newDate,setNewDate]=useState<string|null>(null);
+ const [editing,setEditing]=useState<Row|null>(null);
  const [deleting,setDeleting]=useState<{row:Row;photo:Asset;page:number}|null>(null);
  async function api(body?:unknown,access=code){if(!access.trim())throw Error('กรุณาใส่รหัสเจ้าหน้าที่เดิม');const res=await fetch('/api/posting',{method:body?'POST':'GET',cache:'no-store',signal:AbortSignal.timeout(120000),headers:{'Content-Type':'application/json','X-Posting-Code':access.trim()},...(body?{body:JSON.stringify(body)}:{})});const data=await res.json() as {error?:string;rows:PostingRow[];row:PostingRow};if(res.status===401)setConnected(false);if(!res.ok||data.error)throw Error(data.error||'เชื่อมต่อไม่สำเร็จ');return data;}
  async function run(fn:()=>Promise<void>){if(lock.current)return;lock.current=true;setBusy(true);try{await fn();}catch(e){setMessage(e instanceof Error?e.message:String(e));}finally{lock.current=false;setBusy(false);}}
@@ -28,6 +30,7 @@ export default function DashboardView(){
  const allPhotos=useMemo(()=>{const list=rows.filter(r=>r.postedDate===date).flatMap(r=>r.photos||[]);for(const photo of evidence.find(d=>d.date===date)?.photos||[])if(!list.some(p=>p.url===photo.url||p.name===photo.name))list.push(photo);return list;},[rows,date]);
  useEffect(()=>{let canceled=false;void (async()=>{for(const r of visible){if(canceled)break;if(!r.pdf||counts[r.id]||documentPageCount(r))continue;try{const pdfjs=await import('pdfjs-dist');pdfjs.GlobalWorkerOptions.workerSrc='/posting-assets/pdf.worker.min.mjs';const task=pdfjs.getDocument({url:r.pdf.url});try{const doc=await task.promise;if(!canceled)setCounts(p=>({...p,[r.id]:doc.numPages}));}finally{await task.destroy();}}catch{/* Drive PDF may require opening in Drive; retain manual page count. */}}})();return()=>{canceled=true;};},[visible,counts]);
  async function changePhoto(r:Row,page:number,file?:File,remove?:Asset){await run(async()=>{
+  if(editing)throw Error('กำลังแก้ไขรายการ กรุณาจัดรูปและบันทึกจากแบบฟอร์มแก้ไข');
   if(!connected||r.previewOnly)throw Error('เชื่อมและโหลดรายการจาก Master เดิมก่อนอัปโหลด');
   if(file)validatePhoto(file);
   const data=await api();const latest=data.rows?.find((x:PostingRow)=>x.id===r.id);if(!latest)throw Error('ไม่พบรายการเดิม กรุณาโหลดใหม่');if(latest.revision!==r.revision)throw Error('รายการเปลี่ยนจากเครื่องอื่น กรุณาโหลดข้อมูลใหม่ก่อน');
@@ -49,7 +52,7 @@ export default function DashboardView(){
   const page=i+1,hasPhoto=r.photos.some((p,j)=>pageOf(p,j,r.notes)===page);
   return <label key={page} className="compact-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือกหนึ่งรูปต่อหน้า');return;}void changePhoto(r,page,e.dataTransfer.files[0]);}}>
    <span>หน้า {page} · {hasPhoto?'เปลี่ยนรูป':'อัปโหลดรูป'}</span>
-   <input type="file" aria-label={'รูปหน้า '+page+' '+r.title} accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" disabled={busy||!connected||r.previewOnly} onChange={e=>{const f=e.target.files?.[0];e.target.value='';if(f)void changePhoto(r,page,f);}}/>
+   <input type="file" aria-label={'รูปหน้า '+page+' '+r.title} accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" disabled={busy||!connected||r.previewOnly||!!editing} onChange={e=>{const f=e.target.files?.[0];e.target.value='';if(f)void changePhoto(r,page,f);}}/>
   </label>;
  })}</div>;}
  return <main className="posting-dashboard">
@@ -76,21 +79,22 @@ export default function DashboardView(){
     </aside>
     <section className="results">
      <div className="heading"><div><h2>{thai(date)}</h2><p>{visible.length} รายการ · รูปหลักฐาน {allPhotos.length} รูป</p></div><input aria-label="ค้นหารายการ" placeholder="ค้นหารายการ / ชื่อโครงการ / คำสำคัญ" value={q} onChange={e=>setQ(e.target.value)}/></div>
-     <div className="filters">{['ทั้งหมด',...KINDS].map((k,i)=><button key={k} aria-pressed={kind===k} className={kind===k?'active':''} onClick={()=>setKind(k)}>{['ทั้งหมด','ประกวดราคา','เผยแพร่แผน','ผู้ชนะ','ยกเลิก'][i]}</button>)}<button className="add-announcement" disabled={busy||!!newDate} onClick={()=>setNewDate(date)}>+ เพิ่มประกาศของวันนี้</button></div>
+     <div className="filters">{['ทั้งหมด',...KINDS].map((k,i)=><button key={k} aria-pressed={kind===k} className={kind===k?'active':''} onClick={()=>setKind(k)}>{['ทั้งหมด','ประกวดราคา','เผยแพร่แผน','ผู้ชนะ','ยกเลิก'][i]}</button>)}<button className="add-announcement" disabled={busy||!!newDate||!!editing} onClick={()=>setNewDate(date)}>+ เพิ่มประกาศของวันนี้</button></div>
      {newDate&&<AnnouncementUpload key={newDate} date={newDate} busy={busy} connected={connected} api={api} run={run} onRow={acceptRow} setMessage={setMessage} onClose={()=>setNewDate(null)} onDone={()=>{selectDay(newDate);setNewDate(null);setKind('ทั้งหมด');setQ('');}}/>}
+     {editing&&<EditAnnouncement key={editing.id} row={editing} initialCount={counts[editing.id]||documentPageCount(editing)||Math.max(1,...editing.photos.map((p,i)=>pageOf(p,i,editing.notes)))} busy={busy} connected={connected} api={api} run={run} onRow={acceptRow} onClose={()=>{setEditing(null);setKind('ทั้งหมด');setQ('');}} setMessage={setMessage}/>}
      <div className="table-scroll"><table>
       <thead><tr>{['ลำดับ','ชื่อรายการ','ประเภท','จำนวนหน้า','PDF','รูปถ่าย','อัปโหลดรูป'].map(h=><th key={h}>{h}</th>)}</tr></thead>
       <tbody>{visible.map(r=>{
        const inferred=Math.max(1,...r.photos.map((p,i)=>pageOf(p,i,r.notes))),known=counts[r.id]||documentPageCount(r),count=known||inferred;
        return <tr key={r.id}>
-        <td>{r.sequence}</td><td className="title">{r.title}</td><td><span className={'kind-tag kind-'+KINDS.indexOf(r.kind)}>{r.kind.replace(/^ประกาศ/,'')}</span></td>
+        <td>{r.sequence}</td><td className="title">{r.title}<button className="edit-row-button" disabled={busy||!connected||r.previewOnly||!!editing||!!newDate} title={!connected?'เชื่อมข้อมูลเดิมเพื่อแก้ไขรายการ':'แก้ไขข้อมูลและรูปตามหน้า'} onClick={()=>setEditing(r)}>แก้ไข</button></td><td><span className={'kind-tag kind-'+KINDS.indexOf(r.kind)}>{r.kind.replace(/^ประกาศ/,'')}</span></td>
         <td>{known||!r.pdf?count:'รอตรวจ PDF'}{r.pdf&&!known&&<details className="page-count"><summary>ระบุจำนวนหน้า</summary><input type="number" min={inferred} max={500} aria-label={'จำนวนหน้า '+r.title} value={count} onChange={e=>{const n=Number(e.target.value);if(Number.isInteger(n)&&n>=inferred&&n<=500)setCounts(p=>({...p,[r.id]:n}));}}/></details>}</td>
         <td>{r.pdf?<a href={r.pdf.url} target="_blank" rel="noreferrer">ดู PDF</a>:<small>—</small>}</td>
-        <td>{r.photos.length?r.photos.map((p,i)=><div className="photo-actions" key={p.id||p.url}><small>หน้า {pageOf(p,i,r.notes)} · อัปแล้ว</small><div><a href={p.url} target="_blank" rel="noreferrer">ดูรูป</a><a href={photoDownload(p)} download target="_blank" rel="noreferrer">ดาวน์โหลด</a>{connected&&!r.previewOnly&&<button disabled={busy} onClick={()=>setDeleting({row:r,photo:p,page:pageOf(p,i,r.notes)})}>ลบรูป</button>}</div></div>):<small className="muted">ยังไม่มีรูป</small>}</td>
+        <td>{r.photos.length?r.photos.map((p,i)=><div className="photo-actions" key={p.id||p.url}><small>หน้า {pageOf(p,i,r.notes)} · อัปแล้ว</small><div><a href={p.url} target="_blank" rel="noreferrer">ดูรูป</a><a href={photoDownload(p)} download target="_blank" rel="noreferrer">ดาวน์โหลด</a>{connected&&!r.previewOnly&&<button disabled={busy||!!editing} onClick={()=>setDeleting({row:r,photo:p,page:pageOf(p,i,r.notes)})}>ลบรูป</button>}</div></div>):<small className="muted">ยังไม่มีรูป</small>}</td>
         <td>{count===1?uploadSlots(r,count):<details className="upload-details"><summary>เลือกหน้า ({count})</summary>{uploadSlots(r,count)}</details>}</td>
        </tr>;
       })}</tbody>
-     </table>{!visible.length&&<div className="empty"><p>{connected?'ยังไม่มีรายการตรงกับวันที่และเงื่อนไขที่เลือก':'ยังไม่มีรายการเผยแพร่ของวันนี้ เชื่อมเพื่อโหลดข้อมูลจาก Master เดิม'}</p><button disabled={busy||!!newDate} onClick={()=>setNewDate(date)}>+ เพิ่มประกาศของวันนี้</button></div>}</div>
+     </table>{!visible.length&&<div className="empty"><p>{connected?'ยังไม่มีรายการตรงกับวันที่และเงื่อนไขที่เลือก':'ยังไม่มีรายการเผยแพร่ของวันนี้ เชื่อมเพื่อโหลดข้อมูลจาก Master เดิม'}</p><button disabled={busy||!!newDate||!!editing} onClick={()=>setNewDate(date)}>+ เพิ่มประกาศของวันนี้</button></div>}</div>
      <section className="gallery"><button className="gallery-toggle" aria-expanded={showAll} onClick={()=>setShowAll(!showAll)}>ดูรูปทั้งหมดของวันที่เลือก ({allPhotos.length}) {showAll?'▴':'▾'}</button>{showAll&&<div className="gallery-grid">{allPhotos.map(p=><figure key={p.id||p.url}><Photo photo={p}/><figcaption>{p.name}<a href={photoDownload(p)} download target="_blank" rel="noreferrer">ดาวน์โหลด</a></figcaption></figure>)}{!allPhotos.length&&<p>ยังไม่มีรูปของวันที่เลือก</p>}</div>}</section>
     </section>
    </div>

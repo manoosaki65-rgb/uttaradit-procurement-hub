@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import XLSX from 'xlsx';import {KINDS,HEADERS} from '../lib/posting-core.js';
-import {preservePhotoPages,documentPageCount,photoPage} from '../lib/posting-photo-pages.js';
+import {preservePhotoPages,documentPageCount,photoPage,manualPhotoPages} from '../lib/posting-photo-pages.js';
 test('Apps Script roundtrip updates the same XLSX, retains PDFs/photos, retries safely, and moves photos',()=>{
  const MASTER='12e7bfzCiv9M3NpPOQmdtd6r75QZj9g98',ROOT='1FVpx-2alioghme97E-sqGIe8vNdg63Fu';let wb=XLSX.utils.book_new();for(const k of KINDS)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([HEADERS]),k);
  let bytes=XLSX.write(wb,{type:'buffer',bookType:'xlsx'}),creates=0,locked=false;const files=new Map();
@@ -36,5 +36,13 @@ test('Apps Script roundtrip updates the same XLSX, retains PDFs/photos, retries 
  assert.equal(XLSX.read(bytes).Sheets[KINDS[0]].L2.v,'ข้อมูลเดิมห้ามทับ');
  assert.equal(all.find(r=>r.id===base.id).pdf.name,'replacement.pdf');
  assert.equal(all.find(r=>r.id===second.row.id).photos.length,1);
+ const beforeFiles=files.size;
+ const changed=request({...uploaded,action:'save',title:'ชื่อแก้ไขด้วยมือ',kind:KINDS[2],requestId:'manual-edit-meta',notes:manualPhotoPages(uploaded.notes,uploaded.photos.map((asset,i)=>({asset,page:i===0?1:3})),3)}).row;
+ const readEdit=request({action:'list'}).rows.find(r=>r.id===uploaded.id);
+ assert.equal(readEdit.title,'ชื่อแก้ไขด้วยมือ');assert.equal(readEdit.kind,KINDS[2]);assert.equal(documentPageCount(readEdit),3);
+ assert.deepEqual(readEdit.photos.map((p,i)=>photoPage(p,i,readEdit.notes)),[1,3]);assert.equal(files.size,beforeFiles);
+ const detached=request({...changed,action:'save',requestId:'manual-unlink',keepPhotoIds:[changed.photos[1].id],notes:preservePhotoPages(changed,3)}).row;
+ assert.equal(detached.photos.length,1);assert.equal(photoPage(detached.photos[0],0,detached.notes),3);assert.equal(files.size,beforeFiles);
+ assert.equal(request({action:'list'}).rows.length,3);
 });
 
