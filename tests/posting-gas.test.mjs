@@ -1,4 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';import XLSX from 'xlsx';import {KINDS,HEADERS} from '../lib/posting-core.js';
+import {preservePhotoPages,documentPageCount,photoPage} from '../lib/posting-photo-pages.js';
 test('Apps Script roundtrip updates the same XLSX, retains PDFs/photos, retries safely, and moves photos',()=>{
  const MASTER='12e7bfzCiv9M3NpPOQmdtd6r75QZj9g98',ROOT='1FVpx-2alioghme97E-sqGIe8vNdg63Fu';let wb=XLSX.utils.book_new();for(const k of KINDS)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([HEADERS]),k);
  let bytes=XLSX.write(wb,{type:'buffer',bookType:'xlsx'}),creates=0,locked=false;const files=new Map();
@@ -21,5 +22,19 @@ test('Apps Script roundtrip updates the same XLSX, retains PDFs/photos, retries 
  assert.equal(request(update).row.revision,3);assert.equal(creates,5);
  result=request({...base,revision:3,requestId:'remove-photo',keepPhotoIds:['asset-5']});assert.equal(result.error,undefined);assert.equal(result.row.photos.length,1);assert.equal(result.row.photos[0].name,'three.png');
  const reread=XLSX.read(bytes);assert.deepEqual(reread.SheetNames,KINDS);const sheet=XLSX.utils.sheet_to_json(reread.Sheets[KINDS[0]]);assert.equal(sheet.length,2);assert.ok(sheet.some(r=>r['ลิงก์ PDF ใน Drive'].includes('asset-4')));assert.equal(locked,false);
+ // New-day upload uses exactly the existing Master and folders. Attach images
+ // in reverse order to verify explicit page choice survives rereading the XLSX.
+ const newPdf={key:'new-pdf-key-000001',name:'__page-1-2__notice.pdf',type:'application/pdf',base64:'YWJj'};
+ const newCmd={action:'save',id:'new-day-row-00001',revision:0,title:'ประกาศจริงของวันที่เลือก',kind:KINDS[1],postedDate:'2026-10-14',notes:preservePhotoPages({notes:'',photos:[]},2),requestId:'new-notice-request',pdfUpload:newPdf};
+ let created=request(newCmd).row;assert.equal(documentPageCount(created),2);assert.equal(created.sequence,1);
+ assert.equal(request(newCmd).row.revision,created.revision);
+ created=request({...created,action:'save',requestId:'photo-page-two',notes:preservePhotoPages(created,2),photoUploads:[{key:'new-photo-key-00002',name:'หน้า-2__first.jpg',type:'image/jpeg',base64:'YWJj'}]}).row;
+ created=request({...created,action:'save',requestId:'photo-page-one',notes:preservePhotoPages(created,2),photoUploads:[{key:'new-photo-key-00001',name:'หน้า-1__second.jpg',type:'image/jpeg',base64:'YWJj'}]}).row;
+ const all=request({action:'list'}).rows,uploaded=all.find(r=>r.id===newCmd.id);
+ assert.equal(all.length,3);assert.equal(uploaded.pdf.key,newPdf.key);assert.equal(uploaded.photos.length,2);
+ assert.deepEqual(uploaded.photos.map((p,i)=>photoPage(p,i,uploaded.notes)),[2,1]);
+ assert.equal(XLSX.read(bytes).Sheets[KINDS[0]].L2.v,'ข้อมูลเดิมห้ามทับ');
+ assert.equal(all.find(r=>r.id===base.id).pdf.name,'replacement.pdf');
+ assert.equal(all.find(r=>r.id===second.row.id).photos.length,1);
 });
 
