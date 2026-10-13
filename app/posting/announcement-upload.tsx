@@ -25,6 +25,7 @@ export default function AnnouncementUpload({date,busy,connected,api,run,onRow,on
  }
  function choosePhoto(page:number,file?:File){
   if(!file||disabled)return;
+  if(photos[page]&&saved?.photos.some(p=>(p as {key?:string}).key===photos[page].key)){setMessage('รูปหน้านี้บันทึกแล้ว เปลี่ยนรูปต่อได้จากตารางหลังปิดแบบฟอร์ม');return;}
   try{validatePhoto(file);const old=photos[page];if(old){URL.revokeObjectURL(old.preview);urls.current.delete(old.preview);}setPhotos(prev=>({...prev,[page]:{file,key:crypto.randomUUID(),preview:remember(file)}}));}
   catch(e){setMessage(e instanceof Error?e.message:String(e));}
  }
