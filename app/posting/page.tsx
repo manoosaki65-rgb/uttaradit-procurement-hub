@@ -1,2 +1,6 @@
 import DailyEvidence from './daily-evidence';
-export default DailyEvidence;
+import Oct9Pairing from './oct9-pairing';
+
+export default function PostingPage(){
+ return <><DailyEvidence/><Oct9Pairing/></>;
+}
