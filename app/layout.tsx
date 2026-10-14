@@ -26,19 +26,36 @@ const weatherEffectScript = `
     if (/ฝนฟ้าคะนอง/.test(text)) hero.classList.add('weather-storm');
     else if (/มีฝน/.test(text)) hero.classList.add('weather-rain');
   };
+
+  const loadRoomPhoto = async (selector, asset) => {
+    const img = document.querySelector(selector);
+    if (!(img instanceof HTMLImageElement) || img.dataset.loaded === '1') return;
+    try {
+      const text = await fetch(asset, { cache: 'force-cache' }).then(r => r.text());
+      img.src = 'data:image/jpeg;base64,' + text.trim();
+      img.dataset.loaded = '1';
+    } catch {}
+  };
+
   const addMeetingCard = () => {
     if (location.pathname !== '/') return;
     const menu = document.querySelector('section[aria-label="เมนูงานพัสดุ"]');
-    if (!menu || menu.querySelector('a[href="/meeting-room-booking"]')) return;
-    const card = document.createElement('a');
-    card.href = '/meeting-room-booking';
-    card.setAttribute('aria-label', 'จองห้องประชุมออนไลน์ ห้องประชุม e-GP และ GF');
-    card.className = 'group relative block overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md';
-    card.style.minHeight = '210px';
-    card.style.background = 'linear-gradient(135deg,#e0f2fe 0%,#dbeafe 45%,#ede9fe 100%)';
-    card.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:18px;padding:24px"><div style="width:118px;height:118px;border-radius:28px;background:white;box-shadow:0 12px 28px rgba(15,23,42,.16);display:flex;align-items:center;justify-content:center;font-size:58px;transform:rotate(-4deg)">📅</div><div style="width:96px;height:96px;border-radius:24px;background:rgba(255,255,255,.86);box-shadow:0 10px 24px rgba(15,23,42,.12);display:flex;align-items:center;justify-content:center;font-weight:900;color:#475569;transform:translate(-28px,32px) rotate(5deg)">GF</div></div><div style="position:absolute;left:0;right:0;bottom:0;padding:34px 16px 14px;background:linear-gradient(transparent,rgba(8,30,55,.9));color:white"><strong style="font-size:20px">จองห้องประชุมออนไลน์</strong><small style="display:block;font-size:13px">ห้องประชุม e-GP / ห้องประชุม GF</small></div>';
-    menu.appendChild(card);
+    if (!menu) return;
+    let card = menu.querySelector('a[href="/meeting-room-booking"]');
+    if (!card) {
+      card = document.createElement('a');
+      card.href = '/meeting-room-booking';
+      card.setAttribute('aria-label', 'จองห้องประชุมออนไลน์ ห้องประชุม e-GP และ GF');
+      card.className = 'group relative block overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md';
+      card.style.minHeight = '250px';
+      card.style.background = '#dbeafe';
+      card.innerHTML = '<div style="position:absolute;inset:0;display:grid;grid-template-columns:1.45fr .85fr;gap:3px;background:#dbeafe"><img class="meeting-egp-thumb" alt="ห้องประชุม e-GP" style="width:100%;height:100%;object-fit:cover;display:block;background:#cfe8f7"><img class="meeting-gf-thumb" alt="ห้องประชุม GF" style="width:100%;height:100%;object-fit:cover;display:block;background:#e8e1f7"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(8,30,55,.18) 58%,rgba(8,30,55,.92) 100%)"></div><div style="position:absolute;left:0;right:0;bottom:0;padding:44px 16px 15px;color:white"><strong style="font-size:21px">จองห้องประชุมออนไลน์</strong><small style="display:block;font-size:13px;margin-top:2px">ห้องประชุม e-GP / ห้องประชุม GF • ดูปฏิทินและคิวจอง</small></div>';
+      menu.appendChild(card);
+    }
+    loadRoomPhoto('.meeting-egp-thumb', '/room-egp.b64');
+    loadRoomPhoto('.meeting-gf-thumb', '/room-gf.b64');
   };
+
   const start = () => {
     sync();
     addMeetingCard();
