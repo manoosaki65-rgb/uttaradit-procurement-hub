@@ -35,3 +35,5 @@
 
 /* Keep the full subject readable while reserving compact action columns. */
 .posting-dashboard table{table-layout:auto;min-width:1000px}.posting-dashboard td.title{width:44%;min-width:340px;white-space:normal;overflow-wrap:anywhere}.posting-dashboard td:nth-child(6){min-width:130px}.posting-dashboard td:nth-child(7){min-width:135px}.new-announcement .tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.new-announcement .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.new-announcement small{display:block}.new-announcement fieldset input[aria-label="ชื่อชุดประกาศ"]{min-width:300px!important}
+
+.gallery-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}.gallery figure{padding:8px;border:1px solid #dbe5ef;border-radius:8px}.gallery-image{display:flex;min-height:195px;align-items:center;justify-content:center;background:#f0f4f8;border-radius:7px}.gallery-filename{display:block;margin-top:7px}.gallery-links{display:flex;gap:12px;flex-wrap:wrap}.gallery-links a{display:inline-block!important}

@@ -14,10 +14,15 @@ const titles=['Compliance Balloon Catheter จำนวน 1,000 เส้น','
 type Row=PostingRow & {previewOnly?:boolean};
 const seed:Row[]=titles.map((title,i)=>({id:'preview-oct9-'+i,sequence:i+1,title,kind:KINDS[i<6?0:1],postedDate:'2026-10-09',notes:'',revision:0,pdf:null,photos:evidence[1].photos[i]?[evidence[1].photos[i]]:[],previewOnly:true}));
 const thai=(d:string)=>new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'long',year:'numeric'}).format(new Date(d+'T12:00:00+07:00'));
-function Photo({photo}:{photo:Asset}){const [failed,setFailed]=useState(false);return <a href={photo.url} target="_blank" rel="noreferrer">{failed?<small>เปิดรูปต้นฉบับใน Drive</small>:<img src={photoThumbnail(photo)} alt={photo.name} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)}/>}<span>ดูรูป</span></a>;}
+function Photo({photo}:{photo:Asset}){
+ const primary=photoThumbnail(photo),id=photo.id||photo.url?.match(/\/d\/([^/?]+)/)?.[1];
+ const sources=Array.from(new Set([primary,...(id&&!photo.url.startsWith('/posting-evidence/')?['https://lh3.googleusercontent.com/d/'+encodeURIComponent(id)+'=w600']:[])]));
+ const [attempt,setAttempt]=useState(0);
+ return <a className="gallery-image" href={photo.url} target="_blank" rel="noreferrer">{attempt>=sources.length?<small>เปิดรูปต้นฉบับใน Drive</small>:<img src={sources[attempt]} alt={photo.name} referrerPolicy="no-referrer" onError={()=>setAttempt(n=>n+1)}/>}</a>;
+}
 
 export default function DashboardView(){
- const [rows,setRows]=useState<Row[]>(seed),[date,setDate]=useState('2026-10-09'),[month,setMonth]=useState('2026-10'),[kind,setKind]=useState('ทั้งหมด'),[q,setQ]=useState(''),[code,setCode]=useState(''),[connected,setConnected]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('เชื่อมด้วยรหัสเจ้าหน้าที่เดิมเพื่อโหลดรายการ PDF และบันทึกรูปลง Master เดิม'),[counts,setCounts]=useState<Record<string,number>>({}),[showAll,setShowAll]=useState(false);
+ const [rows,setRows]=useState<Row[]>(seed),[date,setDate]=useState('2026-10-09'),[month,setMonth]=useState('2026-10'),[kind,setKind]=useState('ทั้งหมด'),[q,setQ]=useState(''),[code,setCode]=useState(''),[connected,setConnected]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('เชื่อมด้วยรหัสเจ้าหน้าที่เดิมเพื่อโหลดรายการ PDF และบันทึกรูปลง Master เดิม'),[counts,setCounts]=useState<Record<string,number>>({}),[showAll,setShowAll]=useState(true);
  const lock=useRef(false);
  const [newDate,setNewDate]=useState<string|null>(null);
  const [editing,setEditing]=useState<Row|null>(null);
@@ -44,7 +49,7 @@ export default function DashboardView(){
  });}
  const [year,mo]=month.split('-').map(Number),days=new Date(year,mo,0).getDate(),offset=new Date(year,mo-1,1).getDay();
  const marked=new Set([...rows.map(r=>r.postedDate),...evidence.map(d=>d.date)]);
- function selectDay(d:string){setDate(d);setMonth(d.slice(0,7));setShowAll(false);}
+ function selectDay(d:string){setDate(d);setMonth(d.slice(0,7));setShowAll(true);}
  function moveMonth(step:number){const d=new Date(year,mo-1+step,1);setMonth(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);}
 
  function acceptRow(row:PostingRow){setRows(prev=>[...prev.filter(r=>r.id!==row.id),row]);setCounts(prev=>({...prev,[row.id]:documentPageCount(row)||prev[row.id]}));}
@@ -95,7 +100,7 @@ export default function DashboardView(){
        </tr>;
       })}</tbody>
      </table>{!visible.length&&<div className="empty"><p>{connected?'ยังไม่มีรายการตรงกับวันที่และเงื่อนไขที่เลือก':'ยังไม่มีรายการเผยแพร่ของวันนี้ เชื่อมเพื่อโหลดข้อมูลจาก Master เดิม'}</p><button disabled={busy||!!newDate||!!editing} onClick={()=>setNewDate(date)}>+ เพิ่มประกาศของวันนี้</button></div>}</div>
-     <section className="gallery"><button className="gallery-toggle" aria-expanded={showAll} onClick={()=>setShowAll(!showAll)}>ดูรูปทั้งหมดของวันที่เลือก ({allPhotos.length}) {showAll?'▴':'▾'}</button>{showAll&&<div className="gallery-grid">{allPhotos.map(p=><figure key={p.id||p.url}><Photo photo={p}/><figcaption>{p.name}<a href={photoDownload(p)} download target="_blank" rel="noreferrer">ดาวน์โหลด</a></figcaption></figure>)}{!allPhotos.length&&<p>ยังไม่มีรูปของวันที่เลือก</p>}</div>}</section>
+     <section className="gallery"><button className="gallery-toggle" aria-expanded={showAll} onClick={()=>setShowAll(!showAll)}>ดูรูปทั้งหมดของวันที่เลือก ({allPhotos.length}) {showAll?'▴':'▾'}</button>{showAll&&<div className="gallery-grid">{allPhotos.map(p=><figure key={p.id||p.url}><Photo photo={p}/><figcaption><span className="gallery-filename">{p.name}</span><div className="gallery-links"><a href={p.url} target="_blank" rel="noreferrer">ดูรูป</a><a href={photoDownload(p)} download target="_blank" rel="noreferrer">ดาวน์โหลด</a></div></figcaption></figure>)}{!allPhotos.length&&<p>ยังไม่มีรูปของวันที่เลือก</p>}</div>}</section>
     </section>
    </div>
   </div>
