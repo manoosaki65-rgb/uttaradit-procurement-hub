@@ -7,178 +7,45 @@ import {validatePhoto,imageType} from '../../lib/posting-upload.js';
 
 type ApiResult={rows:PostingRow[];row:PostingRow;error?:string};
 type PendingPhoto={file:File;key:string;preview:string};
-type PageItem={
- page:number;
- title:string;
- kind:string;
- pagePdf:File|null;
- photo?:PendingPhoto;
- reading:boolean;
- id:string;
- pdfKey:string;
- requestId:string;
- saved?:PostingRow;
-};
+type PageItem={page:number;title:string;kind:string;pagePdf:File|null;photo?:PendingPhoto;reading:boolean;id:string;pdfKey:string;requestId:string;saved?:PostingRow};
 type Props={date:string;busy:boolean;connected:boolean;api:(body?:unknown)=>Promise<ApiResult>;run:(fn:()=>Promise<void>)=>Promise<void>;onRow:(row:PostingRow)=>void;onDone:()=>void;onClose:()=>void;setMessage:(message:string)=>void};
 
 export default function AnnouncementUpload({date,busy,connected,api,run,onRow,onDone,onClose,setMessage}:Props){
- const [pdf,setPdf]=useState<File|null>(null);
- const [items,setItems]=useState<PageItem[]>([]);
- const [readingPdf,setReadingPdf]=useState(false);
- const [preview,setPreview]=useState('');
- const [previewPdf,setPreviewPdf]=useState('');
- const [closing,setClosing]=useState(false);
- const urls=useRef(new Set<string>());
- const pdfSignature=useRef('');
-
+ const [pdf,setPdf]=useState<File|null>(null),[items,setItems]=useState<PageItem[]>([]),[readingPdf,setReadingPdf]=useState(false),[preview,setPreview]=useState(''),[previewPdf,setPreviewPdf]=useState(''),[closing,setClosing]=useState(false);
+ const urls=useRef(new Set<string>()),pdfSignature=useRef('');
  useEffect(()=>()=>{for(const url of urls.current)URL.revokeObjectURL(url);},[]);
  function remember(file:File){const url=URL.createObjectURL(file);urls.current.add(url);return url;}
  function patchPage(page:number,patch:Partial<PageItem>){setItems(prev=>prev.map(item=>item.page===page?{...item,...patch}:item));}
-
  async function readOnePage(file:File,page:number){
   try{
    const {readPdf}=await import('../../lib/posting-media');
    const meta=await readPdf(file,[],text=>setMessage(`กำลังอ่านชื่อรายการ หน้า ${page}: ${text}`));
    const candidate=meta.parts.find(p=>p.title)||meta.parts[0];
-   patchPage(page,{
-    title:candidate?.title?.trim()||'',
-    kind:candidate?.kind&&KINDS.includes(candidate.kind)?candidate.kind:'',
-    reading:false
-   });
-  }catch{
-   patchPage(page,{reading:false});
-  }
+   patchPage(page,{title:candidate?.title?.trim()||'',kind:candidate?.kind&&KINDS.includes(candidate.kind)?candidate.kind:'',reading:false});
+  }catch(e){patchPage(page,{reading:false});setMessage(`หน้า ${page} อ่านชื่ออัตโนมัติไม่สำเร็จ สามารถกรอกชื่อเองและเลือกรูปต่อได้`);}
  }
-
  async function choosePdf(file?:File){
   if(!file||busy)return;
   setReadingPdf(true);
   try{
    const {pdfPageCount,singlePdfPage}=await import('../../lib/posting-upload.js');
-   const count=await pdfPageCount(file);
-   const signature=`${file.name}:${file.size}:${file.lastModified}`;
-   const keepExisting=signature===pdfSignature.current;
-   const previous=items;
-   setPdf(file);
-   pdfSignature.current=signature;
-   setPreview('');
-   setPreviewPdf('');
-   const initial:PageItem[]=Array.from({length:count},(_,i)=>{
-    const page=i+1;
-    const old=keepExisting?previous.find(x=>x.page===page):undefined;
-    return old?{...old,reading:true,pagePdf:null}:{page,title:'',kind:'',pagePdf:null,reading:true,id:crypto.randomUUID(),pdfKey:crypto.randomUUID(),requestId:crypto.randomUUID()};
-   });
-   setItems(initial);
-   setMessage(`PDF ${count} หน้า · กำลังแยกเป็นรายการละ 1 หน้าและอ่านชื่อรายการ`);
+   const count=await pdfPageCount(file),signature=`${file.name}:${file.size}:${file.lastModified}`,keepExisting=signature===pdfSignature.current,previous=items;
+   setPdf(file);pdfSignature.current=signature;setPreview('');setPreviewPdf('');
+   const initial:PageItem[]=Array.from({length:count},(_,i)=>{const page=i+1,old=keepExisting?previous.find(x=>x.page===page):undefined;return old?{...old,reading:true,pagePdf:null}:{page,title:'',kind:'',pagePdf:null,reading:true,id:crypto.randomUUID(),pdfKey:crypto.randomUUID(),requestId:crypto.randomUUID()};});
+   setItems(initial);setMessage(`PDF ${count} หน้า · แยกเป็นรายการละ 1 หน้าแล้ว กำลังอ่านชื่อทีละหน้า`);
    for(let page=1;page<=count;page++){
     const pageFile=await singlePdfPage(file,page);
     patchPage(page,{pagePdf:pageFile,reading:true});
-    void readOnePage(pageFile,page);
+    await readOnePage(pageFile,page);
    }
+   setMessage(`อ่าน PDF ครบ ${count} หน้าแล้ว ตรวจชื่อรายการ เลือกรูปประกอบ แล้วกดบันทึก`);
   }catch(e){setMessage(e instanceof Error?e.message:String(e));}
   finally{setReadingPdf(false);}
  }
-
- function choosePhoto(page:number,file?:File){
-  if(!file||busy)return;
-  try{
-   validatePhoto(file);
-   const old=items.find(x=>x.page===page)?.photo;
-   if(old){URL.revokeObjectURL(old.preview);urls.current.delete(old.preview);}
-   patchPage(page,{photo:{file,key:crypto.randomUUID(),preview:remember(file)}});
-  }catch(e){setMessage(e instanceof Error?e.message:String(e));}
- }
-
- async function viewPage(page:number){
-  const item=items.find(x=>x.page===page);
-  if(!item?.pagePdf||busy)return;
-  try{
-   const file=item.pagePdf;
-   const pdfjs=await import('pdfjs-dist');
-   pdfjs.GlobalWorkerOptions.workerSrc='/posting-assets/pdf.worker.min.mjs';
-   const task=pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer())});
-   try{
-    const doc=await task.promise,p=await doc.getPage(1),viewport=p.getViewport({scale:1.5}),canvas=document.createElement('canvas');
-    canvas.width=viewport.width;canvas.height=viewport.height;
-    await p.render({canvas,canvasContext:canvas.getContext('2d')!,viewport}).promise;
-    const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('แสดง PDF ไม่สำเร็จ')),'image/png'));
-    setPreview(remember(new File([blob],`preview-${page}.png`,{type:'image/png'})));
-    setPreviewPdf(remember(file));
-   }finally{await task.destroy();}
-  }catch(e){setMessage(e instanceof Error?e.message:String(e));}
- }
-
- async function save(){await run(async()=>{
-  if(!connected)throw Error('เชื่อมด้วยรหัสเจ้าหน้าที่เดิมก่อนบันทึก');
-  if(!pdf||!items.length)throw Error('กรุณาเลือก PDF ก่อน');
-  const incomplete=items.find(x=>!x.title.trim()||!KINDS.includes(x.kind));
-  if(incomplete)throw Error(`หน้า ${incomplete.page} ยังไม่มีชื่อรายการหรือประเภท กรุณาตรวจแล้วเติมให้ครบ`);
-  const missingPhoto=items.find(x=>!x.photo);
-  if(missingPhoto)throw Error(`กรุณาเลือกรูปประกอบหน้า ${missingPhoto.page} ก่อนบันทึก`);
-
-  let data=await api();
-  if(!Array.isArray(data.rows))throw Error('โหลด Master ก่อนบันทึกไม่สำเร็จ');
-
-  for(const item of items){
-   setMessage(`กำลังบันทึกรายการ ${item.page}/${items.length}: ${item.title}`);
-   let row=data.rows.find(r=>r.id===item.id);
-   if(!row){
-    if(exactMatch(item.title,item.kind,date,data.rows))throw Error(`หน้า ${item.page}: มีรายการชื่อเดียวกันในวันที่และประเภทนี้แล้ว`);
-    if(!item.pagePdf)throw Error(`หน้า ${item.page}: ยังแยก PDF ไม่สำเร็จ`);
-    const pagePdf=new File([item.pagePdf],`__page-${item.page}-${item.page}__${pdf.name}`,{type:'application/pdf'});
-    const result=await api({
-     action:'save',id:item.id,revision:0,title:item.title.trim(),kind:item.kind,postedDate:date,
-     notes:preservePhotoPages({notes:'',photos:[]},1),requestId:item.requestId,
-     pdfUpload:await uploadData(pagePdf,item.pdfKey)
-    });
-    row=result.row;
-   }
-   if(!row?.pdf)throw Error(`หน้า ${item.page}: บันทึก PDF ไม่สำเร็จ`);
-   const photo=item.photo!;
-   if(!row.photos.some(p=>(p as {key?:string}).key===photo.key)){
-    const photoFile=new File([photo.file],`หน้า-1__${photo.file.name}`,{type:imageType(photo.file)});
-    const result=await api({...row,action:'save',notes:preservePhotoPages(row,1),requestId:photo.key,photoUploads:[await uploadData(photoFile,photo.key)]});
-    row=result.row;
-   }
-   if(!row?.photos?.some(p=>(p as {key?:string}).key===photo.key))throw Error(`หน้า ${item.page}: บันทึกรูปไม่สำเร็จ`);
-   patchPage(item.page,{saved:row});
-   onRow(row);
-   data=await api();
-  }
-  setMessage(`บันทึกครบ ${items.length} รายการ: PDF แยกหน้าละ 1 รายการ พร้อมรูปประกอบแล้ว`);
-  onDone();
- });}
-
+ function choosePhoto(page:number,file?:File){if(!file||busy)return;try{validatePhoto(file);const old=items.find(x=>x.page===page)?.photo;if(old){URL.revokeObjectURL(old.preview);urls.current.delete(old.preview);}patchPage(page,{photo:{file,key:crypto.randomUUID(),preview:remember(file)}});}catch(e){setMessage(e instanceof Error?e.message:String(e));}}
+ async function viewPage(page:number){const item=items.find(x=>x.page===page);if(!item?.pagePdf||busy)return;try{const file=item.pagePdf,pdfjs=await import('pdfjs-dist');pdfjs.GlobalWorkerOptions.workerSrc='/posting-assets/pdf.worker.min.mjs';const task=pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer())});try{const doc=await task.promise,p=await doc.getPage(1),viewport=p.getViewport({scale:1.5}),canvas=document.createElement('canvas');canvas.width=viewport.width;canvas.height=viewport.height;await p.render({canvas,canvasContext:canvas.getContext('2d')!,viewport}).promise;const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('แสดง PDF ไม่สำเร็จ')),'image/png'));setPreview(remember(new File([blob],`preview-${page}.png`,{type:'image/png'})));setPreviewPdf(remember(file));}finally{await task.destroy();}}catch(e){setMessage(e instanceof Error?e.message:String(e));}}
+ async function save(){await run(async()=>{if(!connected)throw Error('เชื่อมด้วยรหัสเจ้าหน้าที่เดิมก่อนบันทึก');if(!pdf||!items.length)throw Error('กรุณาเลือก PDF ก่อน');const incomplete=items.find(x=>!x.title.trim()||!KINDS.includes(x.kind));if(incomplete)throw Error(`หน้า ${incomplete.page} ยังไม่มีชื่อรายการหรือประเภท กรุณาตรวจแล้วเติมให้ครบ`);const missingPhoto=items.find(x=>!x.photo);if(missingPhoto)throw Error(`กรุณาเลือกรูปประกอบหน้า ${missingPhoto.page} ก่อนบันทึก`);let data=await api();if(!Array.isArray(data.rows))throw Error('โหลด Master ก่อนบันทึกไม่สำเร็จ');for(const item of items){setMessage(`กำลังบันทึกรายการ ${item.page}/${items.length}: ${item.title}`);let row=data.rows.find(r=>r.id===item.id);if(!row){if(exactMatch(item.title,item.kind,date,data.rows))throw Error(`หน้า ${item.page}: มีรายการชื่อเดียวกันในวันที่และประเภทนี้แล้ว`);if(!item.pagePdf)throw Error(`หน้า ${item.page}: ยังแยก PDF ไม่สำเร็จ`);const pagePdf=new File([item.pagePdf],`__page-${item.page}-${item.page}__${pdf.name}`,{type:'application/pdf'});const result=await api({action:'save',id:item.id,revision:0,title:item.title.trim(),kind:item.kind,postedDate:date,notes:preservePhotoPages({notes:'',photos:[]},1),requestId:item.requestId,pdfUpload:await uploadData(pagePdf,item.pdfKey)});row=result.row;}if(!row?.pdf)throw Error(`หน้า ${item.page}: บันทึก PDF ไม่สำเร็จ`);const photo=item.photo!;if(!row.photos.some(p=>(p as {key?:string}).key===photo.key)){const photoFile=new File([photo.file],`หน้า-1__${photo.file.name}`,{type:imageType(photo.file)});const result=await api({...row,action:'save',notes:preservePhotoPages(row,1),requestId:photo.key,photoUploads:[await uploadData(photoFile,photo.key)]});row=result.row;}if(!row?.photos?.some(p=>(p as {key?:string}).key===photo.key))throw Error(`หน้า ${item.page}: บันทึกรูปไม่สำเร็จ`);patchPage(item.page,{saved:row});onRow(row);data=await api();}setMessage(`บันทึกครบ ${items.length} รายการ: PDF แยกหน้าละ 1 รายการ พร้อมรูปประกอบแล้ว`);onDone();});}
  useEffect(()=>{const warn=(e:BeforeUnloadEvent)=>{if(pdf){e.preventDefault();e.returnValue='';}};window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[pdf]);
-
  const ready=!!pdf&&items.length>0&&items.every(x=>x.title.trim()&&KINDS.includes(x.kind)&&x.photo&&!x.reading);
-
- return <section className="new-announcement" aria-label="เพิ่มประกาศของวันนี้">
-  <div className="form-heading"><h3>เพิ่มประกาศของวันที่ {date}</h3><button disabled={busy} onClick={()=>pdf?setClosing(true):onClose()}>ปิด</button></div>
-  {closing&&<div className="close-form-confirm"><p>ต้องการปิดแบบฟอร์มหรือไม่?</p><button disabled={busy} onClick={onClose}>ยืนยันปิด</button><button onClick={()=>setClosing(false)}>กลับไปแบบฟอร์ม</button></div>}
-
-  <label className="pdf-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือก PDF หนึ่งไฟล์');return;}void choosePdf(e.dataTransfer.files[0]);}}>
-   <b>{readingPdf?'กำลังแยก PDF…':pdf?`${pdf.name} · ${items.length} หน้า`:'1. เลือก PDF หรือลากไฟล์มาวาง'}</b>
-   <input type="file" accept="application/pdf,.pdf" aria-label="PDF ประกาศใหม่" disabled={busy} onChange={e=>{void choosePdf(e.target.files?.[0]);e.target.value='';}}/>
-   <small>ระบบจะแยก PDF เป็นรายการละ 1 หน้า แล้วอ่านชื่อรายการของแต่ละหน้าให้</small>
-  </label>
-
-  {items.length>0&&<div className="new-pages">{items.map(item=><div className="new-page" key={item.page}>
-   <b>หน้า {item.page}</b>
-   <button disabled={busy||!item.pagePdf} onClick={()=>viewPage(item.page)}>ดู PDF หน้า {item.page}</button>
-   <label>ชื่อรายการ<input value={item.title} disabled={busy||!!item.saved} placeholder={item.reading?'กำลังอ่านชื่อ…':'กรอกชื่อรายการ'} onChange={e=>patchPage(item.page,{title:e.target.value})}/></label>
-   <label>ประเภท<select value={item.kind} disabled={busy||!!item.saved} onChange={e=>patchPage(item.page,{kind:e.target.value})}><option value="">เลือกประเภท</option>{KINDS.map((k,i)=><option value={k} key={k}>{['ประกวดราคา','เผยแพร่แผน','ผู้ชนะ','ยกเลิก'][i]}</option>)}</select></label>
-   <label className="compact-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือกหนึ่งรูปต่อหน้า');return;}choosePhoto(item.page,e.dataTransfer.files[0]);}}>
-    <span>{item.photo?'เปลี่ยนรูป':'4. เลือกรูปประกอบ / ลากวาง'}</span>
-    <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" aria-label={`รูปประกาศหน้า ${item.page}`} disabled={busy||!!item.saved} onChange={e=>{choosePhoto(item.page,e.target.files?.[0]);e.target.value='';}}/>
-   </label>
-   <small>{item.saved?'บันทึกแล้ว':item.photo?'เลือกรูปแล้ว รอบันทึก':item.reading?'กำลังอ่านชื่อรายการ…':'ยังไม่มีรูป'}</small>
-   {item.photo&&<><a href={item.photo.preview} target="_blank" rel="noreferrer">ดูรูป</a><span className="file-name">{item.photo.file.name}</span>{!item.saved&&<button disabled={busy} onClick={()=>{URL.revokeObjectURL(item.photo!.preview);urls.current.delete(item.photo!.preview);patchPage(item.page,{photo:undefined});}}>นำรูปออก</button>}</>}
-  </div>)}</div>}
-
-  {!connected&&<p>เชื่อมด้วยรหัสเจ้าหน้าที่เดิมด้านบนเพื่อบันทึกลง Master/Drive</p>}
-  <button className="primary" disabled={busy||!connected||!ready} onClick={save}>5. บันทึกทั้งหมด</button>
-
-  {preview&&<div className="pdf-dialog" role="dialog" aria-modal="true" aria-label="ตัวอย่าง PDF แยกหน้า"><div><button onClick={()=>setPreview('')}>ปิดตัวอย่าง PDF</button><a href={previewPdf} download="หน้าเอกสาร.pdf">ดาวน์โหลดหน้านี้</a><div className="pdf-preview-page"><img alt="PDF หน้าที่เลือก" src={preview}/></div></div></div>}
- </section>;
+ return <section className="new-announcement" aria-label="เพิ่มประกาศของวันนี้"><div className="form-heading"><h3>เพิ่มประกาศของวันที่ {date}</h3><button disabled={busy} onClick={()=>pdf?setClosing(true):onClose()}>ปิด</button></div>{closing&&<div className="close-form-confirm"><p>ต้องการปิดแบบฟอร์มหรือไม่?</p><button disabled={busy} onClick={onClose}>ยืนยันปิด</button><button onClick={()=>setClosing(false)}>กลับไปแบบฟอร์ม</button></div>}<label className="pdf-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือก PDF หนึ่งไฟล์');return;}void choosePdf(e.dataTransfer.files[0]);}}><b>{readingPdf?'กำลังแยก/อ่าน PDF…':pdf?`${pdf.name} · ${items.length} หน้า`:'1. เลือก PDF หรือลากไฟล์มาวาง'}</b><input type="file" accept="application/pdf,.pdf" aria-label="PDF ประกาศใหม่" disabled={busy} onChange={e=>{void choosePdf(e.target.files?.[0]);e.target.value='';}}/><small>ระบบแยกหน้าละ 1 รายการ และอ่านชื่อทีละหน้าเพื่อไม่ให้ OCR ชนกัน</small></label>{items.length>0&&<div className="new-pages">{items.map(item=><div className="new-page" key={item.page}><b>หน้า {item.page}</b><button disabled={busy||!item.pagePdf} onClick={()=>viewPage(item.page)}>ดู PDF หน้า {item.page}</button><label>ชื่อรายการ<input value={item.title} disabled={busy||!!item.saved} placeholder={item.reading?'กำลังอ่านชื่อ…':'กรอกชื่อรายการ'} onChange={e=>patchPage(item.page,{title:e.target.value})}/></label><label>ประเภท<select value={item.kind} disabled={busy||!!item.saved} onChange={e=>patchPage(item.page,{kind:e.target.value})}><option value="">เลือกประเภท</option>{KINDS.map((k,i)=><option value={k} key={k}>{['ประกวดราคา','เผยแพร่แผน','ผู้ชนะ','ยกเลิก'][i]}</option>)}</select></label><label className="compact-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือกหนึ่งรูปต่อหน้า');return;}choosePhoto(item.page,e.dataTransfer.files[0]);}}><span>{item.photo?'เปลี่ยนรูป':'4. เลือกรูปประกอบ / ลากวาง'}</span><input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" aria-label={`รูปประกาศหน้า ${item.page}`} disabled={busy||!!item.saved} onChange={e=>{choosePhoto(item.page,e.target.files?.[0]);e.target.value='';}}/></label><small>{item.saved?'บันทึกแล้ว':item.photo?'เลือกรูปแล้ว รอบันทึก':item.reading?'กำลังอ่านชื่อรายการ…':'ยังไม่มีรูป'}</small>{item.photo&&<><a href={item.photo.preview} target="_blank" rel="noreferrer">ดูรูป</a><span className="file-name">{item.photo.file.name}</span>{!item.saved&&<button disabled={busy} onClick={()=>{URL.revokeObjectURL(item.photo!.preview);urls.current.delete(item.photo!.preview);patchPage(item.page,{photo:undefined});}}>นำรูปออก</button>}</>}</div>)}</div>}{!connected&&<p>เชื่อมด้วยรหัสเจ้าหน้าที่เดิมด้านบนเพื่อบันทึกลง Master/Drive</p>}<button className="primary" disabled={busy||!connected||!ready} onClick={save}>5. บันทึกทั้งหมด</button>{preview&&<div className="pdf-dialog" role="dialog" aria-modal="true" aria-label="ตัวอย่าง PDF แยกหน้า"><div><button onClick={()=>setPreview('')}>ปิดตัวอย่าง PDF</button><a href={previewPdf} download="หน้าเอกสาร.pdf">ดาวน์โหลดหน้านี้</a><div className="pdf-preview-page"><img alt="PDF หน้าที่เลือก" src={preview}/></div></div></div>}</section>;
 }
