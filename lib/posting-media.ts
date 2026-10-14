@@ -12,10 +12,10 @@ export async function readPdf(file:File,rows:PostingRow[],progress:(text:string)
  try {for(let i=1;i<=doc.numPages;i++){
   progress(`อ่าน PDF หน้า ${i}/${doc.numPages}`);const page=await doc.getPage(i);const content=await page.getTextContent();
   let text=content.items.map(item=>'str' in item?item.str+('hasEOL' in item&&item.hasEOL?'\n':' '):'').join('');
-  if(text.trim().length<50&&ocrAvailable){const canvas=document.createElement('canvas');const viewport=page.getViewport({scale:2});canvas.width=viewport.width;canvas.height=viewport.height;try{await page.render({canvas,canvasContext:canvas.getContext('2d')!,viewport}).promise;text=(await recognize(canvas)).data.text;}catch{ocrAvailable=false;progress('OCR อ่านไม่ได้ กรุณาตรวจและเลือกช่วงหน้าด้วยตัวเอง');}finally{canvas.width=0;canvas.height=0;}}
+  if(text.trim().length<50&&ocrAvailable){const canvas=document.createElement('canvas');const viewport=page.getViewport({scale:2});canvas.width=viewport.width;canvas.height=viewport.height;try{await page.render({canvas,canvasContext:canvas.getContext('2d')!,viewport}).promise;text=(await recognize(canvas)).data.text;}catch{ocrAvailable=false;progress('OCR อ่านไม่ได้ กรุณาตรวจชื่อรายการด้วยตัวเอง');}finally{canvas.width=0;canvas.height=0;}}
   texts.push(text);page.cleanup();
  }}finally{await task.destroy();}
- return {total:texts.length,parts:pageParts(texts) as Part[]};
+ return {total:texts.length,texts,parts:pageParts(texts) as Part[]};
 }
 export async function splitPdf(file:File,start:number,end:number,name:string){const {PDFDocument}=await import('pdf-lib');const src=await PDFDocument.load(await file.arrayBuffer());const dst=await PDFDocument.create();const pages=await dst.copyPages(src,Array.from({length:end-start+1},(_,i)=>start-1+i));pages.forEach(p=>dst.addPage(p));return new File([new Uint8Array(await dst.save())],name+'.pdf',{type:'application/pdf'});}
 export async function uploadData(file:File,key:string){if(file.size>20*1024*1024)throw Error('ไฟล์แต่ละไฟล์ต้องไม่เกิน 20 MB');return {key,name:file.name,type:file.type||(/\.hei[cf]$/i.test(file.name)?'image/heic':''),base64:await new Promise<string>((ok,no)=>{const reader=new FileReader();reader.onload=()=>ok(String(reader.result).split(',')[1]);reader.onerror=()=>no(Error('อ่านไฟล์ไม่สำเร็จ'));reader.readAsDataURL(file);})};}
