@@ -20,7 +20,28 @@ export default function AnnouncementUpload({date,busy,connected,api,run,onRow,on
  async function choosePdf(file?:File){
   if(!file||disabled||saved)return;
   setReading(true);
-  try{const {pdfPageCount}=await import('../../lib/posting-upload.js');const pages=await pdfPageCount(file);setPdf(file);setCount(pages);setPhotos({});for(const url of urls.current)URL.revokeObjectURL(url);urls.current.clear();setPreview('');identity.current={id:crypto.randomUUID(),pdfKey:crypto.randomUUID(),requestId:crypto.randomUUID()};setMessage(`อ่าน PDF จริงแล้ว ${pages} หน้า เลือกรูปจับคู่ตามหน้าได้`);}
+  try{
+   const {pdfPageCount}=await import('../../lib/posting-upload.js');
+   const pages=await pdfPageCount(file);
+   setPdf(file);setCount(pages);setPhotos({});
+   for(const url of urls.current)URL.revokeObjectURL(url);urls.current.clear();setPreview('');
+   identity.current={id:crypto.randomUUID(),pdfKey:crypto.randomUUID(),requestId:crypto.randomUUID()};
+   setMessage(`อ่าน PDF ${pages} หน้าแล้ว กำลังอ่านชื่อรายการและประเภท…`);
+   try{
+    const {readPdf}=await import('../../lib/posting-media');
+    const meta=await readPdf(file,[],text=>setMessage(text));
+    const candidate=meta.parts.find(p=>p.title)||meta.parts[0];
+    if(candidate?.title)setTitle(candidate.title.trim());
+    if(candidate?.kind&&KINDS.includes(candidate.kind))setKind(candidate.kind);
+    if(candidate?.title||candidate?.kind){
+      setMessage(`อ่าน PDF แล้ว ${pages} หน้า${candidate?.title?' · เติมชื่อรายการอัตโนมัติแล้ว':''}${candidate?.kind?' · เลือกประเภทให้แล้ว':''} กรุณาตรวจชื่อและประเภทก่อนบันทึก`);
+    }else{
+      setMessage(`อ่าน PDF แล้ว ${pages} หน้า แต่ยังอ่านชื่อ/ประเภทอัตโนมัติไม่ได้ กรุณากรอกชื่อและเลือกประเภทเอง`);
+    }
+   }catch{
+    setMessage(`อ่าน PDF แล้ว ${pages} หน้า แต่ OCR อ่านชื่ออัตโนมัติไม่ได้ กรุณากรอกชื่อและเลือกประเภทเอง`);
+   }
+  }
   catch(e){setMessage(e instanceof Error?e.message:String(e));}finally{setReading(false);}
  }
  function choosePhoto(page:number,file?:File){
@@ -57,8 +78,6 @@ export default function AnnouncementUpload({date,busy,connected,api,run,onRow,on
   }
   if(!row||row.postedDate!==date||(row.pdf as {key?:string}|null)?.key!==pdfKey)throw Error('ยังยืนยัน PDF ใน Master ไม่ได้ กดบันทึกต่อเพื่อตรวจข้อมูลเดิมอีกครั้ง');
   setSaved(row);onRow(row);
-  // One image per request stays below the existing API limit. Stable keys allow
-  // a retry to read the committed row and resume without duplicating attachments.
   for(const [pageText,item] of Object.entries(photos)){
    const page=Number(pageText);
    if(row.photos.some(p=>(p as {key?:string}).key===item.key))continue;
@@ -77,7 +96,7 @@ export default function AnnouncementUpload({date,busy,connected,api,run,onRow,on
   <div className="form-heading"><h3>เพิ่มประกาศของวันที่ {date}</h3><button disabled={disabled} onClick={()=>pdf?setClosing(true):onClose()}>ปิด</button></div>
   {closing&&<div className="close-form-confirm"><p>{saved?'ข้อมูลที่บันทึกแล้วยังคงอยู่ แนบรูปต่อในตารางได้':'ไฟล์ที่เลือกยังไม่บันทึก ต้องการปิดแบบฟอร์มหรือไม่?'}</p><button disabled={disabled} onClick={onClose}>ยืนยันปิด</button><button onClick={()=>setClosing(false)}>กลับไปแบบฟอร์ม</button></div>}
   <div className="form-fields"><label>ชื่อรายการ / ชื่อโครงการ<input aria-label="ชื่อประกาศใหม่" value={title} disabled={disabled||!!saved} onChange={e=>setTitle(e.target.value)}/></label><label>ประเภท<select aria-label="ประเภทประกาศใหม่" value={kind} disabled={disabled||!!saved} onChange={e=>setKind(e.target.value)}><option value="">เลือกประเภท</option>{KINDS.map((k,i)=><option value={k} key={k}>{['ประกวดราคา','เผยแพร่แผน','ผู้ชนะ','ยกเลิก'][i]}</option>)}</select></label></div>
-  <label className="pdf-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือก PDF หนึ่งไฟล์ต่อประกาศ');return;}void choosePdf(e.dataTransfer.files[0]);}}><b>{reading?'กำลังอ่าน PDF…':pdf?`${pdf.name} · ${count} หน้า`:'คลิกเลือก PDF หรือลากไฟล์มาวาง'}</b><input type="file" accept="application/pdf,.pdf" aria-label="PDF ประกาศใหม่" disabled={disabled||!!saved} onChange={e=>{void choosePdf(e.target.files?.[0]);e.target.value='';}}/><small>เก็บ PDF ต้นฉบับครบทุกหน้าใน Google Drive เดิม · ไม่เกิน 20 MB</small></label>
+  <label className="pdf-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือก PDF หนึ่งไฟล์ต่อประกาศ');return;}void choosePdf(e.dataTransfer.files[0]);}}><b>{reading?'กำลังอ่าน PDF/OCR…':pdf?`${pdf.name} · ${count} หน้า`:'คลิกเลือก PDF หรือลากไฟล์มาวาง'}</b><input type="file" accept="application/pdf,.pdf" aria-label="PDF ประกาศใหม่" disabled={disabled||!!saved} onChange={e=>{void choosePdf(e.target.files?.[0]);e.target.value='';}}/><small>หลังเลือก PDF ระบบจะพยายามเติมชื่อรายการและประเภทให้อัตโนมัติ แต่สามารถแก้เองก่อนบันทึกได้</small></label>
   {count>0&&<div className="new-pages">{Array.from({length:count},(_,i)=>{const page=i+1,item=photos[page],uploaded=!!item&&!!saved?.photos.some(p=>(p as {key?:string}).key===item.key);return <div className="new-page" key={page}><b>หน้า {page}</b><button disabled={disabled} onClick={()=>viewPage(page)}>ดู PDF หน้า {page}</button><label className="compact-dropzone" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(e.dataTransfer.files.length!==1){setMessage('เลือกหนึ่งรูปต่อหน้า');return;}choosePhoto(page,e.dataTransfer.files[0]);}}><span>{item?'เปลี่ยนรูป':'เลือกรูป / ลากวาง'}</span><input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" aria-label={`รูปประกาศใหม่หน้า ${page}`} disabled={disabled||uploaded} onChange={e=>{choosePhoto(page,e.target.files?.[0]);e.target.value='';}}/></label><small>{uploaded?'อัปแล้ว':item?'เลือกรูปแล้ว รอบันทึก':'ยังไม่มีรูป'}</small>{item&&<><a href={item.preview} target="_blank" rel="noreferrer">ดูรูป</a><a href={item.preview} download={item.file.name}>ดาวน์โหลด</a><span className="file-name">{item.file.name}</span>{!uploaded&&<button disabled={disabled} onClick={()=>{setPhotos(prev=>{const next={...prev};delete next[page];return next;});URL.revokeObjectURL(item.preview);urls.current.delete(item.preview);}}>นำรูปออก</button>}</>}</div>;})}</div>}
   {!connected&&<p>เชื่อมด้วยรหัสเจ้าหน้าที่เดิมด้านบนเพื่อบันทึกลง Master/Drive</p>}
   <button className="primary" disabled={disabled||!connected||!pdf||!kind||!title.trim()} onClick={save}>{saved?'บันทึกต่อ / ตรวจอ่านกลับ':'บันทึกประกาศ PDF และรูป'}</button>
