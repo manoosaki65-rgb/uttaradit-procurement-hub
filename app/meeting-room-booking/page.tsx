@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarDays, ChevronLeft, ChevronRight, Clock3, UsersRound } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 type Booking = {
   date: string;
@@ -11,19 +11,6 @@ type Booking = {
   title: string;
   bookedBy: string;
 };
-
-function RoomImage({ asset, alt, style }: { asset: string; alt: string; style?: React.CSSProperties }) {
-  const [src, setSrc] = useState<string>("");
-  useEffect(() => {
-    let active = true;
-    fetch(asset, { cache: "force-cache" })
-      .then((r) => r.text())
-      .then((text) => { if (active) setSrc(`data:image/jpeg;base64,${text.trim()}`); })
-      .catch(() => {});
-    return () => { active = false; };
-  }, [asset]);
-  return src ? <img src={src} alt={alt} style={style} /> : <div aria-label={alt} style={{ ...style, background: "linear-gradient(135deg,#dbeafe,#e0f2fe)" }} />;
-}
 
 const bookings: Booking[] = [];
 const thaiMonths = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
@@ -54,7 +41,7 @@ export default function MeetingRoomBookingPage() {
 
       <section style={{overflow:"hidden",borderRadius:26,background:"#fff",boxShadow:"0 18px 48px rgba(15,59,88,.12)"}}>
         <div style={{position:"relative",height:"clamp(260px,38vw,430px)",overflow:"hidden"}}>
-          <RoomImage asset="/room-egp.b64" alt="ห้องประชุม e-GP" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+          <img src="/room-egp.jpg" alt="ห้องประชุม e-GP" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
           <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,rgba(6,31,55,.82) 0%,rgba(6,31,55,.28) 55%,rgba(6,31,55,.08) 100%)"}}/>
           <div style={{position:"absolute",left:"clamp(20px,4vw,48px)",bottom:"clamp(24px,5vw,50px)",color:"white",maxWidth:620}}>
             <div style={{display:"inline-flex",alignItems:"center",gap:8,padding:"7px 12px",borderRadius:999,background:"rgba(255,255,255,.16)",backdropFilter:"blur(8px)",fontWeight:800,fontSize:14}}><CalendarDays size={18}/>จองห้องประชุมออนไลน์</div>
@@ -66,11 +53,11 @@ export default function MeetingRoomBookingPage() {
         <div style={{padding:"22px"}}>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:16}}>
             <div style={{borderRadius:20,overflow:"hidden",border:"2px solid #b9dff6",background:"#f4fbff"}}>
-              <RoomImage asset="/room-egp.b64" alt="ภาพห้องประชุม e-GP" style={{width:"100%",aspectRatio:"16/9",objectFit:"cover",display:"block"}}/>
+              <img src="/room-egp.jpg" alt="ภาพห้องประชุม e-GP" style={{width:"100%",aspectRatio:"16/9",objectFit:"cover",display:"block"}}/>
               <div style={{padding:16}}><strong style={{fontSize:20,color:"#16324a"}}>ห้องประชุม e-GP</strong><div style={{marginTop:4,color:"#64748b"}}>ห้องหลัก • ใช้งานเป็นหลัก</div></div>
             </div>
             <div style={{borderRadius:20,overflow:"hidden",border:"2px solid #ddd6fe",background:"#fbf9ff"}}>
-              <RoomImage asset="/room-gf.b64" alt="ภาพห้องประชุม GF" style={{width:"100%",aspectRatio:"16/9",objectFit:"cover",display:"block"}}/>
+              <img src="/room-gf.jpg" alt="ภาพห้องประชุม GF" style={{width:"100%",aspectRatio:"16/9",objectFit:"cover",display:"block"}}/>
               <div style={{padding:16}}><strong style={{fontSize:20,color:"#16324a"}}>ห้องประชุม GF</strong><div style={{marginTop:4,color:"#64748b"}}>ห้องสำรอง • เลือกใช้เมื่อจำเป็น</div></div>
             </div>
           </div>
