@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const version = '20261014v2';
+const version = '20261014v3';
 for (const room of ['egp','gf']) {
   const source = `public/room-${room}.b64`;
   const targets = [
