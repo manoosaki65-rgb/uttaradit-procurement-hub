@@ -4,8 +4,8 @@ import { CalendarDays, ChevronLeft, ChevronRight, Clock3, UsersRound } from "luc
 import { useMemo, useState } from "react";
 
 type Booking = { date:string; room:"ห้องประชุม e-GP"|"ห้องประชุม GF"; start:string; end:string; title:string; bookedBy:string };
-const EGP_IMG="/meeting-egp-20261014v2.jpg";
-const GF_IMG="/meeting-gf-20261014v2.jpg";
+const EGP_IMG="/meeting-egp-20261014v3.jpg";
+const GF_IMG="/meeting-gf-20261014v3.jpg";
 const bookings:Booking[]=[];
 const thaiMonths=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 const weekdays=["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
