@@ -2,7 +2,7 @@
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {KINDS} from '../../lib/posting-core.js';
 import {uploadData,type PostingRow,type Asset} from '../../lib/posting-media';
-import {photoThumbnail,photoDownload} from '../../lib/posting-daily.js';
+import {photoThumbnail,photoDownload,isTestEvidence} from '../../lib/posting-daily.js';
 import evidence from '../../lib/posting-web-evidence.json';
 import './dashboard.css';
 import {photoPage as pageOf,preservePhotoPages,documentPageCount} from '../../lib/posting-photo-pages.js';
@@ -26,8 +26,8 @@ export default function DashboardView(){
  async function run(fn:()=>Promise<void>){if(lock.current)return;lock.current=true;setBusy(true);try{await fn();}catch(e){setMessage(e instanceof Error?e.message:String(e));}finally{lock.current=false;setBusy(false);}}
  async function connect(access=code){const data=await api(undefined,access);if(!Array.isArray(data.rows))throw Error('โหลด Master เดิมไม่สำเร็จ');setRows(data.rows);setConnected(true);setEditing(prev=>prev?data.rows.find((r:PostingRow)=>r.id===prev.id)||null:null);try{sessionStorage.setItem('posting-access',access.trim());}catch{}setMessage(`โหลด Master เดิมแล้ว ${data.rows.length} รายการ เลือกแก้ไขรายการในตารางได้`);}
  useEffect(()=>{try{const saved=sessionStorage.getItem('posting-access');if(saved){setCode(saved);void run(()=>connect(saved));}}catch{}},[]);
- const visible=useMemo(()=>rows.filter(r=>r.postedDate===date&&(kind==='ทั้งหมด'||r.kind===kind)&&`${r.title} ${r.kind} ${r.notes}`.toLowerCase().includes(q.trim().toLowerCase())).sort((a,b)=>a.sequence-b.sequence),[rows,date,kind,q]);
- const allPhotos=useMemo(()=>{const list=rows.filter(r=>r.postedDate===date).flatMap(r=>r.photos||[]);for(const photo of evidence.find(d=>d.date===date)?.photos||[])if(!list.some(p=>p.url===photo.url||p.name===photo.name))list.push(photo);return list;},[rows,date]);
+ const visible=useMemo(()=>rows.filter(r=>!isTestEvidence(r)&&r.postedDate===date&&(kind==='ทั้งหมด'||r.kind===kind)&&`${r.title} ${r.kind} ${r.notes}`.toLowerCase().includes(q.trim().toLowerCase())).sort((a,b)=>a.sequence-b.sequence),[rows,date,kind,q]);
+ const allPhotos=useMemo(()=>{const list=rows.filter(r=>!isTestEvidence(r)&&r.postedDate===date).flatMap(r=>r.photos||[]);if(!connected)for(const photo of evidence.find(d=>d.date===date)?.photos||[])if(!list.some(p=>p.url===photo.url||p.name===photo.name))list.push(photo);return list;},[rows,date,connected]);
  useEffect(()=>{let canceled=false;void (async()=>{for(const r of visible){if(canceled)break;if(!r.pdf||counts[r.id]||documentPageCount(r))continue;try{const pdfjs=await import('pdfjs-dist');pdfjs.GlobalWorkerOptions.workerSrc='/posting-assets/pdf.worker.min.mjs';const task=pdfjs.getDocument({url:r.pdf.url});try{const doc=await task.promise;if(!canceled)setCounts(p=>({...p,[r.id]:doc.numPages}));}finally{await task.destroy();}}catch{/* Drive PDF may require opening in Drive; retain manual page count. */}}})();return()=>{canceled=true;};},[visible,counts]);
  async function changePhoto(r:Row,page:number,file?:File,remove?:Asset){await run(async()=>{
   if(editing)throw Error('กำลังแก้ไขรายการ กรุณาจัดรูปและบันทึกจากแบบฟอร์มแก้ไข');
