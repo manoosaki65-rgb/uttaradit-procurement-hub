@@ -64,6 +64,7 @@ function doPostPosting(e){
     const props=PropertiesService.getScriptProperties();
     const secret=props.getProperty('POSTING_SCRIPT_SECRET')||props.getProperty('SYNC_TOKEN');
     if(!secret||cmd.secret!==secret)throw Error('Unauthorized');
+    if(cmd.action==='thumbnail')return json_(postingThumbnail_(cmd.photoId));
     lock=LockService.getScriptLock();if(!lock.tryLock(25000))throw Error('มีการบันทึกจากเครื่องอื่น กรุณาลองใหม่');
     const {wb,rows}=load_();
     if(cmd.action==='list')return json_({rows:rows.filter(r=>!r.deleted),masterId:MASTER});
@@ -96,4 +97,17 @@ function doPostPosting(e){
 function doPost(e){
   let cmd;try{cmd=JSON.parse(e.postData.contents);}catch{return json_({error:'Invalid JSON'});}
   return cmd.posting ? doPostPosting(e) : typeof doPostLegacy==='function' ? doPostLegacy(e) : json_({error:'Unsupported request'});
+}
+
+function postingThumbnail_(id){
+ if(!/^[A-Za-z0-9_-]{10,100}$/.test(id||''))throw Error('ไม่พบรูปหลักฐาน');
+ const file=DriveApp.getFileById(id),parents=file.getParents();let allowed=false;
+ while(parents.hasNext())if(parents.next().getId()===PHOTO_FOLDER)allowed=true;
+ if(!allowed||!/^image\//.test(file.getMimeType()))throw Error('ไม่ใช่รูปในโฟลเดอร์หลักฐานเดิม');
+ const headers={Authorization:'Bearer '+ScriptApp.getOAuthToken()};
+ const meta=UrlFetchApp.fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=thumbnailLink',{headers});
+ const link=JSON.parse(meta.getContentText()).thumbnailLink;
+ if(!link)throw Error('รูปนี้ยังไม่มีภาพแสดงตัวอย่าง');
+ const image=UrlFetchApp.fetch(link.replace(/=s\d+$/,'=s1200'),{headers}).getBlob();
+ return {mime:image.getContentType(),base64:Utilities.base64Encode(image.getBytes())};
 }

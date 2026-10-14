@@ -2,7 +2,7 @@
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {KINDS} from '../../lib/posting-core.js';
 import {uploadData,type PostingRow,type Asset} from '../../lib/posting-media';
-import {photoThumbnail,photoDownload,isTestEvidence} from '../../lib/posting-daily.js';
+import {photoDownload,isTestEvidence} from '../../lib/posting-daily.js';
 import evidence from '../../lib/posting-web-evidence.json';
 import './dashboard.css';
 import {photoPage as pageOf,preservePhotoPages,documentPageCount} from '../../lib/posting-photo-pages.js';
@@ -14,11 +14,22 @@ const titles=['Compliance Balloon Catheter จำนวน 1,000 เส้น','
 type Row=PostingRow & {previewOnly?:boolean};
 const seed:Row[]=titles.map((title,i)=>({id:'preview-oct9-'+i,sequence:i+1,title,kind:KINDS[i<6?0:1],postedDate:'2026-10-09',notes:'',revision:0,pdf:null,photos:evidence[1].photos[i]?[evidence[1].photos[i]]:[],previewOnly:true}));
 const thai=(d:string)=>new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'long',year:'numeric'}).format(new Date(d+'T12:00:00+07:00'));
-function Photo({photo}:{photo:Asset}){
- const primary=photoThumbnail(photo),id=photo.id||photo.url?.match(/\/d\/([^/?]+)/)?.[1];
- const sources=Array.from(new Set([primary,...(id&&!photo.url.startsWith('/posting-evidence/')?['https://lh3.googleusercontent.com/d/'+encodeURIComponent(id)+'=w600']:[])]));
- const [attempt,setAttempt]=useState(0);
- return <a className="gallery-image" href={photo.url} target="_blank" rel="noreferrer">{attempt>=sources.length?<small>เปิดรูปต้นฉบับใน Drive</small>:<img src={sources[attempt]} alt={photo.name} referrerPolicy="no-referrer" onError={()=>setAttempt(n=>n+1)}/>}</a>;
+function Photo({photo,code,connected}:{photo:Asset;code:string;connected:boolean}){
+ const local=photo.url.startsWith('/posting-evidence/');
+ const id=photo.id||photo.url.match(/\/d\/([^/?]+)/)?.[1]||photo.url.match(/[?&]id=([^&]+)/)?.[1];
+ const [source,setSource]=useState(local?photo.url:''),[failed,setFailed]=useState(false);
+ useEffect(()=>{
+  if(local){setSource(photo.url);setFailed(false);return;}
+  let active=true;const controller=new AbortController();setSource('');setFailed(false);
+  if(!connected||!code.trim()||!id){setFailed(true);return;}
+  void fetch('/api/posting',{method:'POST',cache:'no-store',signal:controller.signal,headers:{'Content-Type':'application/json','X-Posting-Code':code.trim()},body:JSON.stringify({action:'thumbnail',photoId:id})}).then(async response=>{
+   const data=await response.json();
+   if(!response.ok||data.error||!/^image\/(jpeg|png|webp|gif)$/.test(data.mime)||typeof data.base64!=='string'||!data.base64||data.base64.length>8*1024*1024)throw Error('Thumbnail unavailable');
+   if(active)setSource('data:'+data.mime+';base64,'+data.base64);
+  }).catch(()=>{if(active)setFailed(true);});
+  return()=>{active=false;controller.abort();};
+ },[local,photo.url,id,code,connected]);
+ return <a className="gallery-image" href={photo.url} target="_blank" rel="noreferrer">{failed?<small>เปิดรูปต้นฉบับใน Drive</small>:source?<img src={source} alt={photo.name} onError={()=>setFailed(true)}/>:<small>กำลังโหลดรูป…</small>}</a>;
 }
 
 export default function DashboardView(){
@@ -100,7 +111,7 @@ export default function DashboardView(){
        </tr>;
       })}</tbody>
      </table>{!visible.length&&<div className="empty"><p>{connected?'ยังไม่มีรายการตรงกับวันที่และเงื่อนไขที่เลือก':'ยังไม่มีรายการเผยแพร่ของวันนี้ เชื่อมเพื่อโหลดข้อมูลจาก Master เดิม'}</p><button disabled={busy||!!newDate||!!editing} onClick={()=>setNewDate(date)}>+ เพิ่มประกาศของวันนี้</button></div>}</div>
-     <section className="gallery"><button className="gallery-toggle" aria-expanded={showAll} onClick={()=>setShowAll(!showAll)}>ดูรูปทั้งหมดของวันที่เลือก ({allPhotos.length}) {showAll?'▴':'▾'}</button>{showAll&&<div className="gallery-grid">{allPhotos.map(p=><figure key={p.id||p.url}><Photo photo={p}/><figcaption><span className="gallery-filename">{p.name}</span><div className="gallery-links"><a href={p.url} target="_blank" rel="noreferrer">ดูรูป</a><a href={photoDownload(p)} download target="_blank" rel="noreferrer">ดาวน์โหลด</a></div></figcaption></figure>)}{!allPhotos.length&&<p>ยังไม่มีรูปของวันที่เลือก</p>}</div>}</section>
+     <section className="gallery"><button className="gallery-toggle" aria-expanded={showAll} onClick={()=>setShowAll(!showAll)}>ดูรูปทั้งหมดของวันที่เลือก ({allPhotos.length}) {showAll?'▴':'▾'}</button>{showAll&&<div className="gallery-grid">{allPhotos.map(p=><figure key={p.id||p.url}><Photo photo={p} code={code} connected={connected}/><figcaption><span className="gallery-filename">{p.name}</span><div className="gallery-links"><a href={p.url} target="_blank" rel="noreferrer">ดูรูป</a><a href={photoDownload(p)} download target="_blank" rel="noreferrer">ดาวน์โหลด</a></div></figcaption></figure>)}{!allPhotos.length&&<p>ยังไม่มีรูปของวันที่เลือก</p>}</div>}</section>
     </section>
    </div>
   </div>
