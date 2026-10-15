@@ -23,12 +23,15 @@ export async function onRequest({request,env}){
   }
   if(request.method==='PATCH'){
     let body; try{body=await request.json();}catch{return json({error:'ข้อมูลไม่ถูกต้อง'},400)}
-    const id=String(body?.id||'').trim(); const assignee=String(body?.assignee||'').trim();
+    const id=String(body?.id||'').trim();
+    const assignee=String(body?.assignee||'').trim();
+    const subject=String(body?.subject||'').trim();
     if(!id)return json({error:'ไม่พบเลขที่ต้องแก้'},400);
+    if(!subject)return json({error:'กรุณาใส่ชื่อรายการ/เรื่องคำสั่ง'},400);
     const status=assignee?'ใช้แล้ว':'ว่าง';
-    const r=await db.prepare(`UPDATE command_numbers SET assignee=?,status=? WHERE id=?`).bind(assignee,status,id).run();
+    const r=await db.prepare(`UPDATE command_numbers SET subject=?,assignee=?,status=? WHERE id=?`).bind(subject,assignee,status,id).run();
     if(!(r.meta?.changes||0))return json({error:'ไม่พบรายการ'},404);
-    return json({ok:true,status,assignee});
+    return json({ok:true,subject,status,assignee});
   }
   return json({error:'Method not allowed'},405);
 }
