@@ -4,8 +4,8 @@ import { CalendarDays, ChevronLeft, ChevronRight, Clock3, Plus, UsersRound, X } 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Booking={id:string;date:string;room:"ห้องประชุม e-GP"|"ห้องประชุม GF";start:string;end:string;title:string;unit?:string;bookedBy:string;phone?:string};
-const EGP_IMG="/meeting-egp-20261014v3.jpg";
-const GF_IMG="/meeting-gf-20261014v3.jpg";
+const EGP_IMG="/meeting-egp.svg";
+const GF_IMG="/meeting-gf-smooth.svg";
 const thaiMonths=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 const weekdays=["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
 const iso=(d:Date)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
