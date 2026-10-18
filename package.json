@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/inject-command-number.mjs && node scripts/copy-posting-assets.mjs && node scripts/decode-room-images.mjs && next build",
+    "build": "node --test tests/command-numbers.test.mjs && node scripts/inject-command-number.mjs && node scripts/copy-posting-assets.mjs && node scripts/decode-room-images.mjs && next build",
     "start": "next start",
     "lint": "eslint ."
   },
