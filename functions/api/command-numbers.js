@@ -39,13 +39,15 @@ export async function onRequest(context){
       // Manual import ends at verified D1 persistence; no external Master write.
       return json({ok:true,rows:rows.map(publicRow),storage:'cloudflare-d1',added:mutations.reduce((n,r)=>n+(r.meta?.changes||0),0),total:values.length,databaseVerified:true},200);
     }
-    requireRole(user,['procurement']);
+    if(body.action==='use')requireRole(user,['procurement']);
     if(!['reserve','use'].includes(body.action))return json({error:'ใช้ปุ่มจองเลขหรือใช้เลข ไม่อนุญาตเขียนทับข้อมูลเดิม'},400);
     if(!Number.isInteger(body.revision)||body.revision<0)return json({error:'กรุณาโหลดรายการล่าสุดก่อนจอง'},400);
     const subject=String(body.subject||'').trim();if(!subject||subject.length>2000)return json({error:'กรุณาระบุเรื่อง'},400);
-    if(body.assignee&&body.assignee!==user.name)return json({error:'ไม่อนุญาตจองในชื่อบุคคลอื่น'},403);
+    const bookingName=String(body.assignee||user?.name||'').trim();
+    if(body.action==='reserve'&&(!bookingName||bookingName.length>100))return json({error:'กรุณาระบุชื่อผู้จอง (ไม่เกิน 100 ตัวอักษร)'},400);
+    if(user&&body.assignee&&body.assignee!==user.name)return json({error:'ไม่อนุญาตจองในชื่อบุคคลอื่น'},403);
     const now=new Date().toISOString();let mutation;
-    if(body.action==='reserve')mutation=await db.prepare("UPDATE command_numbers SET subject=?,status='จองแล้ว',assignee=?,reserved_by=?,reserved_at=?,revision=revision+1,master_sync_error='' WHERE id=? AND status='ว่าง' AND COALESCE(hidden,0)=0 AND revision=?").bind(subject,user.name,user.id,now,body.id,body.revision).run();
+    if(body.action==='reserve')mutation=await db.prepare("UPDATE command_numbers SET subject=?,status='จองแล้ว',assignee=?,reserved_by=?,reserved_at=?,revision=revision+1,master_sync_error='' WHERE id=? AND status='ว่าง' AND COALESCE(hidden,0)=0 AND revision=?").bind(subject,bookingName,user?.id||('guest:'+bookingName),now,body.id,body.revision).run();
     else mutation=await db.prepare("UPDATE command_numbers SET subject=?,status='ใช้แล้ว',used_at=?,revision=revision+1,master_sync_error='' WHERE id=? AND status='จองแล้ว' AND reserved_by=? AND COALESCE(hidden,0)=0 AND revision=?").bind(subject,now,body.id,user.id,body.revision).run();
     if(mutation.meta?.changes!==1)return json({error:'เลขนี้ถูกจอง/ใช้แล้ว หรือข้อมูลเปลี่ยนจากอีกเครื่อง กรุณาโหลดใหม่'},409);
     const rows=await rowsByIds(db,[body.id]);const result=await syncMaster(db,env,rows);return json({...result,ok:true,masterVerified:result.ok,warning:result.ok?'':'บันทึกการจองใน D1 แล้ว — ยังไม่ยืนยัน Google Master',databaseVerified:true,reservationPersisted:true},200);
