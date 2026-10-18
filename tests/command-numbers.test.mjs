@@ -43,13 +43,14 @@ test('repeat import never resets an already reserved or used row',async()=>{
   await f.call('POST',batch());const latest=(await f.call('GET')).body.rows.find(x=>x.id===old.id);
   for(const key of ['subject','status','assignee','reservedBy','reservedAt','usedAt','revision'])assert.equal(latest[key],old[key]);
 });
-test('identity and role checks reject anonymous booking, wrong role and another assignee',async()=>{
+test('public booking requires a name, authenticated users cannot impersonate another assignee, import remains issuer-only',async()=>{
   const f=await fixture();await f.call('POST',batch());const b={action:'reserve',id:'2569-90000',revision:0,subject:'งานจริง'};
-  assert.equal((await f.call('PATCH',b,'anonymous')).status,401);
-  assert.equal((await f.call('PATCH',b,'issuer')).status,403);
+  assert.equal((await f.call('PATCH',b,'anonymous')).status,400);
+  const publicBooked=await f.call('PATCH',{...b,assignee:'เจ้าหน้าที่ทดสอบ'},'anonymous');assert.equal(publicBooked.status,200);
   assert.equal((await f.call('POST',batch(),'alice')).status,403);
-  assert.equal((await f.call('PATCH',{...b,assignee:'บุคคลอื่น'},'alice')).status,403);
   assert.equal((await f.call('POST',{action:'login',username:'alice',code:'wrong'},'anonymous')).status,400);
+  await f.call('POST',batch(90030,90030));
+  assert.equal((await f.call('PATCH',{action:'reserve',id:'2569-90030',revision:0,subject:'งานจริง',assignee:'บุคคลอื่น'},'alice')).status,403);
 });
 test('invalid date, count mismatch, duplicate explicit numbers and more than thirty are rejected',async()=>{
   assert.equal(dateBE('1/1/2569'),'01/01/2569');assert.throws(()=>dateBE('31/2/2569'));
@@ -76,12 +77,13 @@ test('gapped actual numbers do not create unissued numbers and all rows remain s
   assert.equal(all.length,543);assert.ok(!all.some(r=>r.number===902));
 });
 
-test('unverified users can search but cannot import, reserve or change data',async()=>{
+test('unverified users can search and reserve an available number by name, but cannot import or sync',async()=>{
   const f=await fixture({auth:false});assert.equal((await f.call('GET')).status,200);
   assert.equal((await f.call('POST',batch())).status,401);
-  assert.equal((await f.call('PATCH',{action:'reserve'})).status,401);
+  f.sqlite.prepare("INSERT INTO command_numbers(id,number,year,issue_date,subject,status,assignee,hidden) VALUES(?,?,?,?,?,'ว่าง','',0)").run('2569-90000',90000,2569,'19/10/2569','แต่งตั้งคณะกรรมการ');
+  const reserved=await f.call('PATCH',{action:'reserve',id:'2569-90000',revision:0,subject:'งานจริง',assignee:'เจ้าหน้าที่จัดซื้อ'});assert.equal(reserved.status,200);assert.equal(reserved.body.reservationPersisted,true);
   assert.equal((await f.call('POST',{action:'sync',ids:['2569-90000']})).status,401);
-  assert.equal((await f.call('GET')).body.rows.length,0);
+  const row=(await f.call('GET')).body.rows[0];assert.equal(row.status,'จองแล้ว');assert.equal(row.assignee,'เจ้าหน้าที่จัดซื้อ');
 });
 
 test('search supports command/year and a range of five verified backlog numbers',async()=>{
