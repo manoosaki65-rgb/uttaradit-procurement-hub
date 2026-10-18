@@ -5,14 +5,14 @@ type Row={id:string;number:number;year:number;issueDate:string;subject:string;st
 type User={id:string;name:string;roles:string[]};
 type Batch={numbers:{number:number;year:number;issueDate:string;subject:string}[];expectedCount:number};
 const api="/api/command-numbers",cacheKey="command-number-last-transfer-v1";
-function today(){return new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Bangkok",day:"2-digit",month:"2-digit",year:"numeric",calendar:"buddhist"}).format(new Date());}
+function today(){const parts=new Intl.DateTimeFormat("en-GB-u-ca-buddhist",{timeZone:"Asia/Bangkok",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date());const part=(type:string)=>parts.find(p=>p.type===type)?.value||"";return `${part("day")}/${part("month")}/${part("year")}`;}
 const card:React.CSSProperties={background:"white",border:"1px solid #dbe4ed",borderRadius:14,padding:18};
 const input:React.CSSProperties={display:"block",padding:10,border:"1px solid #aebdcb",borderRadius:7,width:"100%",boxSizing:"border-box",marginTop:5};
 const button:React.CSSProperties={padding:"10px 14px",border:"1px solid #9bb0c2",borderRadius:7,background:"#eaf3fa",cursor:"pointer"};
 
 export default function CommandNumberPage(){
   const [rows,setRows]=useState<Row[]>([]),[query,setQuery]=useState(""),[count,setCount]=useState("30");
-  const [start,setStart]=useState(""),[end,setEnd]=useState(""),[year,setYear]=useState("2569"),[date,setDate]=useState(today),[subject,setSubject]=useState("แต่งตั้งคณะกรรมการ");
+  const [start,setStart]=useState(""),[end,setEnd]=useState(""),[year,setYear]=useState(()=>today().split("/")[2]),[date,setDate]=useState(today),[subject,setSubject]=useState("แต่งตั้งคณะกรรมการ");
   const [message,setMessage]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true);
   const [user,setUser]=useState<User|null>(null);
   const [lastBatch,setLastBatch]=useState<Batch|null>(null),[editSubjects,setEditSubjects]=useState<Record<string,string>>({});
