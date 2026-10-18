@@ -28,7 +28,7 @@ export default function CommandNumberPage(){
     const fresh=await fetch(api,{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("อ่านกลับ D1 ไม่สำเร็จ");return r.json();});
     const missing=batch.numbers.filter(n=>fresh.rows?.filter((row:Row)=>row.number===n.number&&row.year===n.year&&row.issueDate===n.issueDate).length!==1);
     if(missing.length)throw Error("อ่านกลับยังขาด: "+missing.map(n=>`${n.number}/${n.year}`).join(", "));
-    await load();setMessage(`D1 ยืนยันครบ ${batch.expectedCount}/${batch.expectedCount} เลข • เพิ่ม ${result.added} • เลขเดิมไม่เขียนทับ ${batch.expectedCount-result.added}${result.masterVerified?" • Master ยืนยันแล้ว":" • Google Master ยังไม่ยืนยันการเชื่อมต่อ"}`);
+    await load();setMessage(`D1 ยืนยันครบ ${batch.expectedCount}/${batch.expectedCount} เลข • เพิ่ม ${result.added} • เลขเดิมไม่เขียนทับ ${batch.expectedCount-result.added}`);
   }catch(e){setError((e as Error).message);}finally{setBusy(false);}};
   const saveManual=()=>{try{void transfer(makeBatch());}catch(e){setError((e as Error).message);}};
   const reserve=async(row:Row,action:"reserve"|"use")=>{setBusy(true);setMessage("");setError("");try{const response=await fetch(api,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:row.id,action,revision:row.revision,subject:editSubjects[row.id]??row.subject})});const result=await response.json();if(!response.ok||!result.reservationPersisted)throw Error(result.error||"ยังไม่ยืนยันการจอง");await load();setMessage(`${row.number}/${row.year}: ${action==="reserve"?"จองแล้ว":"ใช้แล้ว"} โดย ${user?.name} — D1 ยืนยันแล้ว${result.masterVerified?"":"; Google Master ยังไม่ยืนยัน"}`);}catch(e){setError((e as Error).message);await load();}finally{setBusy(false);}};

@@ -36,7 +36,8 @@ export async function onRequest(context){
       if(prior.some(row=>row.hidden||values.find(value=>value.id===row.id)?.issueDate!==row.issueDate))return json({error:'เลขเดิมถูกซ่อนหรือวันที่ต่างกัน จึงไม่เขียนทับ'},409);
       const mutations=await db.batch(values.map(row=>db.prepare("INSERT INTO command_numbers(id,number,year,issue_date,subject,status,assignee,hidden) VALUES(?,?,?,?,?,'ว่าง','',0) ON CONFLICT DO NOTHING").bind(row.id,row.number,row.year,row.issueDate,row.subject)));
       const rows=await rowsByIds(db,values.map(row=>row.id));if(rows.length!==values.length)return json({error:'ฐานข้อมูลยังยืนยันจำนวนไม่ครบ',rows:rows.map(publicRow)},500);
-      const result=await syncMaster(db,env,rows);return json({...result,ok:true,masterVerified:result.ok,warning:result.ok?'':'บันทึก D1 แล้ว — ยังไม่ยืนยัน Google Master',added:mutations.reduce((n,r)=>n+(r.meta?.changes||0),0),total:values.length,databaseVerified:true},200);
+      // Manual import ends at verified D1 persistence; no external Master write.
+      return json({ok:true,rows:rows.map(publicRow),storage:'cloudflare-d1',added:mutations.reduce((n,r)=>n+(r.meta?.changes||0),0),total:values.length,databaseVerified:true},200);
     }
     requireRole(user,['procurement']);
     if(!['reserve','use'].includes(body.action))return json({error:'ใช้ปุ่มจองเลขหรือใช้เลข ไม่อนุญาตเขียนทับข้อมูลเดิม'},400);

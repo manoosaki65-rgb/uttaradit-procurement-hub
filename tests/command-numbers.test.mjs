@@ -20,7 +20,7 @@ async function fixture({auth=true}={}){
 }
 const batch=(start=90000,end=90029)=>({start,end,year:2569,issueDate:'19/10/2569',subject:'แต่งตั้งคณะกรรมการ',expectedCount:end-start+1});
 test('manual fallback imports exactly thirty without active booking state, survives fresh reads and detects duplicates',async()=>{
-  const f=await fixture();const first=await f.call('POST',batch());assert.equal(first.status,200);assert.equal(first.body.added,30);assert.equal(first.body.databaseVerified,true);assert.equal(first.body.masterVerified,false);
+  const f=await fixture();const first=await f.call('POST',batch());assert.equal(first.status,200);assert.equal(first.body.added,30);assert.equal(first.body.databaseVerified,true);assert.equal(first.body.storage,'cloudflare-d1');assert.equal(first.body.masterVerified,undefined);
   const again=await f.call('POST',batch());assert.equal(again.body.added,0);assert.equal(again.body.total,30);
   const read=await f.call('GET',null,'', '?q=900');assert.equal(read.body.rows.length,30);assert.equal(new Set(read.body.rows.map(row=>row.id)).size,30);
   assert.equal((await f.call('GET')).body.rows.length,30);
@@ -89,4 +89,18 @@ test('search supports command/year and a range of five verified backlog numbers'
   assert.equal((await f.call('GET',null,'issuer','?q=10913%2F2569')).body.rows.length,1);
   assert.equal((await f.call('GET',null,'issuer','?q=10913-10917%2F2569')).body.rows.length,5);
   const forged=await f.call('POST',{...batch(),hubUser:{id:'admin',verified:true,roles:['issuer']}},'anonymous');assert.equal(forged.status,401);
+});
+
+test('manual thirty-number import never contacts Master and leaves existing metadata untouched',async()=>{
+  const f=await fixture();
+  f.env.COMMAND_MASTER_URL='https://master.invalid/test';f.env.COMMAND_MASTER_SECRET='test-only';
+  const originalFetch=globalThis.fetch;let calls=0;
+  globalThis.fetch=async()=>{calls++;throw Error('External writes forbidden');};
+  try{
+    const first=await f.call('POST',batch());assert.equal(first.status,200);assert.equal(first.body.added,30);
+    const before=(await f.call('GET')).body.rows;
+    const repeated=await f.call('POST',batch());assert.equal(repeated.body.added,0);
+    assert.deepEqual((await f.call('GET')).body.rows,before);assert.equal(calls,0);
+    assert.equal(before.length,30);assert.ok(before.every(row=>row.masterSyncError===''));
+  }finally{globalThis.fetch=originalFetch;}
 });
