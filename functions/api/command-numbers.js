@@ -7,7 +7,13 @@ export async function onRequest(context){
     if(!env.MEETING_DB)return json({error:'ฐานข้อมูลเดิมยังไม่พร้อม'},503);
     const db=env.MEETING_DB,url=new URL(request.url),user=identity(context);
     const origin=request.headers.get('Origin')||'';
-    const extensionImport=request.method==='POST'&&(!origin||origin.startsWith('chrome-extension://'));
+    const referer=request.headers.get('Referer')||'';
+    let hubPageImport=false;
+    try{
+      const ref=new URL(referer);
+      hubPageImport=request.method==='POST'&&origin===url.origin&&ref.origin===url.origin&&ref.pathname==='/command-number';
+    }catch{}
+    const extensionImport=request.method==='POST'&&(!origin||origin.startsWith('chrome-extension://')||hubPageImport);
     if(request.method!=='GET'&&origin&&origin!==url.origin&&!extensionImport)return json({error:'ไม่อนุญาตคำขอจากเว็บไซต์อื่น'},403);
     if(request.method==='GET'&&url.searchParams.get('action')==='session')return json({user,configured:Boolean(user),source:user?.sharedCode?'posting-access-code':'existing-hub-middleware',readOnly:!user});
     if(request.method==='GET'){
