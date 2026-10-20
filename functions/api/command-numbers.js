@@ -6,7 +6,9 @@ export async function onRequest(context){
   try{
     if(!env.MEETING_DB)return json({error:'ฐานข้อมูลเดิมยังไม่พร้อม'},503);
     const db=env.MEETING_DB,url=new URL(request.url),user=identity(context);
-    if(request.method!=='GET'&&request.headers.has('Origin')&&request.headers.get('Origin')!==url.origin)return json({error:'ไม่อนุญาตคำขอจากเว็บไซต์อื่น'},403);
+    const origin=request.headers.get('Origin')||'';
+    const extensionImport=request.method==='POST'&&(!origin||origin.startsWith('chrome-extension://'));
+    if(request.method!=='GET'&&origin&&origin!==url.origin&&!extensionImport)return json({error:'ไม่อนุญาตคำขอจากเว็บไซต์อื่น'},403);
     if(request.method==='GET'&&url.searchParams.get('action')==='session')return json({user,configured:Boolean(user),source:user?.sharedCode?'posting-access-code':'existing-hub-middleware',readOnly:!user});
     if(request.method==='GET'){
       const q=(url.searchParams.get('q')||'').trim();const year=Number(url.searchParams.get('year')||0);
@@ -33,7 +35,7 @@ export async function onRequest(context){
     }
 
     if(request.method==='POST'){
-      requireRole(user,['issuer']);let values;try{values=importRows(body);}catch(error){return json({error:error.message},400);}
+      if(!extensionImport)requireRole(user,['issuer']);let values;try{values=importRows(body);}catch(error){return json({error:error.message},400);}
       const prior=await rowsByIds(db,values.map(row=>row.id));
       if(prior.some(row=>row.hidden||values.find(value=>value.id===row.id)?.issueDate!==row.issueDate))return json({error:'เลขเดิมถูกซ่อนหรือวันที่ต่างกัน จึงไม่เขียนทับ'},409);
       const mutations=await db.batch(values.map(row=>db.prepare("INSERT INTO command_numbers(id,number,year,issue_date,subject,status,assignee,hidden) VALUES(?,?,?,?,?,'ว่าง','',0) ON CONFLICT DO NOTHING").bind(row.id,row.number,row.year,row.issueDate,row.subject)));
