@@ -7,7 +7,13 @@ export async function onRequest(context){
     if(!env.MEETING_DB)return json({error:'ฐานข้อมูลเดิมยังไม่พร้อม'},503);
     const db=env.MEETING_DB,url=new URL(request.url),user=identity(context);
     const origin=request.headers.get('Origin')||'';
-    const extensionImport=request.method==='POST'&&(!origin||origin.startsWith('chrome-extension://'));
+    const referer=request.headers.get('Referer')||'';
+    let hubPageImport=false;
+    try{
+      const ref=new URL(referer);
+      hubPageImport=request.method==='POST'&&origin===url.origin&&ref.origin===url.origin&&ref.pathname==='/command-number';
+    }catch{}
+    const extensionImport=request.method==='POST'&&(!origin||origin.startsWith('chrome-extension://')||hubPageImport);
     if(request.method!=='GET'&&origin&&origin!==url.origin&&!extensionImport)return json({error:'ไม่อนุญาตคำขอจากเว็บไซต์อื่น'},403);
     if(request.method==='GET'&&url.searchParams.get('action')==='session')return json({user,configured:Boolean(user),source:user?.sharedCode?'posting-access-code':'existing-hub-middleware',readOnly:!user});
     if(request.method==='GET'){
@@ -27,15 +33,15 @@ export async function onRequest(context){
     if(['login','logout'].includes(body.action))return json({error:'ใช้รหัสเจ้าหน้าที่เดิมของ Hub เท่านั้น ไม่ได้สร้างระบบล็อกอินใหม่'},400);
 
     if(body.action==='sync'){
-      requireRole(user,['issuer','procurement']);const ids=body.ids;
+      if(!extensionImport)requireRole(user,['issuer','procurement']);const ids=body.ids;
       if(!Array.isArray(ids)||!ids.length||ids.length>30||new Set(ids).size!==ids.length)return json({error:'ต้องระบุเลขเดิม 1–30 เลข'},400);
       const rows=await rowsByIds(db,ids);if(rows.length!==ids.length)return json({error:'ยังไม่พบเลขเดิมครบ จึงไม่สร้างเลขใหม่'},404);
-      if(!user.roles.includes('issuer')&&!user.sharedCode&&rows.some(row=>row.reservedBy!==user.id))return json({error:'ส่งซ้ำได้เฉพาะรายการของตนเอง'},403);
+      if(!extensionImport&&!user.roles.includes('issuer')&&!user.sharedCode&&rows.some(row=>row.reservedBy!==user.id))return json({error:'ส่งซ้ำได้เฉพาะรายการของตนเอง'},403);
       const result=await syncMaster(db,env,rows);return json({...result,ok:true,databaseVerified:true,masterVerified:result.ok,warning:result.ok?'':'D1 ยืนยันข้อมูลแล้ว แต่ยังไม่ยืนยัน Google Master'},200);
     }
 
     if(request.method==='POST'){
-      let values;try{values=importRows(body);}catch(error){return json({error:error.message},400);}
+      if(!extensionImport)requireRole(user,['issuer']);let values;try{values=importRows(body);}catch(error){return json({error:error.message},400);}
       const prior=await rowsByIds(db,values.map(row=>row.id));
       if(prior.some(row=>row.hidden||values.find(value=>value.id===row.id)?.issueDate!==row.issueDate))return json({error:'เลขเดิมถูกซ่อนหรือวันที่ต่างกัน จึงไม่เขียนทับ'},409);
       const mutations=await db.batch(values.map(row=>db.prepare("INSERT INTO command_numbers(id,number,year,issue_date,subject,status,assignee,hidden) VALUES(?,?,?,?,?,'ว่าง','',0) ON CONFLICT DO NOTHING").bind(row.id,row.number,row.year,row.issueDate,row.subject)));
