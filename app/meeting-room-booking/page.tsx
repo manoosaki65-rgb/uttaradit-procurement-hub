@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, CalendarDays, ChevronLeft, ChevronRight, Pencil, Plus, Trash2, X } from "lucide-react";
+import { AlertTriangle, CalendarDays, ChevronLeft, ChevronRight, Pencil, Plus, Share2, Trash2, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Room="ห้องประชุม e-GP"|"ห้องประชุม GF";
@@ -15,18 +15,46 @@ const overlaps=(aStart:string,aEnd:string,bStart:string,bEnd:string)=>!(bEnd<=aS
 const normalize=(s:string)=>s.replace(/\s+/g," ").trim().toLocaleLowerCase("th");
 const inputStyle={width:"100%",minHeight:46,border:"1px solid #cbd5e1",borderRadius:12,padding:"0 12px",fontSize:16,background:"white",boxSizing:"border-box" as const};
 
+function fitText(ctx:CanvasRenderingContext2D,text:string,maxWidth:number){
+  if(ctx.measureText(text).width<=maxWidth)return text;
+  let out=text;
+  while(out.length>1&&ctx.measureText(`${out}…`).width>maxWidth)out=out.slice(0,-1);
+  return `${out}…`;
+}
+
+function wrapText(ctx:CanvasRenderingContext2D,text:string,maxWidth:number,maxLines=2){
+  const lines:string[]=[]; let line="";
+  for(const ch of Array.from(text||"")){
+    const test=line+ch;
+    if(line&&ctx.measureText(test).width>maxWidth){lines.push(line);line=ch;if(lines.length===maxLines)break}else line=test;
+  }
+  if(lines.length<maxLines&&line)lines.push(line);
+  if(lines.length===maxLines){
+    const consumed=lines.join("").length;
+    if(consumed<(text||"").length)lines[maxLines-1]=fitText(ctx,lines[maxLines-1]+(text||"").slice(consumed),maxWidth);
+  }
+  return lines;
+}
+
 export default function MeetingRoomBookingPage(){
-  const today=useMemo(()=>new Date(),[]);
-  const todayIso=iso(today);
-  const [anchor,setAnchor]=useState(new Date(today.getFullYear(),today.getMonth(),today.getDate()));
-  const [selectedDate,setSelectedDate]=useState(todayIso);
+  const initialToday=useMemo(()=>new Date(),[]);
+  const [todayIso,setTodayIso]=useState(()=>iso(initialToday));
+  const [anchor,setAnchor]=useState(new Date(initialToday.getFullYear(),initialToday.getMonth(),initialToday.getDate()));
+  const [selectedDate,setSelectedDate]=useState(()=>iso(initialToday));
   const [bookings,setBookings]=useState<Booking[]>([]);
   const [open,setOpen]=useState(false);
   const [editingId,setEditingId]=useState<string|null>(null);
   const [saving,setSaving]=useState(false);
+  const [sharing,setSharing]=useState(false);
   const [message,setMessage]=useState("");
   const [notice,setNotice]=useState("");
-  const [form,setForm]=useState<FormState>({date:todayIso,start:"09:00",end:"10:00",room:"ห้องประชุม e-GP",title:"",unit:"",bookedBy:"",phone:"",participants:[""]});
+  const [form,setForm]=useState<FormState>({date:iso(initialToday),start:"09:00",end:"10:00",room:"ห้องประชุม e-GP",title:"",unit:"",bookedBy:"",phone:"",participants:[""]});
+
+  useEffect(()=>{
+    const tick=()=>setTodayIso(iso(new Date()));
+    const timer=setInterval(tick,60000);
+    return()=>clearInterval(timer);
+  },[]);
 
   const load=async(base=anchor)=>{
     const from=iso(addDays(base,-7)); const to=iso(addDays(base,62));
@@ -60,9 +88,59 @@ export default function MeetingRoomBookingPage(){
     setMessage(""); setOpen(true);
   };
   const jumpTo=(date:string)=>{const d=atNoon(date);setAnchor(d);setSelectedDate(date)};
+  const moveOneDay=(amount:number)=>{const d=addDays(atNoon(selectedDate),amount);setAnchor(d);setSelectedDate(iso(d))};
+  const goToday=()=>{const d=new Date();const date=iso(d);setTodayIso(date);setAnchor(new Date(d.getFullYear(),d.getMonth(),d.getDate()));setSelectedDate(date)};
   const updateParticipant=(index:number,value:string)=>setForm(f=>({...f,participants:f.participants.map((p,i)=>i===index?value:p)}));
   const addParticipant=()=>setForm(f=>({...f,participants:[...f.participants,""]}));
   const removeParticipant=(index:number)=>setForm(f=>({...f,participants:f.participants.length===1?[""]:f.participants.filter((_,i)=>i!==index)}));
+
+  const sharePublicRelations=async()=>{
+    if(dayBookings.length===0){setNotice("วันที่เลือกยังไม่มีรายการประชุมสำหรับส่งประชาสัมพันธ์");return}
+    setSharing(true); setNotice("");
+    try{
+      if(document.fonts?.ready)await document.fonts.ready;
+      const width=1080;
+      const itemHeights=dayBookings.map(b=>190+(b.unit?36:0)+Math.min((b.participants||[]).length,8)*38);
+      const height=Math.max(720,250+itemHeights.reduce((a,b)=>a+b,0)+90);
+      const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
+      const ctx=canvas.getContext("2d");if(!ctx)throw new Error("สร้างภาพไม่สำเร็จ");
+      ctx.fillStyle="#f4f8fc";ctx.fillRect(0,0,width,height);
+      ctx.fillStyle="#1267d8";ctx.fillRect(0,0,width,190);
+      ctx.fillStyle="#ffffff";ctx.font="700 50px sans-serif";ctx.fillText("ตารางใช้ห้องประชุม",58,76);
+      ctx.font="500 30px sans-serif";ctx.fillText("กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์",58,124);
+      ctx.font="600 31px sans-serif";ctx.fillText(selectedLabel,58,168);
+      let y=230;
+      dayBookings.forEach((b,index)=>{
+        const participants=b.participants||[];
+        const boxH=itemHeights[index]-20;
+        ctx.fillStyle="#ffffff";ctx.fillRect(42,y,width-84,boxH);
+        ctx.fillStyle="#1267d8";ctx.fillRect(42,y,12,boxH);
+        ctx.fillStyle="#17324d";ctx.font="700 34px sans-serif";ctx.fillText(`${b.start} - ${b.end}`,78,y+52);
+        ctx.font="600 31px sans-serif";
+        const titleLines=wrapText(ctx,b.title,820,2);titleLines.forEach((line,i)=>ctx.fillText(line,78,y+100+i*40));
+        let cy=y+100+titleLines.length*40+12;
+        ctx.fillStyle="#526577";ctx.font="500 25px sans-serif";ctx.fillText(`ห้อง: ${b.room.replace("ห้องประชุม ","")}${b.unit?`   •   ${b.unit}`:""}`,78,cy);cy+=40;
+        if(participants.length){
+          ctx.fillStyle="#334155";ctx.font="700 25px sans-serif";ctx.fillText("กรรมการ / ผู้เข้าร่วม",78,cy);cy+=34;
+          ctx.font="500 24px sans-serif";
+          participants.slice(0,8).forEach((p,i)=>{ctx.fillText(`${i+1}. ${fitText(ctx,p,850)}`,92,cy);cy+=36});
+          if(participants.length>8){ctx.fillStyle="#64748b";ctx.fillText(`และอีก ${participants.length-8} คน`,92,cy);cy+=36}
+        }
+        y+=boxH+22;
+      });
+      ctx.fillStyle="#64748b";ctx.font="500 22px sans-serif";ctx.fillText("ข้อมูลจากระบบจองห้องประชุม กลุ่มงานพัสดุ",58,height-40);
+      const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("สร้างไฟล์ภาพไม่สำเร็จ")),"image/jpeg",0.92));
+      const file=new File([blob],`ตารางประชุม-${selectedDate}.jpg`,{type:"image/jpeg"});
+      const nav=navigator as Navigator&{canShare?:(data:ShareData)=>boolean};
+      if(nav.share&&(!nav.canShare||nav.canShare({files:[file]}))){
+        await nav.share({title:`ตารางประชุม ${selectedLabel}`,text:`ตารางประชุม ${selectedLabel}`,files:[file]});
+      }else{
+        const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+        setNotice("สร้างภาพ JPG แล้ว สามารถส่งต่อให้ประชาสัมพันธ์ได้");
+      }
+    }catch(err:any){if(err?.name!=="AbortError")setNotice(err?.message||"สร้างภาพสำหรับประชาสัมพันธ์ไม่สำเร็จ")}
+    finally{setSharing(false)}
+  };
 
   const submit=async(e:FormEvent)=>{
     e.preventDefault(); setSaving(true); setMessage(""); setNotice("");
@@ -92,7 +170,7 @@ export default function MeetingRoomBookingPage(){
       </section>
 
       <section style={{marginTop:12,background:"white",borderRadius:18,padding:"12px",boxShadow:"0 5px 18px rgba(15,23,42,.06)"}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,marginBottom:9}}><strong style={{fontSize:15}}>เลือกวันประชุม</strong><div style={{display:"flex",gap:6}}><button onClick={()=>setAnchor(addDays(anchor,-7))} aria-label="สัปดาห์ก่อน" style={{width:34,height:34,borderRadius:10,border:"1px solid #e2e8f0",background:"white"}}><ChevronLeft size={18}/></button><button onClick={()=>{const n=new Date();setAnchor(n);setSelectedDate(iso(n))}} style={{height:34,borderRadius:10,border:"1px solid #e2e8f0",background:"#f8fafc",padding:"0 10px",fontWeight:800}}>วันนี้</button><button onClick={()=>setAnchor(addDays(anchor,7))} aria-label="สัปดาห์ถัดไป" style={{width:34,height:34,borderRadius:10,border:"1px solid #e2e8f0",background:"white"}}><ChevronRight size={18}/></button></div></div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,marginBottom:9}}><strong style={{fontSize:15}}>เลือกวันประชุม</strong><div style={{display:"flex",gap:6}}><button onClick={()=>moveOneDay(-1)} aria-label="วันก่อน" style={{width:34,height:34,borderRadius:10,border:"1px solid #e2e8f0",background:"white"}}><ChevronLeft size={18}/></button><button onClick={goToday} style={{height:34,borderRadius:10,border:"1px solid #e2e8f0",background:"#f8fafc",padding:"0 10px",fontWeight:800}}>วันนี้</button><button onClick={()=>moveOneDay(1)} aria-label="วันถัดไป" style={{width:34,height:34,borderRadius:10,border:"1px solid #e2e8f0",background:"white"}}><ChevronRight size={18}/></button></div></div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(7,minmax(58px,1fr))",gap:7,overflowX:"auto",paddingBottom:3}}>
           {stripDays.map(d=>{const date=iso(d);const active=date===selectedDate;const count=bookings.filter(b=>b.date===date).length;const isToday=date===todayIso;return <button key={date} onClick={()=>setSelectedDate(date)} style={{minWidth:58,border:active?"2px solid #1769e0":"1px solid #e2e8f0",borderRadius:14,padding:"8px 3px",background:active?"#eaf2ff":"#fff",color:active?"#1456b8":"#475569",fontWeight:800}}><div style={{fontSize:11}}>{isToday?"วันนี้":new Intl.DateTimeFormat("th-TH",{weekday:"short"}).format(d)}</div><div style={{fontSize:21,lineHeight:1.2,margin:"2px 0"}}>{d.getDate()}</div><div style={{fontSize:10,color:count?"#1664d9":"#94a3b8"}}>{count?`${count} วาระ`:"ว่าง"}</div></button>})}
         </div>
@@ -102,7 +180,7 @@ export default function MeetingRoomBookingPage(){
       {notice&&<div style={{marginTop:12,padding:"12px 14px",borderRadius:14,background:notice.includes("กรรมการซ้ำ")?"#fff7ed":"#ecfdf5",color:notice.includes("กรรมการซ้ำ")?"#9a3412":"#166534",fontWeight:700,fontSize:14}}>{notice}</div>}
 
       <section style={{marginTop:12,background:"white",borderRadius:20,padding:"15px 13px",boxShadow:"0 5px 18px rgba(15,23,42,.06)"}}>
-        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10,marginBottom:12}}><div><div style={{fontWeight:900,fontSize:17}}>{selectedLabel}</div><div style={{fontSize:12,color:"#64748b",marginTop:2}}>{allToday.length} วาระ • กรรมการ/ผู้เข้าร่วม {totalPeople} คน</div></div><button onClick={()=>openNew(selectedDate)} style={{border:0,borderRadius:11,padding:"9px 11px",background:"#eaf2ff",color:"#1456b8",fontWeight:900}}>+ เพิ่มวาระ</button></div>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8,marginBottom:12,flexWrap:"wrap"}}><div style={{minWidth:180,flex:"1 1 auto"}}><div style={{fontWeight:900,fontSize:17}}>{selectedLabel}</div><div style={{fontSize:12,color:"#64748b",marginTop:2}}>{allToday.length} วาระ • กรรมการ/ผู้เข้าร่วม {totalPeople} คน</div></div><div style={{display:"flex",gap:7,flexWrap:"wrap"}}><button onClick={sharePublicRelations} disabled={sharing||dayBookings.length===0} style={{border:"1px solid #b9d8c3",borderRadius:11,padding:"9px 10px",background:"#f0fdf4",color:"#16733a",fontWeight:900,display:"inline-flex",alignItems:"center",gap:5,opacity:dayBookings.length===0?.55:1}}><Share2 size={15}/>{sharing?'กำลังสร้างภาพ...':'แชร์ประชาสัมพันธ์'}</button><button onClick={()=>openNew(selectedDate)} style={{border:0,borderRadius:11,padding:"9px 11px",background:"#eaf2ff",color:"#1456b8",fontWeight:900}}>+ เพิ่มวาระ</button></div></div>
 
         {dayBookings.length===0?<div style={{padding:"34px 12px",textAlign:"center",border:"1px dashed #cbd5e1",borderRadius:16,color:"#64748b"}}><CalendarDays size={30} style={{margin:"0 auto 7px"}}/><strong style={{display:"block",color:"#334155"}}>วันนี้ยังไม่มีประชุม</strong><span style={{fontSize:13}}>กด “เพิ่มวาระ” เพื่อจองได้เลย</span></div>:
         <div style={{display:"grid",gap:10}}>{dayBookings.map(b=>{const same=dayBookings.filter(x=>x.start===b.start&&x.end===b.end).length>1;return <article key={b.id} style={{display:"grid",gridTemplateColumns:"66px minmax(0,1fr)",gap:10,alignItems:"stretch"}}>
