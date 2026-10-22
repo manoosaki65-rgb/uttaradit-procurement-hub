@@ -17,11 +17,13 @@ export async function onRequest({request,env}){
   if(!['ห้องประชุม e-GP','ห้องประชุม GF'].includes(room))return json({error:'ห้องประชุมไม่ถูกต้อง'},400);
   if(end<=start)return json({error:'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม'},400);
 
-  // ห้องเดียวกันและเวลาเดียวกันสามารถมีหลายวาระได้ จึงแจ้งเตือนแต่ไม่บล็อกการจอง
+  // ห้องเดียวกันและเวลาเดียวกันสามารถมีหลายวาระและใช้กรรมการชุดเดียวกันได้
   const overlaps=await env.MEETING_DB.prepare(`SELECT id,title,room,start_time AS start,end_time AS end,participants FROM room_bookings WHERE date=? AND NOT (end_time<=? OR start_time>=?) ORDER BY start_time`).bind(date,start,end).all();
   const roomOverlaps=(overlaps.results||[]).filter(r=>r.room===room).map(r=>({id:r.id,title:r.title,start:r.start,end:r.end}));
   const wanted=new Map(participants.map(p=>[key(p),p])); const participantConflicts=[];
   for(const r of overlaps.results||[]){
+    // เวลาเดียวกันเป๊ะในห้องเดียวกันถือเป็นชุดประชุมเดียวกัน จึงไม่เตือนกรรมการซ้ำ
+    if(r.room===room&&r.start===start&&r.end===end)continue;
     const common=parsePeople(r.participants).filter(p=>wanted.has(key(p)));
     if(common.length)participantConflicts.push({bookingId:r.id,title:r.title,room:r.room,start:r.start,end:r.end,names:common});
   }
