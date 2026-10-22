@@ -19,8 +19,10 @@ test('multi-page document boundaries and coverage',()=>{
 test('ambiguous or short OCR never gets an automatic match',()=>{
  const rows=[{id:'1',title:'จ้างตรวจด้วยเครื่อง MRI ประจำปี'},{id:'2',title:'ซื้อวัสดุการแพทย์สำหรับห้องผ่าตัด'}];assert.equal(suggest('ประกาศ เรื่อง จ้างตรวจด้วยเครื่อง MRI ประจำปี',rows),'1');assert.equal(suggest('ไม่สามารถอ่านได้',rows),'');assert.equal(suggest(rows.map(r=>r.title).join(' '),rows),'');
 });
-test('backend refuses unconfigured Drive and incorrect staff code',async()=>{
- const req=new Request('https://example.test/api/posting');assert.equal((await onRequest({request:req,env:{}})).status,503);assert.equal((await onRequest({request:req,env:{POSTING_SCRIPT_URL:'x',POSTING_SCRIPT_SECRET:'s',POSTING_ACCESS_CODE:'c'}})).status,401);
+test('backend refuses unconfigured Drive and incorrect staff code on writes',async()=>{
+ const readReq=new Request('https://example.test/api/posting');assert.equal((await onRequest({request:readReq,env:{}})).status,503);
+ const writeReq=new Request('https://example.test/api/posting',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save'})});
+ assert.equal((await onRequest({request:writeReq,env:{POSTING_SCRIPT_URL:'x',POSTING_SCRIPT_SECRET:'s',POSTING_ACCESS_CODE:'c'}})).status,401);
 });
 test('classification recognizes all four types and leaves unknown text undecided',()=>{
  assert.equal(classify('ประกาศประกวดราคา ซื้อวัสดุ'),KINDS[0]);
