@@ -35,11 +35,14 @@ const weatherEffectScript = `
     if (!card) {
       card = document.createElement('a');
       card.href = '/meeting-room-booking';
-      card.setAttribute('aria-label', 'จองห้องประชุมออนไลน์ ห้องประชุม e-GP และ GF');
+      card.setAttribute('aria-label', 'ตารางประชุมและจองห้องประชุมออนไลน์');
       card.className = 'group relative block overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md';
       card.style.minHeight = '250px';
-      card.style.background = '#dbeafe';
-      card.innerHTML = '<div style="position:absolute;inset:0;display:grid;grid-template-columns:1.45fr .85fr;gap:3px;background:#dbeafe"><img src="/meeting-egp-20261017hd.jpg" alt="ห้องประชุม e-GP" style="width:100%;height:100%;object-fit:cover;display:block;background:#cfe8f7"><img src="/meeting-gf-smooth.svg" alt="ห้องประชุม GF" style="width:100%;height:100%;object-fit:cover;display:block;background:#e8e1f7"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(8,30,55,.18) 58%,rgba(8,30,55,.92) 100%)"></div><div style="position:absolute;left:0;right:0;bottom:0;padding:44px 16px 15px;color:white"><strong style="font-size:21px">จองห้องประชุมออนไลน์</strong><small style="display:block;font-size:13px;margin-top:2px">ห้องประชุม e-GP / ห้องประชุม GF • ดูปฏิทินและคิวจอง</small></div>';
+      card.style.background = 'linear-gradient(135deg,#e8f3ff,#dbeafe 55%,#eef2ff)';
+      const now = new Date();
+      const days = [0,1,2].map((n) => { const d = new Date(now); d.setDate(d.getDate()+n); return d; });
+      const tiles = days.map((d,i) => '<div style="min-width:62px;border-radius:14px;background:white;padding:9px 8px;text-align:center;box-shadow:0 8px 18px rgba(30,64,175,.10)"><div style="font-size:11px;font-weight:800;color:#64748b">'+(i===0?'วันนี้':new Intl.DateTimeFormat('th-TH',{weekday:'short'}).format(d))+'</div><div style="font-size:24px;font-weight:950;color:#165cc3;line-height:1.1">'+d.getDate()+'</div><div style="font-size:10px;color:#94a3b8">'+new Intl.DateTimeFormat('th-TH',{month:'short'}).format(d)+'</div></div>').join('');
+      card.innerHTML = '<div style="position:absolute;inset:0;padding:22px 18px 72px;display:flex;flex-direction:column;justify-content:center"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:54px;height:54px;border-radius:16px;background:#1769e0;color:white;display:grid;place-items:center;font-size:28px">📅</div><div><strong style="display:block;font-size:20px;color:#153b69">ตารางประชุม</strong><small style="color:#5b6f86">ดูวันนี้และ 7 วันข้างหน้า</small></div></div><div style="display:flex;gap:8px;overflow:hidden">'+tiles+'</div></div><div style="position:absolute;left:0;right:0;bottom:0;padding:15px 16px;background:linear-gradient(90deg,#155bb7,#327fe6);color:white"><strong style="font-size:18px">จองห้องประชุมออนไลน์</strong><small style="display:block;font-size:12px;margin-top:2px">e-GP ห้องหลัก • GF ห้องสำรอง</small></div>';
       menu.appendChild(card);
     }
   };
