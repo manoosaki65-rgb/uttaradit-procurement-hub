@@ -27,6 +27,19 @@ const weatherEffectScript = `
     else if (/มีฝน/.test(text)) hero.classList.add('weather-rain');
   };
 
+  const addForgotScanIcon = () => {
+    if (location.pathname !== '/') return;
+    const hero = document.querySelector('.hero-banner');
+    if (!hero || hero.querySelector('a[data-forgot-scan-link]')) return;
+    const link = document.createElement('a');
+    link.href = '/forgot-scan';
+    link.setAttribute('data-forgot-scan-link', 'true');
+    link.setAttribute('aria-label', 'แจ้งลืมสแกนเวลาเข้าออก ตรวจสอบกล้องวงจรปิด');
+    link.style.cssText = 'position:absolute;left:18px;bottom:18px;z-index:8;display:flex;align-items:center;gap:10px;padding:10px 14px 10px 10px;border-radius:16px;background:rgba(255,255,255,.94);color:#172033;text-decoration:none;box-shadow:0 10px 28px rgba(15,23,42,.24);border:1px solid rgba(255,255,255,.75);backdrop-filter:blur(10px);max-width:calc(100% - 36px);';
+    link.innerHTML = '<span style="width:46px;height:46px;flex:0 0 46px;border-radius:13px;background:linear-gradient(135deg,#fb7185,#e11d48);color:white;display:grid;place-items:center;font-size:25px;box-shadow:0 6px 14px rgba(225,29,72,.25)">⏱️</span><span style="min-width:0"><strong style="display:block;font-size:15px;line-height:1.25">แจ้งลืมสแกนเวลาเข้า–ออก</strong><small style="display:block;margin-top:3px;color:#64748b;font-size:11px">ตรวจกล้องวงจรปิด / ส่งหลักฐาน</small></span>';
+    hero.appendChild(link);
+  };
+
   const addMeetingCard = () => {
     if (location.pathname !== '/') return;
     const menu = document.querySelector('section[aria-label="เมนูงานพัสดุ"]');
@@ -49,10 +62,11 @@ const weatherEffectScript = `
 
   const start = () => {
     sync();
+    addForgotScanIcon();
     addMeetingCard();
     const hero = document.querySelector('.hero-banner');
     if (!hero) return setTimeout(start, 300);
-    new MutationObserver(() => { sync(); addMeetingCard(); }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    new MutationObserver(() => { sync(); addForgotScanIcon(); addMeetingCard(); }).observe(document.body, { childList: true, subtree: true, characterData: true });
     setInterval(sync, 60000);
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
