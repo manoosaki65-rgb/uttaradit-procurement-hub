@@ -1,0 +1,284 @@
+/* Mobile-first refinements for /forgot-scan */
+@media (max-width: 900px) {
+  .fs-page {
+    padding: 10px !important;
+    overflow-x: hidden;
+  }
+
+  .fs-wrap {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .fs-back {
+    min-height: 44px;
+    margin-bottom: 8px !important;
+    padding: 8px 4px;
+  }
+
+  .fs-hero,
+  .fs-card {
+    border-radius: 14px !important;
+    padding: 14px !important;
+  }
+
+  .fs-hero {
+    margin-bottom: 10px !important;
+    gap: 10px !important;
+  }
+
+  .fs-icon {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px;
+    border-radius: 12px !important;
+  }
+
+  .fs-hero h1 {
+    font-size: 20px !important;
+    line-height: 1.25;
+  }
+
+  .fs-hero p {
+    font-size: 12px !important;
+    line-height: 1.45;
+  }
+
+  .calendar-card {
+    padding: 0 !important;
+    border-radius: 14px !important;
+  }
+
+  .calendar-head {
+    grid-template-columns: 44px minmax(0,1fr) 44px !important;
+    padding: 10px 8px !important;
+    gap: 4px !important;
+  }
+
+  .calendar-head > button {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 11px !important;
+  }
+
+  .calendar-head > div {
+    min-width: 0;
+    gap: 3px 6px !important;
+  }
+
+  .calendar-head strong {
+    font-size: 17px !important;
+  }
+
+  .calendar-head small {
+    font-size: 11px !important;
+  }
+
+  .day-row {
+    grid-template-columns: 58px minmax(0,1fr) !important;
+    min-height: 58px !important;
+  }
+
+  .day-number {
+    min-width: 58px;
+    padding: 6px 3px !important;
+    touch-action: manipulation;
+  }
+
+  .day-number b {
+    font-size: 22px !important;
+  }
+
+  .day-number span {
+    font-size: 10px !important;
+    margin-top: 3px !important;
+  }
+
+  .day-content {
+    min-width: 0;
+    padding: 6px 8px !important;
+    gap: 5px !important;
+  }
+
+  .empty-day {
+    min-height: 46px;
+    padding: 6px 2px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px !important;
+    touch-action: manipulation;
+  }
+
+  .empty-day span {
+    float: none !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 7px 9px;
+    border-radius: 10px;
+    background: #eff6ff;
+    white-space: nowrap;
+    font-size: 12px !important;
+  }
+
+  .day-request {
+    min-height: 52px;
+    padding: 8px 9px !important;
+    gap: 6px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    touch-action: manipulation;
+  }
+
+  .day-request div {
+    min-width: 0;
+  }
+
+  .day-request strong {
+    font-size: 13px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .day-request small {
+    font-size: 11px !important;
+  }
+
+  .day-request em {
+    flex: 0 0 auto;
+    font-size: 10px !important;
+    padding: 4px 6px !important;
+  }
+
+  .add-inline {
+    min-height: 38px;
+    padding: 5px 2px !important;
+  }
+
+  .form-card,
+  .detail-card {
+    padding: 14px !important;
+  }
+
+  .two,
+  .attach-grid,
+  .captures {
+    grid-template-columns: 1fr !important;
+  }
+
+  .fs-form input,
+  .fs-form select,
+  .fs-form textarea,
+  .drive-box input {
+    min-height: 46px;
+    font-size: 16px !important;
+  }
+
+  .pills button,
+  .primary,
+  .bottom-actions button,
+  .drive-box button,
+  .controls button {
+    min-height: 44px;
+  }
+
+  .active-head {
+    padding: 10px !important;
+    margin: 10px 0 14px !important;
+  }
+
+  .controls {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 7px !important;
+    padding: 0 10px !important;
+  }
+
+  .controls .capture {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-left: 0 !important;
+  }
+
+  .bottom-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .fs-page {
+    padding: 6px !important;
+  }
+
+  .fs-hero,
+  .fs-card {
+    border-radius: 12px !important;
+  }
+
+  .fs-hero {
+    padding: 11px !important;
+  }
+
+  .fs-icon {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px;
+  }
+
+  .fs-hero h1 {
+    font-size: 18px !important;
+  }
+
+  .calendar-head {
+    grid-template-columns: 40px minmax(0,1fr) 40px !important;
+    padding: 8px 5px !important;
+  }
+
+  .calendar-head > button {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .calendar-head strong {
+    font-size: 16px !important;
+  }
+
+  .day-row {
+    grid-template-columns: 50px minmax(0,1fr) !important;
+  }
+
+  .day-number {
+    min-width: 50px;
+  }
+
+  .day-number b {
+    font-size: 20px !important;
+  }
+
+  .day-content {
+    padding: 5px 6px !important;
+  }
+
+  .empty-day {
+    font-size: 11px !important;
+  }
+
+  .empty-day span {
+    font-size: 11px !important;
+    padding: 6px 7px;
+  }
+
+  .day-request strong {
+    font-size: 12px !important;
+  }
+
+  .day-request small {
+    font-size: 10px !important;
+  }
+}
