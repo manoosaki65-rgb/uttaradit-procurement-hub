@@ -105,7 +105,6 @@ function parseCameraStamp(text: string) {
   let cameraDate = "";
   if (date) {
     const a = Number(date[1]), b = Number(date[2]), year = Number(date[3]);
-    // กล้องชุดนี้แสดงแบบ MM-DD-YYYY เช่น 10-20-2026
     const month = a;
     const day = b;
     if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
@@ -275,9 +274,7 @@ export default function ForgotScanPage() {
         const stamp = await readCameraStamp(v);
         cameraDate = stamp.cameraDate;
         cameraTime = stamp.cameraTime;
-      } catch {
-        // เก็บภาพไว้ได้ แม้ OCR อ่านไม่สำเร็จ เพื่อให้ผู้ใช้กรอกวันเวลาเอง
-      }
+      } catch {}
       const cap: Capture = {
         id: crypto.randomUUID(), image, seconds: v.currentTime, clipTime: fmtTime(v.currentTime), cameraDate, cameraTime,
       };
@@ -285,7 +282,7 @@ export default function ForgotScanPage() {
       if (cameraDate && cameraTime) {
         setMessage(`จับภาพแล้ว — อ่านเวลาจากกล้องได้ ${compactThaiDate(cameraDate)} ${cameraTime} น.`);
       } else {
-        setMessage("จับภาพแล้ว แต่ระบบอ่านวัน/เวลาบนภาพไม่ครบ กรุณาตรวจและกรอกใต้ภาพก่อนพิมพ์");
+        setMessage("จับภาพแล้ว ถ้าอ่านวัน/เวลาไม่ครบสามารถกรอกแก้ใต้ภาพได้ หรือพิมพ์ PDF ได้โดยดูวันเวลาจากตัวภาพกล้อง");
       }
     } catch {
       setMessage("ไม่สามารถจับภาพจากคลิปนี้ได้ กรุณาเลือกไฟล์วิดีโอจากเครื่อง");
@@ -315,10 +312,6 @@ export default function ForgotScanPage() {
   function printPdf() {
     if (!active) return;
     if (!active.captures.length) { setMessage("กรุณาแคปภาพหลักฐานอย่างน้อย 1 รูปก่อนพิมพ์"); return; }
-    if (active.captures.some((c) => !c.cameraDate || !c.cameraTime)) {
-      setMessage("กรุณาตรวจและกรอกวันที่/เวลาจากภาพกล้องให้ครบทุกภาพก่อนพิมพ์");
-      return;
-    }
     window.print();
   }
 
@@ -372,7 +365,7 @@ export default function ForgotScanPage() {
 
         {localVideoUrl ? <div className="player"><video ref={videoRef} src={localVideoUrl} playsInline onLoadedMetadata={(e)=>setDuration(e.currentTarget.duration)} onTimeUpdate={(e)=>setCurrentSeconds(e.currentTarget.currentTime)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)}/><div className="timebar"><b>{fmtTime(currentSeconds)}</b><span>/ {fmtTime(duration)}</span></div><input className="range" type="range" min={0} max={duration||0} step="0.1" value={Math.min(currentSeconds,duration||0)} onChange={(e)=>{const v=videoRef.current;if(v)v.currentTime=Number(e.target.value)}}/><div className="controls"><button onClick={()=>seek(-10)}>−10 วิ</button><button className="play" onClick={togglePlay}>{playing?<Pause size={18}/>:<Play size={18}/>} {playing?"หยุด":"เล่น"}</button><button onClick={()=>seek(10)}>+10 วิ</button><button className="capture" disabled={ocrBusy} onClick={captureFrame}><Camera size={18}/> {ocrBusy?"กำลังอ่านวันเวลา…":"แคปเจอร์ภาพ"}</button></div></div> : <div className="empty">เลือกไฟล์วิดีโอจากเครื่องเพื่อเปิดตัวเล่นและแคปภาพได้ทันที</div>}
 
-        <div className="captures">{active.captures.map((c,i)=><figure key={c.id}><img src={c.image} alt={`หลักฐาน ${i+1}`}/><figcaption><strong>ภาพที่ {i+1}</strong><div className="stamp-fields"><label><span>วันที่จากกล้อง</span><input type="date" value={c.cameraDate||""} onChange={(e)=>updateCapture(c.id,{cameraDate:e.target.value})}/></label><label><span>เวลาจากกล้อง</span><input type="time" step="1" value={c.cameraTime||""} onChange={(e)=>updateCapture(c.id,{cameraTime:e.target.value})}/></label></div>{c.cameraDate&&c.cameraTime&&<small>หลักฐาน: {compactThaiDate(c.cameraDate)} เวลา {c.cameraTime} น.</small>}</figcaption><button onClick={()=>removeCapture(c.id)}><X size={15}/></button></figure>)}</div>
+        <div className="captures">{active.captures.map((c,i)=><figure key={c.id}><img src={c.image} alt={`หลักฐาน ${i+1}`}/><figcaption><strong>ภาพที่ {i+1}</strong><div className="stamp-fields"><label><span>วันที่จากกล้อง</span><input type="date" value={c.cameraDate||""} onChange={(e)=>updateCapture(c.id,{cameraDate:e.target.value})}/></label><label><span>เวลาจากกล้อง</span><input type="time" step="1" value={c.cameraTime||""} onChange={(e)=>updateCapture(c.id,{cameraTime:e.target.value})}/></label></div>{c.cameraDate&&c.cameraTime?<small>หลักฐาน: {compactThaiDate(c.cameraDate)} เวลา {c.cameraTime} น.</small>:<small>ถ้ายังอ่านไม่ครบ สามารถพิมพ์ PDF ได้โดยใช้วันเวลาที่เห็นบนตัวภาพกล้อง</small>}</figcaption><button onClick={()=>removeCapture(c.id)}><X size={15}/></button></figure>)}</div>
         <div className="bottom-actions"><button onClick={markDone}>ตรวจสอบแล้ว</button><button className="print" onClick={printPdf}><Printer size={18}/> พิมพ์ / Save PDF</button></div>
         {message&&<div className="message"><CheckCircle2 size={18}/>{message}</div>}
       </section>}
@@ -381,7 +374,7 @@ export default function ForgotScanPage() {
     {active && <section className="print-report">
       <div className="report-title"><FileText size={28}/><div><h1>แบบรายงานกรณีลืมสแกนเวลาเข้า–ออก</h1><p>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์</p></div></div>
       <table><tbody><tr><th>ชื่อ–สกุล</th><td>{active.employeeName}</td></tr><tr><th>ตำแหน่ง</th><td>{active.position}</td></tr><tr><th>วันที่ลืมสแกน</th><td>{thaiDate(active.workDate)}</td></tr><tr><th>เวลา</th><td>{active.workTime} น.</td></tr><tr><th>ประเภท</th><td>ลืมสแกน{active.scanKind}</td></tr><tr><th>หมายเหตุ</th><td>{active.note||"-"}</td></tr><tr><th>คลิปที่ตรวจ</th><td>{active.videoName||active.driveUrl||"-"}</td></tr></tbody></table>
-      <div className={`report-images count-${active.captures.length}`}>{active.captures.map((c,i)=><figure key={c.id}><img src={c.image} alt={`หลักฐาน ${i+1}`}/><figcaption>ภาพหลักฐานที่ {i+1} — {compactThaiDate(c.cameraDate)} เวลา {c.cameraTime} น.</figcaption></figure>)}</div>
+      <div className={`report-images count-${active.captures.length}`}>{active.captures.map((c,i)=><figure key={c.id}><img src={c.image} alt={`หลักฐาน ${i+1}`}/><figcaption>{c.cameraDate&&c.cameraTime?`ภาพหลักฐานที่ ${i+1} — ${compactThaiDate(c.cameraDate)} เวลา ${c.cameraTime} น.`:`ภาพหลักฐานที่ ${i+1} — วัน/เวลาตามที่ปรากฏในภาพกล้อง`}</figcaption></figure>)}</div>
       <div className="sign"><div><p>ลงชื่อ ............................................................ ผู้แจ้ง</p><p>( {active.employeeName} )</p><p>วันที่ ........../........../..........</p></div><div><p>ลงชื่อ ............................................................ ผู้ตรวจสอบ</p><p>( ............................................................ )</p><p>วันที่ ........../........../..........</p></div><div><p>ลงชื่อ ............................................................ หัวหน้ากลุ่มงานพัสดุ</p><p>( นางวราพร จันทร์ศรีทอง )</p><p>วันที่ ........../........../..........</p></div></div>
     </section>}
 
