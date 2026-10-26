@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./weather-effects.css";
+import "./forgot-scan-mobile.css";
 
 export const metadata: Metadata = {
   title: "ระบบงานพัสดุ โรงพยาบาลอุตรดิตถ์",
