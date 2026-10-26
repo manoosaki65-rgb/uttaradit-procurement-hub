@@ -1,0 +1,35 @@
+@media print {
+  .print-report .sign {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    margin-top: 28px !important;
+    align-items: start !important;
+  }
+
+  .print-report .sign > div,
+  .print-report .sign > div:last-child {
+    grid-column: auto !important;
+    width: auto !important;
+    justify-self: stretch !important;
+    min-width: 0 !important;
+  }
+
+  .print-report .sign p {
+    margin: 7px 0 !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+  }
+
+  .print-report .sign p:first-child {
+    font-size: 11.5px !important;
+    letter-spacing: -0.1px !important;
+  }
+
+  .print-report .sign p:nth-child(2),
+  .print-report .sign p:nth-child(3) {
+    font-size: 11.5px !important;
+  }
+}
