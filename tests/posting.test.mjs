@@ -39,11 +39,12 @@ test('attachment matching requires a unique exact title in the same day and type
  assert.equal(exactMatch(row.title,row.kind,'2026-10-08',[row]),undefined);
  assert.equal(exactMatch(row.title,row.kind,row.postedDate,[row,{...row,id:'duplicate'}]),undefined);
 });
-test('central mutation rejects duplicate records and impossible calendar dates',()=>{
- const rows=[];const cmd={action:'save',id:'first',title:'ซื้อวัสดุการแพทย์',kind:KINDS[0],postedDate:'2026-10-09'};mutate(rows,cmd,'now');
- assert.throws(()=>mutate(rows,{...cmd,id:'duplicate',title:'ซื้อ วัสดุการแพทย์'},'now'),/รายการเดิม/);
+test('central mutation allows same-title records with distinct IDs and rejects impossible calendar dates',()=>{
+ const rows=[];const cmd={action:'save',id:'first',title:'ตรายาง',kind:KINDS[0],postedDate:'2026-10-27'};mutate(rows,cmd,'now');
+ mutate(rows,{...cmd,id:'second',title:'ตรายาง'},'now');
+ assert.equal(rows.length,2);
+ assert.notEqual(rows[0].id,rows[1].id);
  assert.throws(()=>mutate(rows,{...cmd,id:'invalid',postedDate:'2026-02-31'},'now'),/วันที่/);
- assert.equal(rows.length,1);
 });
 test('proxy rejects an integration that responds with unrelated JSON',async()=>{
  const original=globalThis.fetch;globalThis.fetch=async()=>Response.json({ok:true});
