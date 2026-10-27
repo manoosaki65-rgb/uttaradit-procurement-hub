@@ -1,0 +1,1 @@
+Trigger production deployment for forgot-scan emergency recovery on 2026-10-27. No application data is stored in this file.
