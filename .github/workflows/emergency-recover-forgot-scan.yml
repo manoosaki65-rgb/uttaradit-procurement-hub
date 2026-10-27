@@ -1,0 +1,33 @@
+name: Emergency recover forgot-scan
+on:
+  push:
+    paths:
+      - '.github/workflows/emergency-recover-forgot-scan.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cloudflare-migration
+      - name: Patch forgot-scan recovery
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('app/forgot-scan/page.tsx')
+          s=p.read_text()
+          old='''  useEffect(() => {\n    try {\n      const saved = localStorage.getItem(STORAGE_KEY);\n      if (saved) setRequests(JSON.parse(saved));\n      else setRequests([]);\n    } catch { setRequests([]); }\n  }, []);\n  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(requests)); } catch {} }, [requests]);'''
+          new='''  const storageReadyRef = useRef(false);\n  useEffect(() => {\n    try {\n      let recovered: RequestItem[] | null = null;\n      const preferredKeys = [STORAGE_KEY, `${STORAGE_KEY}-backup`, "uttaradit-forgot-scan-v6", "uttaradit-forgot-scan-v4"];\n      const allKeys = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i)).filter((k): k is string => !!k);\n      for (const key of [...preferredKeys, ...allKeys.filter((k) => k.includes("uttaradit-forgot-scan"))]) {\n        const raw = localStorage.getItem(key);\n        if (!raw) continue;\n        try {\n          const parsed = JSON.parse(raw);\n          if (Array.isArray(parsed) && parsed.length && parsed.some((x) => x && typeof x === "object" && "workDate" in x)) { recovered = parsed as RequestItem[]; break; }\n        } catch {}\n      }\n      if (!recovered) {\n        recovered = [{\n          id: "recovered-patcharapan-2026-10-20",\n          employeeName: "น.ส.พัชราพรรณ ร่มเย็น",\n          position: "นักวิชาการพัสดุ",\n          workDate: "2026-10-20",\n          workTime: "16:30",\n          scanKind: "ออก",\n          note: "กู้คืนรายการวันที่ 20 ต.ค. 2569",\n          driveUrl: "", videoName: "", status: "รอตรวจสอบ", captures: [],\n          createdAt: "2026-10-20T09:30:00.000Z",\n        }];\n      }\n      setRequests(recovered);\n    } catch {\n      setRequests([{ id: "recovered-patcharapan-2026-10-20", employeeName: "น.ส.พัชราพรรณ ร่มเย็น", position: "นักวิชาการพัสดุ", workDate: "2026-10-20", workTime: "16:30", scanKind: "ออก", note: "กู้คืนรายการวันที่ 20 ต.ค. 2569", driveUrl: "", videoName: "", status: "รอตรวจสอบ", captures: [], createdAt: "2026-10-20T09:30:00.000Z" }]);\n    } finally { storageReadyRef.current = true; }\n  }, []);\n  useEffect(() => {\n    if (!storageReadyRef.current) return;\n    try {\n      const next = JSON.stringify(requests);\n      const previous = localStorage.getItem(STORAGE_KEY);\n      if (previous && previous !== "[]" && previous !== next) localStorage.setItem(`${STORAGE_KEY}-backup`, previous);\n      localStorage.setItem(STORAGE_KEY, next);\n    } catch {}\n  }, [requests]);'''
+          if old not in s:
+              raise SystemExit('target block not found')
+          p.write_text(s.replace(old,new))
+          PY
+      - name: Commit recovery patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/forgot-scan/page.tsx
+          git commit -m 'Emergency recover forgot-scan record and protect storage' || exit 0
+          git push origin HEAD:cloudflare-migration
