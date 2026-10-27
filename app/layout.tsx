@@ -29,21 +29,6 @@ const weatherEffectScript = `
     else if (/มีฝน/.test(text)) hero.classList.add('weather-rain');
   };
 
-  const addForgotScanIcon = () => {
-    if (location.pathname !== '/') return;
-    const topbarRight = document.querySelector('.topbar-right');
-    if (!topbarRight || topbarRight.querySelector('a[data-forgot-scan-link]')) return;
-    const link = document.createElement('a');
-    link.href = '/forgot-scan';
-    link.setAttribute('data-forgot-scan-link', 'true');
-    link.setAttribute('aria-label', 'แจ้งลืมสแกนเวลาเข้าออก ตรวจสอบกล้องวงจรปิด');
-    link.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 11px 7px 8px;border-radius:14px;background:#fff1f2;color:#9f1239;text-decoration:none;border:1px solid #fecdd3;box-shadow:0 4px 12px rgba(225,29,72,.10);white-space:nowrap;';
-    link.innerHTML = '<span style="width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:linear-gradient(135deg,#fb7185,#e11d48);color:white;display:grid;place-items:center;font-size:19px;box-shadow:0 4px 10px rgba(225,29,72,.20)">⏱️</span><span style="min-width:0"><strong style="display:block;font-size:12px;line-height:1.2">แจ้งลืมสแกน</strong><small style="display:block;margin-top:2px;color:#be123c;font-size:10px">เวลาเข้า–ออก</small></span>';
-    const dateBox = topbarRight.querySelector('.date-box');
-    if (dateBox) topbarRight.insertBefore(link, dateBox);
-    else topbarRight.prepend(link);
-  };
-
   const addMeetingCard = () => {
     if (location.pathname !== '/') return;
     const menu = document.querySelector('section[aria-label="เมนูงานพัสดุ"]');
@@ -66,11 +51,10 @@ const weatherEffectScript = `
 
   const start = () => {
     sync();
-    addForgotScanIcon();
     addMeetingCard();
     const hero = document.querySelector('.hero-banner');
     if (!hero) return setTimeout(start, 300);
-    new MutationObserver(() => { sync(); addForgotScanIcon(); addMeetingCard(); }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    new MutationObserver(() => { sync(); addMeetingCard(); }).observe(document.body, { childList: true, subtree: true, characterData: true });
     setInterval(sync, 60000);
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
