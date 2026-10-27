@@ -1,0 +1,27 @@
+name: Restore forgot-scan video player
+on:
+  push:
+    branches: [cloudflare-migration]
+    paths:
+      - '.github/scripts/restore-forgot-scan-video-player.py'
+      - '.github/restore-forgot-scan-video-player.trigger'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cloudflare-migration
+      - run: python .github/scripts/restore-forgot-scan-video-player.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/forgot-scan/page.tsx
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Restore yesterday-style forgot-scan video playback"
+            git push origin HEAD:cloudflare-migration
+          fi
