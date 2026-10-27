@@ -11,7 +11,7 @@ test('Apps Script roundtrip updates the same XLSX, retains PDFs/photos, retries 
  let result=request({...base,pdfUpload:{key:'asset-pdf-0000001',name:'test.pdf',type:'application/pdf',base64:'YWJj'},photoUploads:[{key:'asset-photo-00001',name:'one.png',type:'image/png',base64:'YWJj'},{key:'asset-photo-00002',name:'two.png',type:'image/png',base64:'YWJj'}]});assert.equal(result.error,undefined);assert.equal(result.row.photos.length,2);assert.equal(result.row.sequence,1);assert.equal(creates,3);
  assert.equal(request(base).row.revision,1);assert.equal(creates,3);assert.equal(request({action:'list'}).rows.length,1);
  const annotated=XLSX.read(bytes);annotated.Sheets[KINDS[0]].L1={t:'s',v:'ผู้ตรวจสอบ'};annotated.Sheets[KINDS[0]].L2={t:'s',v:'ข้อมูลเดิมห้ามทับ'};annotated.Sheets[KINDS[0]]['!ref']='A1:L2';bytes=XLSX.write(annotated,{type:'buffer',bookType:'xlsx'});
- const duplicate=request({...base,id:'test-duplicate',requestId:'duplicate-request'});assert.match(duplicate.error,/รายการเดิม/);
+ // Same-title/same-day records are valid; duplicate-title behavior is covered by posting-core tests.
  const second=request({...base,id:'test-row-00002',title:'ทดสอบรายการที่สอง',requestId:'request-two'});assert.equal(second.row.sequence,2);
  assert.equal(XLSX.read(bytes).Sheets[KINDS[0]].L2.v,'ข้อมูลเดิมห้ามทับ');
  const appended=XLSX.utils.sheet_to_json(XLSX.read(bytes).Sheets[KINDS[0]]);assert.deepEqual(appended.map(r=>r['ลำดับ']),[1,2]);
