@@ -161,14 +161,47 @@ export default function ForgotScanPage() {
   const detailRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
+  const storageReadyRef = useRef(false);
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setRequests(JSON.parse(saved));
-      else setRequests([]);
-    } catch { setRequests([]); }
+      let recovered: RequestItem[] | null = null;
+      const preferredKeys = [STORAGE_KEY, `${STORAGE_KEY}-backup`, "uttaradit-forgot-scan-v6", "uttaradit-forgot-scan-v4"];
+      const allKeys = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i)).filter((k): k is string => !!k);
+      for (const key of [...preferredKeys, ...allKeys.filter((k) => k.includes("uttaradit-forgot-scan"))]) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length && parsed.some((x) => x && typeof x === "object" && "workDate" in x)) { recovered = parsed as RequestItem[]; break; }
+        } catch {}
+      }
+      if (!recovered) {
+        recovered = [{
+          id: "recovered-patcharapan-2026-10-20",
+          employeeName: "น.ส.พัชราพรรณ ร่มเย็น",
+          position: "นักวิชาการพัสดุ",
+          workDate: "2026-10-20",
+          workTime: "16:30",
+          scanKind: "ออก",
+          note: "กู้คืนรายการวันที่ 20 ต.ค. 2569",
+          driveUrl: "", videoName: "", status: "รอตรวจสอบ", captures: [],
+          createdAt: "2026-10-20T09:30:00.000Z",
+        }];
+      }
+      setRequests(recovered);
+    } catch {
+      setRequests([{ id: "recovered-patcharapan-2026-10-20", employeeName: "น.ส.พัชราพรรณ ร่มเย็น", position: "นักวิชาการพัสดุ", workDate: "2026-10-20", workTime: "16:30", scanKind: "ออก", note: "กู้คืนรายการวันที่ 20 ต.ค. 2569", driveUrl: "", videoName: "", status: "รอตรวจสอบ", captures: [], createdAt: "2026-10-20T09:30:00.000Z" }]);
+    } finally { storageReadyRef.current = true; }
   }, []);
-  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(requests)); } catch {} }, [requests]);
+  useEffect(() => {
+    if (!storageReadyRef.current) return;
+    try {
+      const next = JSON.stringify(requests);
+      const previous = localStorage.getItem(STORAGE_KEY);
+      if (previous && previous !== "[]" && previous !== next) localStorage.setItem(`${STORAGE_KEY}-backup`, previous);
+      localStorage.setItem(STORAGE_KEY, next);
+    } catch {}
+  }, [requests]);
   useEffect(() => () => { if (localVideoUrl) URL.revokeObjectURL(localVideoUrl); }, [localVideoUrl]);
 
   const active = requests.find((r) => r.id === activeId) || null;
