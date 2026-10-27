@@ -61,20 +61,6 @@ const STAFF: Staff[] = [
 ];
 
 const STORAGE_KEY = "uttaradit-forgot-scan-v5";
-const DEMO_REQUEST: RequestItem = {
-  id: "demo-patcharapan-2026-10-20",
-  employeeName: "น.ส.พัชราพรรณ ร่มเย็น",
-  position: "นักวิชาการพัสดุ",
-  workDate: "2026-10-20",
-  workTime: "16:30",
-  scanKind: "ออก",
-  note: "ตัวอย่างรายการสำหรับจับคู่คลิปกล้องวงจรปิด",
-  driveUrl: "",
-  videoName: "",
-  status: "รอตรวจสอบ",
-  captures: [],
-  createdAt: "2026-10-20T09:30:00.000Z",
-};
 
 function fmtTime(seconds: number) {
   const s = Math.max(0, Math.floor(seconds || 0));
@@ -154,10 +140,10 @@ export default function ForgotScanPage() {
   const now = new Date();
   const [calendarYear, setCalendarYear] = useState(now.getFullYear());
   const [calendarMonth, setCalendarMonth] = useState(now.getMonth());
-  const [employeeName, setEmployeeName] = useState("น.ส.พัชราพรรณ ร่มเย็น");
+  const [employeeName, setEmployeeName] = useState(STAFF[0].name);
   const currentStaff = STAFF.find((s) => s.name === employeeName) || STAFF[0];
-  const [workDate, setWorkDate] = useState("2026-10-20");
-  const [workTime, setWorkTime] = useState("16:30");
+  const [workDate, setWorkDate] = useState(dateKey(now.getFullYear(), now.getMonth(), now.getDate()));
+  const [workTime, setWorkTime] = useState("");
   const [scanKind, setScanKind] = useState<"เข้า" | "ออก">("ออก");
   const [note, setNote] = useState("");
   const [requests, setRequests] = useState<RequestItem[]>([]);
@@ -179,8 +165,8 @@ export default function ForgotScanPage() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) setRequests(JSON.parse(saved));
-      else setRequests([DEMO_REQUEST]);
-    } catch { setRequests([DEMO_REQUEST]); }
+      else setRequests([]);
+    } catch { setRequests([]); }
   }, []);
   useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(requests)); } catch {} }, [requests]);
   useEffect(() => () => { if (localVideoUrl) URL.revokeObjectURL(localVideoUrl); }, [localVideoUrl]);
