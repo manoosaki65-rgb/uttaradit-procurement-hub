@@ -1,0 +1,23 @@
+name: Add forgot-scan browser transcode
+on:
+  push:
+    branches: [cloudflare-migration]
+    paths:
+      - '.github/add-forgot-scan-browser-transcode.trigger'
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cloudflare-migration
+      - run: python .github/scripts/add-forgot-scan-browser-transcode.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json app/forgot-scan/page.tsx
+          git diff --cached --quiet && exit 0
+          git commit -m "Auto-convert unsupported CCTV video in browser"
+          git push origin cloudflare-migration
