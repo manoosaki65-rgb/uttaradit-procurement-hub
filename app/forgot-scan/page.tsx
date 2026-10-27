@@ -321,7 +321,18 @@ export default function ForgotScanPage() {
 
   async function togglePlay() {
     const v = videoRef.current; if (!v) return;
-    if (v.paused) await v.play(); else v.pause();
+    if (v.paused) {
+      try {
+        setVideoError(false);
+        setMessage("");
+        await v.play();
+      } catch {
+        setVideoError(true);
+        setDuration(0);
+        setCurrentSeconds(0);
+        setMessage("วิดีโอนี้เล่นไม่ได้ใน Chrome เครื่องนี้ — เลือกภาพหลักฐาน 1 รูปด้านล่างแทนได้ทันที");
+      }
+    } else v.pause();
   }
 
   async function captureFrame() {
@@ -444,7 +455,7 @@ export default function ForgotScanPage() {
           <div className="drive-box"><strong>ลิงก์ไฟล์ Google Drive</strong><input value={driveUrl} onChange={(e)=>setDriveUrl(e.target.value)} placeholder="https://drive.google.com/file/d/..."/><button onClick={saveDriveLink}>บันทึกลิงก์</button>{active.driveUrl&&<a href={active.driveUrl} target="_blank" rel="noopener noreferrer">เปิดคลิปใน Google Drive ↗</a>}</div>
         </div>
 
-        {localVideoUrl ? <div className="player"><video ref={videoRef} src={localVideoUrl} playsInline controls preload="metadata" onLoadedMetadata={(e)=>{setVideoError(false);setDuration(e.currentTarget.duration)}} onTimeUpdate={(e)=>setCurrentSeconds(e.currentTarget.currentTime)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onError={()=>{setVideoError(true);setDuration(0);setCurrentSeconds(0);setMessage("ไฟล์วิดีโอนี้ใช้ codec ที่ Chrome บนเครื่องนี้อ่านไม่ได้ — เลือกภาพหลักฐาน 1 รูปด้านล่างแทนได้ทันที")}}/><div className="timebar"><b>{fmtTime(currentSeconds)}</b><span>/ {fmtTime(duration)}</span></div>{!videoError&&<><input className="range" type="range" min={0} max={duration||0} step="0.1" value={Math.min(currentSeconds,duration||0)} onChange={(e)=>{const v=videoRef.current;if(v)v.currentTime=Number(e.target.value)}}/><div className="controls"><button onClick={()=>seek(-10)}>−10 วิ</button><button className="play" onClick={togglePlay}>{playing?<Pause size={18}/>:<Play size={18}/>} {playing?"หยุด":"เล่น"}</button><button onClick={()=>seek(10)}>+10 วิ</button><button className="capture" disabled={ocrBusy} onClick={captureFrame}><Camera size={18}/> {ocrBusy?"กำลังอ่านวันเวลา…":"แคปเจอร์ภาพ"}</button></div></>} {videoError&&<label className="video-fallback"><Camera size={20}/><strong>วิดีโอเล่นไม่ได้ — เลือกภาพหลักฐาน 1 รูปแทน</strong><small>รองรับ JPG / PNG และนำไปพิมพ์ครึ่ง A4 ได้ทันที</small><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e)=>attachEvidenceImage(e.target.files?.[0])}/></label>}</div> : <div className="empty">เลือกไฟล์วิดีโอจากเครื่องเพื่อเปิดตัวเล่นและแคปภาพได้ทันที</div>}
+        {localVideoUrl ? <div className="player"><video ref={videoRef} src={localVideoUrl} playsInline onLoadedMetadata={(e)=>{setVideoError(false);setDuration(e.currentTarget.duration)}} onTimeUpdate={(e)=>setCurrentSeconds(e.currentTarget.currentTime)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)}/><div className="timebar"><b>{fmtTime(currentSeconds)}</b><span>/ {fmtTime(duration)}</span></div>{!videoError&&<><input className="range" type="range" min={0} max={duration||0} step="0.1" value={Math.min(currentSeconds,duration||0)} onChange={(e)=>{const v=videoRef.current;if(v)v.currentTime=Number(e.target.value)}}/><div className="controls"><button onClick={()=>seek(-10)}>−10 วิ</button><button className="play" onClick={togglePlay}>{playing?<Pause size={18}/>:<Play size={18}/>} {playing?"หยุด":"เล่น"}</button><button onClick={()=>seek(10)}>+10 วิ</button><button className="capture" disabled={ocrBusy} onClick={captureFrame}><Camera size={18}/> {ocrBusy?"กำลังอ่านวันเวลา…":"แคปเจอร์ภาพ"}</button></div></>} {videoError&&<label className="video-fallback"><Camera size={20}/><strong>วิดีโอเล่นไม่ได้ — เลือกภาพหลักฐาน 1 รูปแทน</strong><small>รองรับ JPG / PNG และนำไปพิมพ์ครึ่ง A4 ได้ทันที</small><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e)=>attachEvidenceImage(e.target.files?.[0])}/></label>}</div> : <div className="empty">เลือกไฟล์วิดีโอจากเครื่องเพื่อเปิดตัวเล่นและแคปภาพได้ทันที</div>}
 
         <div className="captures">{active.captures.map((c,i)=><figure key={c.id}><img src={c.image} alt={`หลักฐาน ${i+1}`}/><figcaption><strong>ภาพที่ {i+1}</strong><div className="stamp-fields"><label><span>วันที่จากกล้อง</span><input type="date" value={c.cameraDate||""} onChange={(e)=>updateCapture(c.id,{cameraDate:e.target.value})}/></label><label><span>เวลาจากกล้อง</span><input type="time" step="1" value={c.cameraTime||""} onChange={(e)=>updateCapture(c.id,{cameraTime:e.target.value})}/></label></div>{c.cameraDate&&c.cameraTime?<small>หลักฐาน: {compactThaiDate(c.cameraDate)} เวลา {c.cameraTime} น.</small>:<small>ถ้ายังอ่านไม่ครบ สามารถพิมพ์ PDF ได้โดยใช้วันเวลาที่เห็นบนตัวภาพกล้อง</small>}</figcaption><button onClick={()=>removeCapture(c.id)}><X size={15}/></button></figure>)}</div>
         <div className="bottom-actions"><button onClick={markDone}>ตรวจสอบแล้ว</button><button className="print" onClick={printPdf}><Printer size={18}/> พิมพ์ / Save PDF</button></div>
