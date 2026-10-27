@@ -375,7 +375,19 @@ export default function ForgotScanPage() {
 
   function markDone() {
     if (!active) return;
-    setRequests((prev) => prev.map((r) => r.id === active.id ? { ...r, status: "ตรวจสอบแล้ว" } : r));
+    const doneId = active.id;
+    setRequests((prev) => prev.map((r) => r.id === doneId ? { ...r, status: "ตรวจสอบแล้ว" } : r));
+    if (localVideoUrl) URL.revokeObjectURL(localVideoUrl);
+    setActiveId(null);
+    setLocalVideoUrl("");
+    setDriveUrl("");
+    setVideoName("");
+    setCurrentSeconds(0);
+    setDuration(0);
+    setPlaying(false);
+    setVideoError(false);
+    setMessage("");
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
   }
 
   function printPdf() {
