@@ -158,6 +158,11 @@ export default function ForgotScanPage() {
   const [message, setMessage] = useState("");
   const [ocrBusy, setOcrBusy] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [sourceVideoFile, setSourceVideoFile] = useState<File | null>(null);
+  const [converting, setConverting] = useState(false);
+  const [convertProgress, setConvertProgress] = useState(0);
+  const [convertedForBrowser, setConvertedForBrowser] = useState(false);
+  const ffmpegRef = useRef<any>(null);
   const formRef = useRef<HTMLElement | null>(null);
   const detailRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -270,6 +275,7 @@ export default function ForgotScanPage() {
   function openRequest(item: RequestItem) {
     setActiveId(item.id); setDriveUrl(item.driveUrl || ""); setVideoName(item.videoName || "");
     setLocalVideoUrl(""); setCurrentSeconds(0); setDuration(0); setPlaying(false); setMessage("");
+    setSourceVideoFile(null); setConverting(false); setConvertProgress(0); setConvertedForBrowser(false); setVideoError(false);
     setTimeout(() => detailRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   }
 
@@ -278,8 +284,86 @@ export default function ForgotScanPage() {
     if (localVideoUrl) URL.revokeObjectURL(localVideoUrl);
     setVideoError(false);
     setMessage("");
+    setSourceVideoFile(file);
+    setConvertedForBrowser(false);
+    setConvertProgress(0);
     const url = URL.createObjectURL(file); setLocalVideoUrl(url); setVideoName(file.name);
     setRequests((prev) => prev.map((r) => r.id === active.id ? { ...r, videoName: file.name, status: "กำลังตรวจสอบ" } : r));
+  }
+
+
+  async function convertVideoForBrowser(file?: File | null) {
+    if (!file || converting) return;
+    if (file.size >= 2 * 1024 * 1024 * 1024) {
+      setVideoError(true);
+      setMessage("ไฟล์ใหญ่เกิน 2 GB ระบบแปลงในเบราว์เซอร์ไม่ได้ — กรุณาตัดเฉพาะช่วงเวลาที่ต้องการก่อน");
+      return;
+    }
+    setConverting(true);
+    setVideoError(false);
+    setConvertProgress(0);
+    setMessage("กำลังเตรียมตัวแปลงวิดีโอในเครื่อง…");
+    try {
+      const [{ FFmpeg }, { fetchFile, toBlobURL }] = await Promise.all([
+        import("@ffmpeg/ffmpeg"),
+        import("@ffmpeg/util"),
+      ]);
+      let ffmpeg = ffmpegRef.current;
+      if (!ffmpeg) {
+        ffmpeg = new FFmpeg();
+        ffmpeg.on("progress", ({ progress }: { progress: number }) => {
+          const p = Math.max(0, Math.min(1, Number(progress) || 0));
+          setConvertProgress(p);
+          setMessage(`กำลังแปลงไฟล์ CCTV ให้ Chrome เล่นได้… ${Math.round(p * 100)}%`);
+        });
+        const baseURL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd";
+        await ffmpeg.load({
+          coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
+          wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
+        });
+        ffmpegRef.current = ffmpeg;
+      }
+      const stamp = Date.now();
+      const ext = (file.name.split(".").pop() || "mp4").replace(/[^a-zA-Z0-9]/g, "") || "mp4";
+      const inputName = `cctv-${stamp}.${ext}`;
+      const outputName = `cctv-browser-${stamp}.mp4`;
+      await ffmpeg.writeFile(inputName, await fetchFile(file));
+      const code = await ffmpeg.exec([
+        "-i", inputName,
+        "-an",
+        "-c:v", "libx264",
+        "-preset", "ultrafast",
+        "-crf", "26",
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        outputName,
+      ]);
+      if (code !== 0) throw new Error(`ffmpeg exit ${code}`);
+      const raw = await ffmpeg.readFile(outputName);
+      const bytes = raw instanceof Uint8Array ? new Uint8Array(raw) : new TextEncoder().encode(String(raw));
+      const blob = new Blob([bytes], { type: "video/mp4" });
+      const url = URL.createObjectURL(blob);
+      setLocalVideoUrl((old) => {
+        if (old) URL.revokeObjectURL(old);
+        return url;
+      });
+      setCurrentSeconds(0);
+      setDuration(0);
+      setPlaying(false);
+      setConvertedForBrowser(true);
+      setVideoError(false);
+      setConvertProgress(1);
+      setMessage("แปลงไฟล์สำเร็จแล้ว — กดเล่น กรอ และแคปภาพได้เลย");
+      try { await ffmpeg.deleteFile(inputName); } catch {}
+      try { await ffmpeg.deleteFile(outputName); } catch {}
+      window.setTimeout(() => videoRef.current?.load(), 50);
+    } catch (err) {
+      console.error("forgot-scan video conversion failed", err);
+      setVideoError(true);
+      setMessage("แปลงวิดีโออัตโนมัติไม่สำเร็จ — ยังสามารถเลือกภาพหลักฐาน 1 รูปแทนได้");
+    } finally {
+      setConverting(false);
+    }
   }
 
   function attachEvidenceImage(file?: File) {
@@ -327,10 +411,14 @@ export default function ForgotScanPage() {
         setMessage("");
         await v.play();
       } catch {
-        setVideoError(true);
-        setDuration(0);
-        setCurrentSeconds(0);
-        setMessage("วิดีโอนี้เล่นไม่ได้ใน Chrome เครื่องนี้ — เลือกภาพหลักฐาน 1 รูปด้านล่างแทนได้ทันที");
+        if (sourceVideoFile && !convertedForBrowser && !converting) {
+          await convertVideoForBrowser(sourceVideoFile);
+        } else {
+          setVideoError(true);
+          setDuration(0);
+          setCurrentSeconds(0);
+          setMessage("วิดีโอนี้ยังเล่นไม่ได้หลังแปลง — เลือกภาพหลักฐาน 1 รูปแทนได้");
+        }
       }
     } else v.pause();
   }
@@ -397,6 +485,10 @@ export default function ForgotScanPage() {
     setDuration(0);
     setPlaying(false);
     setVideoError(false);
+    setSourceVideoFile(null);
+    setConverting(false);
+    setConvertProgress(0);
+    setConvertedForBrowser(false);
     setMessage("");
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
   }
@@ -455,7 +547,7 @@ export default function ForgotScanPage() {
           <div className="drive-box"><strong>ลิงก์ไฟล์ Google Drive</strong><input value={driveUrl} onChange={(e)=>setDriveUrl(e.target.value)} placeholder="https://drive.google.com/file/d/..."/><button onClick={saveDriveLink}>บันทึกลิงก์</button>{active.driveUrl&&<a href={active.driveUrl} target="_blank" rel="noopener noreferrer">เปิดคลิปใน Google Drive ↗</a>}</div>
         </div>
 
-        {localVideoUrl ? <div className="player"><video ref={videoRef} src={localVideoUrl} playsInline onLoadedMetadata={(e)=>{setVideoError(false);setDuration(e.currentTarget.duration)}} onTimeUpdate={(e)=>setCurrentSeconds(e.currentTarget.currentTime)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)}/><div className="timebar"><b>{fmtTime(currentSeconds)}</b><span>/ {fmtTime(duration)}</span></div>{!videoError&&<><input className="range" type="range" min={0} max={duration||0} step="0.1" value={Math.min(currentSeconds,duration||0)} onChange={(e)=>{const v=videoRef.current;if(v)v.currentTime=Number(e.target.value)}}/><div className="controls"><button onClick={()=>seek(-10)}>−10 วิ</button><button className="play" onClick={togglePlay}>{playing?<Pause size={18}/>:<Play size={18}/>} {playing?"หยุด":"เล่น"}</button><button onClick={()=>seek(10)}>+10 วิ</button><button className="capture" disabled={ocrBusy} onClick={captureFrame}><Camera size={18}/> {ocrBusy?"กำลังอ่านวันเวลา…":"แคปเจอร์ภาพ"}</button></div></>} {videoError&&<label className="video-fallback"><Camera size={20}/><strong>วิดีโอเล่นไม่ได้ — เลือกภาพหลักฐาน 1 รูปแทน</strong><small>รองรับ JPG / PNG และนำไปพิมพ์ครึ่ง A4 ได้ทันที</small><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e)=>attachEvidenceImage(e.target.files?.[0])}/></label>}</div> : <div className="empty">เลือกไฟล์วิดีโอจากเครื่องเพื่อเปิดตัวเล่นและแคปภาพได้ทันที</div>}
+        {localVideoUrl ? <div className="player"><video ref={videoRef} src={localVideoUrl} playsInline onLoadedMetadata={(e)=>{setVideoError(false);setDuration(e.currentTarget.duration)}} onTimeUpdate={(e)=>setCurrentSeconds(e.currentTarget.currentTime)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onError={()=>{ if(sourceVideoFile && !convertedForBrowser && !converting){ void convertVideoForBrowser(sourceVideoFile); } else if(!converting){ setVideoError(true); setDuration(0); setCurrentSeconds(0); setMessage("วิดีโอนี้ยังเล่นไม่ได้ — เลือกภาพหลักฐาน 1 รูปแทนได้"); } }}/>{converting&&<div style={{padding:"10px 12px",marginBottom:8,borderRadius:10,background:"#fff7ed",color:"#9a3412",display:"grid",gap:4}}><strong>กำลังแปลงไฟล์ CCTV ให้เล่นบนเว็บ… {Math.round(convertProgress*100)}%</strong><small>ประมวลผลในเครื่องนี้ ไฟล์ไม่ถูกอัปโหลดออกไป</small></div>}<div className="timebar"><b>{fmtTime(currentSeconds)}</b><span>/ {fmtTime(duration)}</span></div>{!videoError&&<><input className="range" type="range" min={0} max={duration||0} step="0.1" value={Math.min(currentSeconds,duration||0)} onChange={(e)=>{const v=videoRef.current;if(v)v.currentTime=Number(e.target.value)}}/><div className="controls"><button onClick={()=>seek(-10)}>−10 วิ</button><button className="play" onClick={togglePlay}>{playing?<Pause size={18}/>:<Play size={18}/>} {playing?"หยุด":"เล่น"}</button><button onClick={()=>seek(10)}>+10 วิ</button><button className="capture" disabled={ocrBusy} onClick={captureFrame}><Camera size={18}/> {ocrBusy?"กำลังอ่านวันเวลา…":"แคปเจอร์ภาพ"}</button></div></>} {videoError&&!converting&&<div className="video-fallback"><Camera size={20}/><strong>วิดีโอยังเล่นไม่ได้หลังลองแปลง</strong>{sourceVideoFile&&!convertedForBrowser&&<button type="button" onClick={()=>void convertVideoForBrowser(sourceVideoFile)} style={{border:0,borderRadius:9,padding:"9px 12px",fontWeight:800,cursor:"pointer"}}>ลองแปลงวิดีโออีกครั้ง</button>}<label style={{display:"grid",gap:4,cursor:"pointer"}}><strong>หรือเลือกภาพหลักฐาน 1 รูปแทน</strong><small>รองรับ JPG / PNG และนำไปพิมพ์ครึ่ง A4 ได้ทันที</small><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e)=>attachEvidenceImage(e.target.files?.[0])}/></label></div>}</div> : <div className="empty">เลือกไฟล์วิดีโอจากเครื่องเพื่อเปิดตัวเล่นและแคปภาพได้ทันที</div>}
 
         <div className="captures">{active.captures.map((c,i)=><figure key={c.id}><img src={c.image} alt={`หลักฐาน ${i+1}`}/><figcaption><strong>ภาพที่ {i+1}</strong><div className="stamp-fields"><label><span>วันที่จากกล้อง</span><input type="date" value={c.cameraDate||""} onChange={(e)=>updateCapture(c.id,{cameraDate:e.target.value})}/></label><label><span>เวลาจากกล้อง</span><input type="time" step="1" value={c.cameraTime||""} onChange={(e)=>updateCapture(c.id,{cameraTime:e.target.value})}/></label></div>{c.cameraDate&&c.cameraTime?<small>หลักฐาน: {compactThaiDate(c.cameraDate)} เวลา {c.cameraTime} น.</small>:<small>ถ้ายังอ่านไม่ครบ สามารถพิมพ์ PDF ได้โดยใช้วันเวลาที่เห็นบนตัวภาพกล้อง</small>}</figcaption><button onClick={()=>removeCapture(c.id)}><X size={15}/></button></figure>)}</div>
         <div className="bottom-actions"><button onClick={markDone}>ตรวจสอบแล้ว</button><button className="print" onClick={printPdf}><Printer size={18}/> พิมพ์ / Save PDF</button></div>

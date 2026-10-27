@@ -39,7 +39,9 @@
     "tesseract.js": "^7.0.0",
     "vaul": "^1.1.2",
     "xlsx": "^0.18.5",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
