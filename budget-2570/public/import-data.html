@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ย้ายและสำรองข้อมูล — งบประมาณ 2570</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;background:#f2f6fb;color:#173457;margin:0}.wrap{max-width:740px;margin:30px auto;padding:22px;background:white;border:1px solid #cbddeb;border-radius:14px}h1{margin:0 0 12px;color:#104b80}button,.button{background:#165ca2;color:white;border:0;border-radius:8px;padding:11px 16px;font:inherit;cursor:pointer;display:inline-block;text-decoration:none;margin:6px 6px 6px 0}button.secondary{background:#687e94}code{background:#e7eef5;border-radius:4px;padding:2px 4px}.ok{color:#0d774a}.warn{color:#9a5300}input[type=file]{margin:12px 0}pre{overflow:auto;font-size:13px;white-space:pre-wrap;background:#f4f7fa;padding:12px;border-radius:8px}</style>
+</head><body><div class="wrap">
+<h1>ย้ายและสำรองข้อมูล</h1>
+<p>ระบบงบประมาณ 2570 / แผนเงินบำรุง / UC ข้อมูลแก้ไขในเว็บเดิมเก็บอยู่ในเบราว์เซอร์ <strong>ไม่ถูกย้ายตาม URL โดยอัตโนมัติ</strong></p>
+<h2>1. สำรองข้อมูลที่อยู่ในเว็บนี้</h2>
+<p>กดก่อนนำเข้าข้อมูล เพื่อรักษาของเดิมไว้เป็นไฟล์ JSON</p>
+<button id="exportBtn">ดาวน์โหลดข้อมูลสำรองของเว็บนี้</button>
+<h2>2. นำเข้าข้อมูลจากเว็บ AppDeploy เดิม</h2>
+<p>เลือกไฟล์ JSON ที่ส่งออกจากเว็บเก่า (ดูวิธีใน README ของโครงการ) ข้อมูลจะนำเข้าเฉพาะเบราว์เซอร์นี้เท่านั้น</p>
+<input id="file" type="file" accept="application/json,.json">
+<div id="preview"></div>
+<button id="importBtn" disabled>นำเข้าข้อมูลทั้ง 3 ส่วน</button>
+<div id="result" role="status"></div>
+<p><a class="button" href="/#uc">กลับระบบ UC</a></p>
+<small class="warn">คำเตือน: ไฟล์แนบใบสั่งซื้ออยู่ใน Storage ของ AppDeploy แยกจากรายการข้อมูล ต้องย้ายไฟล์แนบต่างหากก่อนปิดเว็บเดิม</small>
+</div>
+<script>
+const keys=['budget70RowsOfficial28','plan69RowsEditable','uc69Rows34Real'];
+function snapshot(){return {app:'uttaradit-budget-2570',createdAt:new Date().toISOString(),source:location.origin,data:Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)]))};}
+function download(payload){const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='budget2570-data-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+document.getElementById('exportBtn').onclick=()=>download(snapshot());
+let pending=null;
+document.getElementById('file').onchange=async(e)=>{
+  const result=document.getElementById('result'); const preview=document.getElementById('preview');
+  pending=null;document.getElementById('importBtn').disabled=true;result.textContent='';preview.textContent='';
+  const file=e.target.files?.[0]; if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text()); const data=parsed.data||parsed;
+    const list=keys.map(k=>{const raw=data[k];if(typeof raw!=='string')throw Error('ไม่พบข้อมูล: '+k);const rows=JSON.parse(raw);if(!Array.isArray(rows))throw Error('ข้อมูลไม่ใช่ตาราง: '+k);return [k,rows.length];});
+    if(!confirm('ตรวจพบข้อมูลครบ 3 ส่วน ยืนยันให้แสดงจำนวนและเตรียมนำเข้าหรือไม่?'))return;
+    pending=data;preview.innerHTML='<p class="ok">ตรวจไฟล์ผ่าน: '+list.map(([k,n])=>k+' '+n+' รายการ').join(' / ')+'</p>';
+    document.getElementById('importBtn').disabled=false;
+  }catch(error){result.textContent='ไฟล์ไม่ถูกต้อง: '+error.message;}
+};
+document.getElementById('importBtn').onclick=()=>{
+  if(!pending)return;
+  const ok=confirm('กำลังแทนข้อมูลที่เก็บไว้ในเว็บใหม่นี้ทั้ง 3 ส่วน ต้องการทำต่อหรือไม่?');if(!ok)return;
+  download(snapshot());
+  try{for(const key of keys)localStorage.setItem(key,pending[key]);document.getElementById('result').innerHTML='<p class="ok">นำเข้าครบ 3 ส่วนแล้ว กำลังกลับไปที่ UC</p>';setTimeout(()=>location.href='/#uc',500);}
+  catch(error){document.getElementById('result').textContent='นำเข้าไม่สำเร็จ: '+error.message;}
+};
+</script></body></html>
