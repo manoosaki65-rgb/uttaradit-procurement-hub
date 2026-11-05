@@ -9,7 +9,23 @@
 <p>กดก่อนนำเข้าข้อมูล เพื่อรักษาของเดิมไว้เป็นไฟล์ JSON</p>
 <button id="exportBtn">ดาวน์โหลดข้อมูลสำรองของเว็บนี้</button>
 <h2>2. นำเข้าข้อมูลจากเว็บ AppDeploy เดิม</h2>
-<p>เลือกไฟล์ JSON ที่ส่งออกจากเว็บเก่า (ดูวิธีใน README ของโครงการ) ข้อมูลจะนำเข้าเฉพาะเบราว์เซอร์นี้เท่านั้น</p>
+<p>ข้อมูลอยู่เฉพาะ Chrome/โปรไฟล์ที่ใช้งานเว็บเก่า ให้ทำบนคอมพิวเตอร์เครื่องเดิมค่ะ</p>
+<details><summary><strong>วิธีส่งออกข้อมูลจาก AppDeploy เดิม (กดดู)</strong></summary>
+<ol><li>เปิด <a href="https://2570-8iw897.v2.appdeploy.ai/#uc" target="_blank" rel="noopener">ระบบงบประมาณเดิม</a> ใน Chrome เครื่องเดิม</li>
+<li>กด F12 แล้วเลือกแท็บ Console</li><li>กดปุ่มคัดลอกคำสั่งด้านล่าง วางใน Console แล้วกด Enter จะได้ไฟล์ JSON</li>
+<li>กลับมาเว็บไซต์ใหม่นี้ แล้วเลือกไฟล์ JSON เพื่อนำเข้า</li></ol>
+<button id="copyScript">คัดลอกคำสั่งส่งออกข้อมูล</button>
+<textarea id="exportJs" readonly style="width:100%;min-height:130px;font-size:12px" aria-label="คำสั่งสำรองข้อมูล">(() => {
+  const keys=['budget70RowsOfficial28','plan69RowsEditable','uc69Rows34Real'];
+  const payload={app:'uttaradit-budget-2570',createdAt:new Date().toISOString(),
+    source:location.origin,data:Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)]))};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download='budget2570-appdeploy-backup.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+})();</textarea>
+</details>
+<p>เลือกไฟล์ JSON ที่ส่งออกจากเว็บเก่า ข้อมูลจะนำเข้าเฉพาะเบราว์เซอร์นี้เท่านั้น</p>
 <input id="file" type="file" accept="application/json,.json">
 <div id="preview"></div>
 <button id="importBtn" disabled>นำเข้าข้อมูลทั้ง 3 ส่วน</button>
@@ -19,6 +35,7 @@
 </div>
 <script>
 const keys=['budget70RowsOfficial28','plan69RowsEditable','uc69Rows34Real'];
+document.getElementById('copyScript').onclick=async()=>{const value=document.getElementById('exportJs').value;try{await navigator.clipboard.writeText(value);alert('คัดลอกแล้ว กลับไปวางที่ Console ของเว็บเดิมได้เลย');}catch{const t=document.getElementById('exportJs');t.select();document.execCommand('copy');alert('คัดลอกคำสั่งแล้ว');}};
 function snapshot(){return {app:'uttaradit-budget-2570',createdAt:new Date().toISOString(),source:location.origin,data:Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)]))};}
 function download(payload){const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='budget2570-data-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 document.getElementById('exportBtn').onclick=()=>download(snapshot());
