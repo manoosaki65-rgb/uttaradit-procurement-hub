@@ -429,6 +429,10 @@ function App() {
           <Home size={18} aria-hidden="true" />
           <span>กลับหน้าโฮมเพจ</span>
         </a>
+        <a href="/import-data.html" style={{ marginLeft: 8 }}>
+          <Download size={18} aria-hidden="true" />
+          <span>ย้าย/สำรองข้อมูล</span>
+        </a>
       </div>
 
       {module === 'plan' ? (
