@@ -1,5 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
-import { api } from '@appdeploy/client';
+const api = {
+  async get(path: string) {
+    const response = await fetch(path);
+    if (!response.ok) throw new Error('โหลดไฟล์ไม่สำเร็จ');
+    return { data: await response.json() };
+  },
+  async post(path: string, body: unknown) {
+    const response = await fetch(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) throw new Error('บันทึกไฟล์ไม่สำเร็จ');
+    return { data: await response.json() };
+  },
+};
 import * as XLSX from 'xlsx';
 import { planCategories, planSeed } from './planData';
 import {
