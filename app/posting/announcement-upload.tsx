@@ -17,6 +17,7 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
  const [pdfPreview,setPdfPreview]=useState('');
  const [pdfBatch,setPdfBatch]=useState('');
  const [partPhotos,setPartPhotos]=useState<Record<string,PartPhoto>>({});
+ const [saveError,setSaveError]=useState('');
  const activeKind=KINDS[0];
 
  useEffect(()=>{if(!pdf){setPdfPreview('');return;}const url=URL.createObjectURL(pdf);setPdfPreview(url);return()=>URL.revokeObjectURL(url);},[pdf]);
@@ -41,7 +42,10 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
   if(!pdf)throw Error('เลือก PDF ก่อน');
   const data=await readPdf(pdf,rows.filter(r=>r.postedDate===workDate),setMessage);
   clearPartPhotos();
-  setParts(data.parts.map(p=>({...p,id:crypto.randomUUID(),requestId:crypto.randomUUID()})));
+  const recognized=Array.from(new Set(data.parts.map(p=>p.kind).filter(k=>KINDS.includes(k))));
+  const commonKind=recognized.length===1?recognized[0]:'';
+  setParts(data.parts.map(p=>({...p,kind:p.kind||commonKind,id:crypto.randomUUID(),requestId:crypto.randomUUID()})));
+  setSaveError('');
   setTotal(data.total);
   setPdfBatch(crypto.randomUUID());
   setMessage('อ่านชื่อและช่วงหน้าแล้ว เลือกรูปประกอบในแต่ละแถว แล้วกดบันทึกทั้งหมด');
@@ -64,10 +68,18 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
  });
 
  const saveParts=()=>run(async()=>{
+  setSaveError('');
+  try{
   if(!connected)throw Error('เชื่อมด้วยรหัสเจ้าหน้าที่ก่อนบันทึก');
   if(!pdf)throw Error('เลือก PDF ก่อน');
   validateRanges(parts,total);
-  if(parts.some(p=>!KINDS.includes(p.kind)))throw Error('เลือกประเภทให้ทุกชุดประกาศที่อ่านไม่มั่นใจ');
+  const invalidKind=parts.findIndex(p=>!KINDS.includes(p.kind));
+  if(invalidKind!==-1){
+   const missing=parts[invalidKind];
+   const message=`ประกาศหน้า ${missing.start} ยังไม่ได้เลือกประเภท กรุณาเลือกก่อนบันทึก`;
+   requestAnimationFrame(()=>document.querySelectorAll<HTMLSelectElement>('.new-announcement select[aria-label="ประเภทประกาศ"]')[invalidKind]?.focus());
+   throw Error(message);
+  }
   if(parts.some(p=>!p.title.trim()))throw Error('ระบุชื่อทุกชุดประกาศ');
   const missingPhoto=parts.find(p=>!p.saved&&!partPhotos[p.id||'']);
   if(missingPhoto)throw Error(`กรุณาเลือกรูปประกอบหน้า ${missingPhoto.start}${missingPhoto.end!==missingPhoto.start?`-${missingPhoto.end}`:''}`);
@@ -98,6 +110,10 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
   setPdf(null);
   setMessage('บันทึก PDF และรูปประกอบครบทุกแถวลง Google Drive และ Master สำเร็จ');
   onDone();
+  }catch(error){
+   setSaveError(error instanceof Error?error.message:String(error));
+   throw error;
+  }
  });
 
  const changePart=(i:number,patch:Partial<Part>)=>setParts(prev=>prev.map((x,j)=>j===i&&!x.saved?{...x,...patch,requestId:crypto.randomUUID()}:x));
@@ -119,13 +135,14 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
     หน้า <input aria-label="หน้าเริ่ม" type="number" style={{width:60}} value={p.start} onChange={e=>changePart(i,{start:Number(e.target.value)})}/>
     ถึง <input aria-label="หน้าจบ" type="number" style={{width:60}} value={p.end} onChange={e=>changePart(i,{end:Number(e.target.value)})}/>
     <input aria-label="ชื่อชุดประกาศ" style={{flex:'1 1 520px',minWidth:360}} value={p.title} onChange={e=>changePart(i,{title:e.target.value})}/>
-    <select value={p.kind} onChange={e=>changePart(i,{kind:e.target.value})}><option value="">ไม่มั่นใจ — เลือกประเภท</option>{KINDS.map(k=><option key={k}>{k}</option>)}</select>
+    <select aria-label="ประเภทประกาศ" style={!KINDS.includes(p.kind)?{borderColor:'#dc2626',background:'#fff1f2'}:undefined} value={p.kind} onChange={e=>{setSaveError('');changePart(i,{kind:e.target.value});}}><option value="">ไม่มั่นใจ — เลือกประเภท</option>{KINDS.map(k=><option key={k}>{k}</option>)}</select>
     <select value={p.target} onChange={e=>changePart(i,{target:e.target.value,title:rows.find(r=>r.id===e.target.value)?.title||p.title,kind:rows.find(r=>r.id===e.target.value)?.kind||p.kind})}><option value="">สร้างรายการใหม่</option>{rows.map(r=><option key={r.id} value={r.id}>{r.postedDate} · {r.sequence} · {r.title}</option>)}</select>
     <label style={{display:'inline-flex',alignItems:'center',gap:6,border:'1px solid #bfdbfe',borderRadius:8,padding:'7px 10px',cursor:'pointer',background:'#f8fbff'}}>
      📷 {photo?'เปลี่ยนรูป':'เลือกรูป'}
      <input type="file" accept="image/*,.heic,.heif" style={{display:'none'}} onChange={e=>{choosePhoto(key,e.target.files?.[0]);e.target.value='';}}/>
     </label>
     {photo&&<><a href={photo.preview} target="_blank" rel="noreferrer">ดูรูป</a><span className="file-name">{photo.file.name}</span><button type="button" onClick={()=>removePhoto(key)}>นำรูปออก</button></>}
+    {!p.saved&&!KINDS.includes(p.kind)&&<small style={{color:'#b91c1c'}}>หน้า {p.start}: ต้องเลือกประเภทประกาศก่อนบันทึก</small>}
     {p.mergeReason&&<small>{p.mergeReason}</small>}
     {p.review&&<small>ยังไม่มั่นใจว่าเป็นหน้าต่อ — โปรดตรวจต้นฉบับ</small>}
     {i>0&&<button type="button" disabled={busy||p.saved||parts[i-1].saved} onClick={()=>{try{setParts(mergePrevious(parts,i));setMessage('รวมช่วงหน้าตามที่เลือกแล้ว กรุณาตรวจชื่อ ประเภท และเลือกรูปของช่วงที่รวมใหม่');}catch(e){setMessage(e instanceof Error?e.message:String(e));}}}>รวมกับหน้าก่อน</button>}
@@ -136,6 +153,7 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
     <button type="button" onClick={()=>setParts(prev=>[...prev,{start:1,end:1,title:'',target:'',kind:activeKind,id:crypto.randomUUID(),requestId:crypto.randomUUID()}])}>เพิ่มช่วงประกาศ</button>
     <button className="primary" disabled={busy||!connected} onClick={saveParts}>💾 บันทึก PDF + รูปทั้งหมด</button>
    </div>
+   {saveError&&<p role="alert" style={{color:'#991b1b',background:'#fff1f2',border:'1px solid #fca5a5',padding:12,borderRadius:8,marginTop:8}}>บันทึกไม่สำเร็จ: {saveError}</p>}
    {!connected&&<small>เลือก PDF อ่านชื่อ และเลือกรูปได้ก่อน — เชื่อมรหัสเจ้าหน้าที่เฉพาะตอนบันทึก</small>}
   </section>}
  </section>;
