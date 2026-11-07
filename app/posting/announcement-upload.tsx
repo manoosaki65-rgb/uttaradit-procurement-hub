@@ -80,7 +80,17 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
    requestAnimationFrame(()=>document.querySelectorAll<HTMLSelectElement>('.new-announcement select[aria-label="ประเภทประกาศ"]')[invalidKind]?.focus());
    throw Error(message);
   }
-  if(parts.some(p=>!p.title.trim()))throw Error('ระบุชื่อทุกชุดประกาศ');
+  const missingTitle=parts.findIndex(p=>!p.title.trim());
+  if(missingTitle!==-1){
+   const missing=parts[missingTitle];
+   const pageLabel=missing.start===missing.end?String(missing.start):missing.start+'-'+missing.end;
+   requestAnimationFrame(()=>{
+    const input=document.querySelectorAll<HTMLInputElement>('.new-announcement input[aria-label="ชื่อชุดประกาศ"]')[missingTitle];
+    input?.scrollIntoView({behavior:'smooth',block:'center'});
+    input?.focus({preventScroll:true});
+   });
+   throw Error('ประกาศหน้า '+pageLabel+' ยังไม่มีชื่อเรื่อง — กรุณาตรวจ PDF และกรอกชื่อรายการในช่องที่ไฮไลต์');
+  }
   const missingPhoto=parts.find(p=>!p.saved&&!partPhotos[p.id||'']);
   if(missingPhoto)throw Error(`กรุณาเลือกรูปประกอบหน้า ${missingPhoto.start}${missingPhoto.end!==missingPhoto.start?`-${missingPhoto.end}`:''}`);
   const selected=parts.map(p=>p.target).filter(Boolean);
@@ -134,7 +144,7 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
    {parts.map((p,i)=>{const key=p.id||String(i),photo=partPhotos[key];return <fieldset disabled={p.saved||busy} key={key} className="tools" style={{marginTop:8,alignItems:'center'}}>
     หน้า <input aria-label="หน้าเริ่ม" type="number" style={{width:60}} value={p.start} onChange={e=>changePart(i,{start:Number(e.target.value)})}/>
     ถึง <input aria-label="หน้าจบ" type="number" style={{width:60}} value={p.end} onChange={e=>changePart(i,{end:Number(e.target.value)})}/>
-    <input aria-label="ชื่อชุดประกาศ" style={{flex:'1 1 520px',minWidth:360}} value={p.title} onChange={e=>changePart(i,{title:e.target.value})}/>
+    <input aria-label="ชื่อชุดประกาศ" placeholder="ชื่อประกาศจาก PDF" style={{flex:'1 1 520px',minWidth:360,...(!p.title.trim()?{borderColor:'#dc2626',background:'#fff1f2'}:{})}} value={p.title} onChange={e=>{setSaveError('');changePart(i,{title:e.target.value});}}/>
     <select aria-label="ประเภทประกาศ" style={!KINDS.includes(p.kind)?{borderColor:'#dc2626',background:'#fff1f2'}:undefined} value={p.kind} onChange={e=>{setSaveError('');changePart(i,{kind:e.target.value});}}><option value="">ไม่มั่นใจ — เลือกประเภท</option>{KINDS.map(k=><option key={k}>{k}</option>)}</select>
     <select value={p.target} onChange={e=>changePart(i,{target:e.target.value,title:rows.find(r=>r.id===e.target.value)?.title||p.title,kind:rows.find(r=>r.id===e.target.value)?.kind||p.kind})}><option value="">สร้างรายการใหม่</option>{rows.map(r=><option key={r.id} value={r.id}>{r.postedDate} · {r.sequence} · {r.title}</option>)}</select>
     <label style={{display:'inline-flex',alignItems:'center',gap:6,border:'1px solid #bfdbfe',borderRadius:8,padding:'7px 10px',cursor:'pointer',background:'#f8fbff'}}>
@@ -142,6 +152,7 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
      <input type="file" accept="image/*,.heic,.heif" style={{display:'none'}} onChange={e=>{choosePhoto(key,e.target.files?.[0]);e.target.value='';}}/>
     </label>
     {photo&&<><a href={photo.preview} target="_blank" rel="noreferrer">ดูรูป</a><span className="file-name">{photo.file.name}</span><button type="button" onClick={()=>removePhoto(key)}>นำรูปออก</button></>}
+    {!p.saved&&!p.title.trim()&&<small style={{color:'#b91c1c'}}>หน้า {p.start}: ไม่พบชื่อเรื่องจาก PDF กรุณากรอกชื่อจากต้นฉบับ</small>}
     {!p.saved&&!KINDS.includes(p.kind)&&<small style={{color:'#b91c1c'}}>หน้า {p.start}: ต้องเลือกประเภทประกาศก่อนบันทึก</small>}
     {p.mergeReason&&<small>{p.mergeReason}</small>}
     {p.review&&<small>ยังไม่มั่นใจว่าเป็นหน้าต่อ — โปรดตรวจต้นฉบับ</small>}
