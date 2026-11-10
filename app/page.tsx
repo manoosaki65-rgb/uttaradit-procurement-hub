@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-const inventoryUrl = "https://uttaradit-inventory.pages.dev/";
+const inventoryUrl = "https://inventory-mwjjut.v2.appdeploy.ai/";
 const budgetUrl = "https://2570-8iw897.v2.appdeploy.ai/#budget";
 const ucUrl = "https://2570-8iw897.v2.appdeploy.ai/#uc";
 const planUrl = "https://2570-8iw897.v2.appdeploy.ai/#plan";
@@ -63,7 +63,7 @@ const modules: ModuleItem[] = [
   { title: "รายงานการประชุม", subtitle: "ปฏิทินประชุม / รายงานและไฟล์แนบ", icon: CalendarDays, tone: "blue", href: "https://uttaradit-meeting-report.manoosaki65.workers.dev/" },
   { title: "รายงานความเสี่ยง / HA", subtitle: "ทบทวนความเสี่ยงและเอกสารคุณภาพ", icon: ShieldCheck, tone: "orange", href: "https://uttaradit-risk-report.manoosaki65.workers.dev/" },
   { title: "ข่าวพัสดุและ AI", subtitle: "Smart Procurement News", icon: BookOpen, tone: "indigo", href: "https://smart-procurement.hatchable.site/" },
-  { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
+  { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ทะเบียน 25 ช่อง / พิมพ์สันแฟ้ม — Hatchable", icon: FilePlus2, tone: "pink", href: "https://project-r3a4.hatchable.site/spine/" },
   { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://app-m7e6r6.v2.appdeploy.ai/", menuOnly: true },
   { title: "ออกเลขที่สัญญาจังหวัด", subtitle: "เปิดทะเบียนออกเลขที่สัญญาจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-contract-number.manoosaki65.workers.dev/?v=20261002", menuOnly: true },
 ];
