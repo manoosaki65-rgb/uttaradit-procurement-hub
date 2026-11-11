@@ -1,8 +1,8 @@
 "use client";
 import {useEffect,useState} from 'react';
-import {KINDS,exactMatch,validateRanges} from '../../lib/posting-core.js';
+import {KINDS,validateRanges} from '../../lib/posting-core.js';
 import {readPdf,splitPdf,uploadData,type PostingRow,type Part} from '../../lib/posting-media';
-import {mergePrevious} from '../../lib/posting-order.js';
+import {mergePrevious,splitNextPage} from '../../lib/posting-order.js';
 
 type Draft=PostingRow & {pdfFile?:File;photoFiles?:File[];requestId?:string};
 type PartPhoto={file:File;preview:string};
@@ -99,7 +99,7 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
   const latest=new Map(rows.map(r=>[r.id,r]));
   for(const p of parts){
    if(p.saved)continue;
-   const existing=p.target?latest.get(p.target):exactMatch(p.title,p.kind,workDate,Array.from(latest.values()));
+   const existing=p.target?latest.get(p.target):undefined; // Creating a new row must never silently reuse a different announcement with the same title.
    if(p.target&&!existing)throw Error('ไม่พบรายการที่จับคู่ กรุณาโหลดข้อมูลใหม่');
    if(existing?.pdf&&!confirm(`รายการ ${existing.title} มี PDF แล้ว ต้องการเปลี่ยนไฟล์ที่จับคู่หรือไม่? ไฟล์เดิมยังเก็บใน Drive`))throw Error('ยังไม่เปลี่ยน PDF');
    const photo=partPhotos[p.id||''];
@@ -156,6 +156,11 @@ export default function AnnouncementUpload({date:workDate,rows,busy,connected,ap
     {!p.saved&&!KINDS.includes(p.kind)&&<small style={{color:'#b91c1c'}}>หน้า {p.start}: ต้องเลือกประเภทประกาศก่อนบันทึก</small>}
     {p.mergeReason&&<small>{p.mergeReason}</small>}
     {p.review&&<small>ยังไม่มั่นใจว่าเป็นหน้าต่อ — โปรดตรวจต้นฉบับ</small>}
+    {p.end>p.start&&<button type="button" disabled={busy||p.saved} title={`แยกหน้า ${p.start} ออกจากหน้า ${p.start+1}`} onClick={()=>{try{
+     setParts(prev=>splitNextPage(prev,i).map((part,j)=>j===i?{...part,requestId:crypto.randomUUID()}:j===i+1?{...part,id:crypto.randomUUID(),requestId:crypto.randomUUID()}:part));
+     setSaveError('');
+     setMessage(`แยกหน้า ${p.start} ออกจากช่วงหน้า ${p.start+1}-${p.end} แล้ว ตรวจชื่อ ประเภท และรูปประกอบก่อนบันทึก`);
+    }catch(e){setMessage(e instanceof Error?e.message:String(e));}}}>✂ แยกหน้า</button>}
     {i>0&&<button type="button" disabled={busy||p.saved||parts[i-1].saved} onClick={()=>{try{setParts(mergePrevious(parts,i));setMessage('รวมช่วงหน้าตามที่เลือกแล้ว กรุณาตรวจชื่อ ประเภท และเลือกรูปของช่วงที่รวมใหม่');}catch(e){setMessage(e instanceof Error?e.message:String(e));}}}>รวมกับหน้าก่อน</button>}
     <button type="button" onClick={()=>{removePhoto(key);setParts(prev=>prev.filter((_,j)=>j!==i));}}>ลบช่วง</button>
     {p.saved&&<b>บันทึกแล้ว</b>}
