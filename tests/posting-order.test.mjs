@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {pageParts,orderedRows,photoTargets} from '../lib/posting-order.js';
+import {pageParts,orderedRows,photoTargets,splitNextPage} from '../lib/posting-order.js';
+import {validateRanges} from '../lib/posting-core.js';
 test('eight-page notices split 1 and 2, and join an evidenced plan table',()=>{
  const bidding='ประกาศจังหวัดอุตรดิตถ์\nเรื่อง ประกวดราคาซื้อวัสดุการแพทย์';
  const plan='ประกาศจังหวัดอุตรดิตถ์\nเรื่อง เผยแพร่แผนการจัดซื้อจัดจ้าง';
@@ -20,4 +21,26 @@ test('page order survives descending display and refresh; excess files stay unas
  assert.deepEqual(photoTargets(9,ordered),['1','2','3','4','5','6','7','','']);
  assert.deepEqual(photoTargets(3,ordered,5),['6','7','']);
  assert.deepEqual(orderedRows(rows,'2026-10-09',['2','1']).map(r=>r.id),['2','1']);
+});
+
+test('manual split makes page 1 and page 2 independent rows without duplicating or losing pages',()=>{
+ const grouped=[{start:1,end:2,title:'เรื่องแรก',kind:'ประกาศผลผู้ชนะ',target:'existing-id',id:'first',requestId:'old'}];
+ const separated=splitNextPage(grouped,0);
+ assert.deepEqual(separated.map(p=>[p.start,p.end]),[[1,1],[2,2]]);
+ assert.equal(separated[0].title,'เรื่องแรก');
+ assert.equal(separated[0].target,'existing-id');
+ assert.equal(separated[1].title,'');
+ assert.equal(separated[1].target,'');
+ assert.equal(separated[1].kind,'');
+ assert.equal(separated[0].requestId,undefined);
+ assert.doesNotThrow(()=>validateRanges(separated,2));
+ assert.deepEqual(grouped.map(p=>[p.start,p.end]),[[1,2]],'original draft stays intact');
+ assert.throws(()=>splitNextPage(separated,0),/แยกได้เฉพาะ/);
+});
+test('long range can be split repeatedly; saved ranges are protected',()=>{
+ const first=splitNextPage([{start:1,end:4,title:'เรื่องแรก',kind:'ประกาศประกวดราคา'}],0);
+ const second=splitNextPage(first,1);
+ assert.deepEqual(second.map(p=>[p.start,p.end]),[[1,1],[2,2],[3,4]]);
+ assert.doesNotThrow(()=>validateRanges(second,4));
+ assert.throws(()=>splitNextPage([{start:1,end:2,saved:true}],0),/แยกได้เฉพาะ/);
 });
