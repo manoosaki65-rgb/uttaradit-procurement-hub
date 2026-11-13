@@ -87,14 +87,25 @@ type NewsItem = { id: string; category: "procurement" | "ai"; title: string; sum
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
+  const [trafficOpen, setTrafficOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsError, setNewsError] = useState(false);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setHeroSlide((current) => (current + 1) % 3), 3000);
+    if (trafficOpen) return;
+    const timer = window.setInterval(() => setHeroSlide((current) => (current + 1) % 2), 9000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [trafficOpen]);
+
+  useEffect(() => {
+    if (!trafficOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setTrafficOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [trafficOpen]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -166,23 +177,32 @@ export default function HomePage() {
             <img src="https://uttaradit-procurement-hub.manoosaki65.chatgpt.site/procurement-home-design.jpg" alt="อาคารพัสดุ โรงพยาบาลอุตรดิตถ์" />
             <div className="mobile-hero-copy"><span>SMART PROCUREMENT</span><h2>อาคารพัสดุ โรงพยาบาลอุตรดิตถ์</h2></div>
           </div>
-          <div className={`hero-slide hero-welcome ${heroSlide === 1 ? "is-active" : ""}`} aria-hidden={heroSlide !== 1}>
-            <img src="https://uttaradit-procurement-hub.manoosaki65.chatgpt.site/welcome-director-latest.jpg" alt="แบนเนอร์ยินดีต้อนรับนายแพทย์วรเชษฐ เต๋ชะรัก ผู้อำนวยการโรงพยาบาลอุตรดิตถ์" />
-          </div>
-          <div className={`hero-slide hero-p4p ${heroSlide === 2 ? "is-active" : ""}`} aria-hidden={heroSlide !== 2}>
-            <div className="hero-message">
-              <span className="hero-eyebrow">แจ้ง OT เดือนกันยายน 2569</span>
-              <h2>แจ้งลง OT เดือนกันยายนได้ตั้งแต่วันนี้</h2>
-              <p>สามารถเข้าไปบันทึก OT เดือนกันยายนได้แล้ว</p>
-              <a href="https://uttaradit-ot.pages.dev/" target="_blank" rel="noopener noreferrer" tabIndex={heroSlide === 2 ? 0 : -1}>เปิดระบบ OT <ChevronRight size={18} /></a>
+          <div className={`hero-slide hero-traffic ${heroSlide === 1 ? "is-active" : ""}`} aria-hidden={heroSlide !== 1}>
+            <button type="button" className="traffic-preview" onClick={() => setTrafficOpen(true)} tabIndex={heroSlide === 1 ? 0 : -1} aria-label="ดูแผนผังเส้นทางจราจรขนาดเต็ม">
+              <img src="/traffic-announcement-uttaradit.webp" alt="ประกาศเส้นทางจราจรทางเดียวภายในโรงพยาบาลอุตรดิตถ์ ตั้งแต่วันที่ 26 ตุลาคม 2569" />
+            </button>
+            <div className="traffic-copy">
+              <span className="traffic-eyebrow">ประกาศประชาสัมพันธ์</span>
+              <h2>เส้นทางจราจรภายในโรงพยาบาลอุตรดิตถ์</h2>
+              <p>เริ่มใช้ตั้งแต่ 26 ตุลาคม 2569 โปรดปฏิบัติตามป้ายจราจรและแผนผังเส้นทาง</p>
+              <button type="button" className="traffic-cta" onClick={() => setTrafficOpen(true)} tabIndex={heroSlide === 1 ? 0 : -1}>เปิดดูประกาศเต็มภาพ</button>
             </div>
           </div>
           <div className="hero-dots" role="group" aria-label="เลือกสไลด์ประกาศ">
-            {["อาคารพัสดุ", "ยินดีต้อนรับผู้อำนวยการ", "แจ้งลง OT"].map((label, index) => (
+            {["อาคารพัสดุ", "ประกาศเส้นทางจราจร"].map((label, index) => (
               <button key={label} type="button" className={heroSlide === index ? "is-active" : ""} onClick={() => setHeroSlide(index)} aria-label={`สไลด์ ${index + 1}: ${label}`} aria-current={heroSlide === index ? "true" : undefined} />
             ))}
           </div>
         </section>
+
+        {trafficOpen && (
+          <div className="traffic-overlay" role="presentation" onClick={() => setTrafficOpen(false)}>
+            <div className="traffic-dialog" role="dialog" aria-modal="true" aria-label="ประกาศเส้นทางจราจรฉบับเต็ม" onClick={(event) => event.stopPropagation()}>
+              <button type="button" className="traffic-close" onClick={() => setTrafficOpen(false)} aria-label="ปิดภาพประกาศ"><X size={22} /></button>
+              <img src="/traffic-announcement-uttaradit.webp" alt="ประกาศแผนผังการเดินรถทางเดียวภายในโรงพยาบาลอุตรดิตถ์ ตั้งแต่วันที่ 26 ตุลาคม 2569" />
+            </div>
+          </div>
+        )}
 
         <div className="dashboard-body">
           <section className="quick-panel" aria-label="งานออกเลขที่ใช้งานบ่อย">
