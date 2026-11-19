@@ -50,3 +50,19 @@ test('proxy rejects an integration that responds with unrelated JSON',async()=>{
  const original=globalThis.fetch;globalThis.fetch=async()=>Response.json({ok:true});
  try{const r=await onRequest({request:new Request('https://example.test/api/posting',{headers:{'X-Posting-Code':'c'}}),env:{POSTING_SCRIPT_URL:'https://script.test',POSTING_SCRIPT_SECRET:'s',POSTING_ACCESS_CODE:'c'}});assert.equal(r.status,502);assert.equal((await r.json()).code,'INVALID_INTEGRATION');}finally{globalThis.fetch=original;}
 });
+test('photo view and download proxy image bytes without Drive navigation',async()=>{
+ const original=globalThis.fetch;let action;
+ globalThis.fetch=async (_url,options)=>{action=JSON.parse(options.body);return Response.json({mime:'image/jpeg',base64:Buffer.from([255,216,255,217]).toString('base64')});};
+ try{
+  const env={POSTING_SCRIPT_URL:'https://script.google.com/macros/s/test/exec',POSTING_SCRIPT_SECRET:'secret'};
+  const inline=await onRequest({request:new Request('https://example.test/api/posting?photoId=stored-image-123'),env});
+  assert.equal(inline.status,200);assert.equal(inline.headers.get('content-type'),'image/jpeg');assert.ok(inline.headers.get('content-disposition').startsWith('inline'));
+  assert.equal(action.action,'thumbnail');assert.equal(action.photoId,'stored-image-123');
+  assert.deepEqual([...new Uint8Array(await inline.arrayBuffer())],[255,216,255,217]);
+  const download=await onRequest({request:new Request('https://example.test/api/posting?photoId=stored-image-123&download=1&name=proof.jpg'),env});
+  assert.equal(download.status,200);assert.ok(download.headers.get('content-disposition').startsWith('attachment'));
+  const bad=await onRequest({request:new Request('https://example.test/api/posting?photoId=bad'),env});
+  assert.equal(bad.status,400);
+ }finally{globalThis.fetch=original;}
+});
+

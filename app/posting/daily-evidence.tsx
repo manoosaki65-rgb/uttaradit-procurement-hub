@@ -1,14 +1,14 @@
 "use client";
 import {useEffect,useMemo,useState} from 'react';
 import type {PostingRow,Asset} from '../../lib/posting-media';
-import {dailyGroups,dailyId,appendNotes,uploadBatches,photoThumbnail,photoDownload} from '../../lib/posting-daily.js';
+import {dailyGroups,dailyId,appendNotes,uploadBatches,photoView,photoThumbnail,photoDownload} from '../../lib/posting-daily.js';
 import webEvidence from '../../lib/posting-web-evidence.json';
 type Pending={file:File;key:string;preview:string};
 const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 const thaiDate=(date:string)=>new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Bangkok'}).format(new Date(date+'T12:00:00+07:00'));
 const photoTypes=/^image\/(jpeg|png|webp|heic|heif)$/;
 async function upload(item:Pending){const type=item.file.type||(/\.hei[cf]$/i.test(item.file.name)?'image/heic':'');if(!photoTypes.test(type))throw Error('รองรับรูป JPG, PNG, WebP และ HEIC');return {key:item.key,name:item.file.name,type,base64:await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('อ่านรูปไม่สำเร็จ'));reader.readAsDataURL(item.file);})};}
-function EvidencePhoto({photo,index}:{photo:Asset;index:number}){const [failed,setFailed]=useState(false);return <figure className="evidence-photo"><a href={photo.url} target="_blank" rel="noreferrer" aria-label={'ดูรูป '+(index+1)}>{failed?<span className="photo-fallback">📷 รูป {index+1}<small>เปิดดูใน Google Drive</small></span>:<img src={photoThumbnail(photo)} alt={'หลักฐานรูป '+(index+1)} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)}/>}</a><figcaption><span>รูป {index+1}</span><a href={photo.url} target="_blank" rel="noreferrer">ดูรูปใหญ่</a><a href={photoDownload(photo)} target="_blank" rel="noreferrer">ดาวน์โหลดต้นฉบับ</a></figcaption></figure>;}
+function EvidencePhoto({photo,index}:{photo:Asset;index:number}){const [failed,setFailed]=useState(false);return <figure className="evidence-photo"><a href={photoView(photo)} target="_blank" rel="noreferrer" aria-label={'ดูรูป '+(index+1)}>{failed?<span className="photo-fallback">📷 รูป {index+1}<small>เปิดรูปผ่านเว็บ</small></span>:<img src={photoThumbnail(photo)} alt={'หลักฐานรูป '+(index+1)} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)}/>}</a><figcaption><span>รูป {index+1}</span><a href={photoView(photo)} target="_blank" rel="noreferrer">ดูรูปใหญ่</a><a href={photoDownload(photo)} target="_blank" rel="noreferrer">ดาวน์โหลดต้นฉบับ</a></figcaption></figure>;}
 export default function DailyEvidence(){
  const [code,setCode]=useState(''),[connected,setConnected]=useState(false),[busy,setBusy]=useState(false),[rows,setRows]=useState<PostingRow[]>([]),[date,setDate]=useState(today),[notes,setNotes]=useState(''),[pending,setPending]=useState<Pending[]>([]),[message,setMessage]=useState('ใส่รหัสเจ้าหน้าที่เดิมแล้วเชื่อม Google Drive เพื่อเริ่มบันทึก'),[open,setOpen]=useState<Record<string,boolean>>({});
  const groups=useMemo(()=>{
