@@ -414,7 +414,7 @@ export default function TelephonePage() {
         </section>
 
         <div className={styles.footTools}>
-          <div className={styles.privacy}><ShieldCheck size={18}/><p><strong>ข้อมูลภายใน:</strong> รายชื่อที่นำเข้าหรือเพิ่มจากหน้านี้จะถูกเก็บเฉพาะในเบราว์เซอร์ของเครื่องที่ใช้งาน ไม่ได้เผยแพร่ขึ้นเว็บไซต์ส่วนกลางอัตโนมัติ</p></div>
+          <div className={styles.privacy}><ShieldCheck size={18}/><p><strong>ข้อมูลภายใน:</strong> รายการเบอร์โทรหลักอ้างอิงจากเอกสารอัปเดต ต.ค. 2568 ซึ่งแสดงบนหน้าเว็บนี้ ส่วนข้อมูลที่คุณนำเข้าและเพิ่มเองจะบันทึกเฉพาะในเบราว์เซอร์ของเครื่องนี้ ไม่ส่งขึ้นฐานข้อมูลส่วนกลาง</p></div>
           {contacts.length > 0 && <div className={styles.dataActions}>
             <button type="button" onClick={exportCsv}><Download size={16}/> ส่งออก CSV</button>
             {mode === "local" && <button type="button" onClick={clearLocal}><Trash2 size={16}/> ล้างข้อมูลในเครื่อง</button>}

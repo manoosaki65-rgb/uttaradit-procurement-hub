@@ -1,1 +1,2256 @@
-[]
+[
+  {
+    "id": "uttaradit-tel-0001",
+    "department": "กายภาพบำบัด",
+    "extension": "1509",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0002",
+    "department": "คลินิกทันตกรรม",
+    "extension": "1508",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0003",
+    "department": "จุดคัดกรอง",
+    "extension": "1500",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0004",
+    "department": "ฉีดยา-ทำแผล",
+    "extension": "1501",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0005",
+    "department": "ห้อง Lab",
+    "extension": "1502",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0006",
+    "department": "ห้อง X-Ray",
+    "extension": "1505",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0007",
+    "department": "ห้องการเงิน",
+    "extension": "1504",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0008",
+    "department": "ห้องตรวจสอบสิทธิ",
+    "extension": "1502",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0009",
+    "department": "ห้องบัตร",
+    "extension": "1502",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0010",
+    "department": "ห้องยา",
+    "extension": "1503",
+    "location": "ศูนย์ อต.1 ศิลาอาสน์",
+    "note": "อต.1 ศิลาอาสน์"
+  },
+  {
+    "id": "uttaradit-tel-0011",
+    "department": "กายภาพบำบัด,กิจกรรมบำบัด",
+    "extension": "3308",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0012",
+    "department": "คลินิกทันตกรรม",
+    "extension": "3304",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0013",
+    "department": "จุดคัดกรอง",
+    "extension": "3300",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0014",
+    "department": "ห้อง Lab",
+    "extension": "3309",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0015",
+    "department": "ห้อง X-Ray",
+    "extension": "3310",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0016",
+    "department": "ห้องการเงิน",
+    "extension": "3311",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0017",
+    "department": "ห้องตรวจ 1",
+    "extension": "3301",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0018",
+    "department": "ห้องตรวจ 2",
+    "extension": "3302",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0019",
+    "department": "ห้องตรวจ 3",
+    "extension": "3303",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0020",
+    "department": "ห้องตรวจ 5",
+    "extension": "3305",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0021",
+    "department": "ห้องตรวจ 6",
+    "extension": "3306",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0022",
+    "department": "ห้องนพ.ยุทธศักดิ์ โอสถธนากร",
+    "extension": "3315",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0023",
+    "department": "ห้องนวดแผนไทย",
+    "extension": "3316",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0024",
+    "department": "ห้องบัตร",
+    "extension": "3313",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0025",
+    "department": "ห้องยา",
+    "extension": "3312",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0026",
+    "department": "เวชกรรมฟื้นฟู",
+    "extension": "3307",
+    "location": "ศูนย์ อต.3 ทุ่งกะโล่",
+    "note": "อต.3 ทุ่งกะโล่"
+  },
+  {
+    "id": "uttaradit-tel-0027",
+    "department": "อต.1 เบอร์กลาง",
+    "extension": "055-403-339",
+    "location": "อต.1 (ศิลาอาสน์)",
+    "note": "เบอร์กลาง อต.1"
+  },
+  {
+    "id": "uttaradit-tel-0028",
+    "department": "อต.2 (หน้าวัดท้าย)",
+    "extension": "055-414-171",
+    "location": "อต.2 (หน้าวัดท้าย)",
+    "note": "เบอร์กลาง อต.2"
+  },
+  {
+    "id": "uttaradit-tel-0029",
+    "department": "Echo",
+    "extension": "5211",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0030",
+    "department": "กายภาพบำบัด",
+    "extension": "5001,5002",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0031",
+    "department": "กิจกรรมบำบัด",
+    "extension": "5005,5006",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0032",
+    "department": "คลังยาสมุนไพร",
+    "extension": "5008",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0033",
+    "department": "คลินิกต่อมไร้ท่อ",
+    "extension": "5134",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0034",
+    "department": "คลินิกผิวหนัง",
+    "extension": "5208",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0035",
+    "department": "คลินิกพิเศษนอกเวลาราชการ (อ,พฤ)",
+    "extension": "5202,5225",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0036",
+    "department": "คลินิกหัวใจ",
+    "extension": "5214,5215",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0037",
+    "department": "คลินิกอายุรกรรม",
+    "extension": "5121,5117,5118",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0038",
+    "department": "คลินิกเฉพาะโรค",
+    "extension": "5116,5111",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0039",
+    "department": "คลินิกโรคเลือด",
+    "extension": "5202,5207",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0040",
+    "department": "ตรวจเท้ำเบำหวำน",
+    "extension": "5108",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0041",
+    "department": "นวดแผนไทย",
+    "extension": "5009",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0042",
+    "department": "ห้องตรวจทางเดินอาหารและตับ",
+    "extension": "5115",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0043",
+    "department": "ห้องประชุมท่าเหนือ (อาคาร 100 ปี)",
+    "extension": "5703",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0044",
+    "department": "ห้องประชุมน่านนิมิต (อาคาร 100 ปี)",
+    "extension": "5702",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0045",
+    "department": "ห้องประชุมบางโพ (อาคาร 100 ปี)",
+    "extension": "5704",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0046",
+    "department": "ห้องประชุมมเหสักข์ (อาคาร 100 ปี)",
+    "extension": "5700",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0047",
+    "department": "เวชกรรมฟื้นฟู",
+    "extension": "5003,5004",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0048",
+    "department": "โรคข้อและรูมาติซั่ม",
+    "extension": "5201,5202",
+    "location": "อาคาร 100 ปี สธ.",
+    "note": "หน่วยงานในอาคาร ๑๐๐ ปี สธ."
+  },
+  {
+    "id": "uttaradit-tel-0049",
+    "department": "การเงินอาคารพีรยพัฒนฯ",
+    "extension": "9120",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "กลุ่มงานการเงิน"
+  },
+  {
+    "id": "uttaradit-tel-0050",
+    "department": "งาน MRI/CT อาคารพีรยพัฒนฯ",
+    "extension": "9109,9119",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0051",
+    "department": "ตรวจสอบสิทธิอาคารพีรยพัฒนฯ",
+    "extension": "9130",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "กลุ่มงานประกันสุขภาพ"
+  },
+  {
+    "id": "uttaradit-tel-0052",
+    "department": "ห้องจ่ายยาอาคารพีรยพัฒนฯ",
+    "extension": "9100,9101",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0053",
+    "department": "ห้องฉีดยา-ทำแผลอาคารพีรยพัฒนฯ",
+    "extension": "9207",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0054",
+    "department": "ห้องบัตรอาคารพีรยพัฒนฯ",
+    "extension": "9230",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "กลุ่มงานเวชระเบียนฯ"
+  },
+  {
+    "id": "uttaradit-tel-0055",
+    "department": "อัลตร้าซาวด์ อาคารพีรยพัฒนฯ",
+    "extension": "9113",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0056",
+    "department": "เคาน์เตอร์ X-Ray อาคารพีรยพัฒนฯ",
+    "extension": "9110",
+    "location": "อาคารพีรยพัฒนเวช",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0057",
+    "department": "MRI / CT",
+    "extension": "9109,9119",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 1",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0058",
+    "department": "X-Ray / อัลตร้าซาวด์",
+    "extension": "9110,9113",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 1",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0059",
+    "department": "การเงิน",
+    "extension": "9120",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 1",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0060",
+    "department": "ตรวจสอบสิทธิการรักษา",
+    "extension": "9130",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 1",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0061",
+    "department": "ห้องจ่ายยาศัลยกรรม",
+    "extension": "9100,9101,9102",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 1",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0062",
+    "department": "ห้องตรวจมวลกระดูก",
+    "extension": "4321",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 1",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0063",
+    "department": "EKG",
+    "extension": "9206",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0064",
+    "department": "OPD ศัลยกรรม",
+    "extension": "9210,9200,9201",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0065",
+    "department": "จุดคัดกรองด่านหน้า",
+    "extension": "9210",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0066",
+    "department": "ศูนย์แพทย์",
+    "extension": "9211",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0067",
+    "department": "ห้องฉีดยา-ทำแผล",
+    "extension": "9207",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0068",
+    "department": "ห้องตรวจทางเดินปัสสาวะ / ห้องตรวจกุมารศัลยกรรม",
+    "extension": "9202,9203",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0069",
+    "department": "ห้องบัตร",
+    "extension": "9230",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0070",
+    "department": "ห้องประชุม 1",
+    "extension": "9208",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0071",
+    "department": "ห้องประชุม 2",
+    "extension": "9209",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0072",
+    "department": "ห้องผ่าตัดเล็ก",
+    "extension": "9220-9222",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0073",
+    "department": "ห้องแล็บ",
+    "extension": "9240",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 2",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0074",
+    "department": "คลินิกทันตกรรม",
+    "extension": "9300-9301",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 3",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0075",
+    "department": "ห้องตรวจหู คอ จมูก / ห้องตรวจการได้ยิน",
+    "extension": "9310,9311,9312",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 3",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0076",
+    "department": "ICU ศัลยกรรม",
+    "extension": "9410,9411",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 4",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0077",
+    "department": "คลินิกมะเร็งอายุรกรรม / ศูนย์อารีรักษ์",
+    "extension": "9420,9421,9422",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 4",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0078",
+    "department": "ศูนย์ผ่าตัดวันเดียวกลับ",
+    "extension": "9400,9401,9402",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 4",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0079",
+    "department": "หน่วยให้ยาเคมีบำบัด",
+    "extension": "9430,9431,9432,9433",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 4",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0080",
+    "department": "ซัพพลาย OR",
+    "extension": "9521,9522,9523",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 5",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0081",
+    "department": "ศูนย์ส่องกล้อง / ศูนย์ส่องกล้องนอกเวลา",
+    "extension": "9500,9508,9509",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 5",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0082",
+    "department": "วิสัญญี",
+    "extension": "9620,9621",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 6",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0083",
+    "department": "ห้องผ่าตัด",
+    "extension": "9600,9611",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 6",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0084",
+    "department": "วิสัญญี",
+    "extension": "9720,9721",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 7",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0085",
+    "department": "ห้องผ่าตัด",
+    "extension": "9700,9701",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 7",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0086",
+    "department": "ICU Trauma / ICU CVT",
+    "extension": "9800,9801",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 8",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0087",
+    "department": "ห้องผ่าตัด CVT",
+    "extension": "9810,9811",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น 8",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0088",
+    "department": "คลินิกโรคไต",
+    "extension": "9001,9002",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น B",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0089",
+    "department": "หน่วยล้างไตทางช่องท้อง",
+    "extension": "9011,9012",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น B",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0090",
+    "department": "หน่วยไตเทียมเรื้อรัง",
+    "extension": "9021,9022,9023",
+    "location": "อาคารพีรยพัฒนเวช · ชั้น B",
+    "note": "อาคารพีรยพัฒนเวช"
+  },
+  {
+    "id": "uttaradit-tel-0091",
+    "department": "00.30-08.30 น. (เวรดึก)",
+    "extension": "1669",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์ Refer"
+  },
+  {
+    "id": "uttaradit-tel-0092",
+    "department": "08.30-16.30 น. (เวรเช้า)",
+    "extension": "1410,1417,1418",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์ Refer"
+  },
+  {
+    "id": "uttaradit-tel-0093",
+    "department": "16.30-00.30 น. (เวรบ่าย)",
+    "extension": "1410",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์ Refer"
+  },
+  {
+    "id": "uttaradit-tel-0094",
+    "department": "CCU",
+    "extension": "5311,5314",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0095",
+    "department": "CT.ชั้น2 ER",
+    "extension": "1405",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0096",
+    "department": "Cath lab",
+    "extension": "5266,5267",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0097",
+    "department": "DATA center",
+    "extension": "4422",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคโนโลยีสารสนเทศ"
+  },
+  {
+    "id": "uttaradit-tel-0098",
+    "department": "ICU MED",
+    "extension": "5306,5307",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0099",
+    "department": "ICU ศัลยกรรมประสาท",
+    "extension": "2164,2165",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0100",
+    "department": "MRI. ER",
+    "extension": "1425",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0101",
+    "department": "NICU (หอผู้ป่วยวิกฤติกุมารเวชฯ เด็กเล็ก)",
+    "extension": "2105",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กุมารเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0102",
+    "department": "PICU (หอผู้ป่วยวิกฤติกุมารเวชฯ เด็กโต)",
+    "extension": "2100",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กุมารเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0103",
+    "department": "RCW",
+    "extension": "5405,5406,5407",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0104",
+    "department": "RICU",
+    "extension": "5301,5302,5303",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0105",
+    "department": "Stroke Unit",
+    "extension": "4116",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยโรคหลอดเลือดสมอง"
+  },
+  {
+    "id": "uttaradit-tel-0106",
+    "department": "Stroke Ward",
+    "extension": "5150,5151",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยโรคหลอดเลือดสมอง"
+  },
+  {
+    "id": "uttaradit-tel-0107",
+    "department": "X–Ray ER (นอกเวลาราชการ)",
+    "extension": "6319",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0108",
+    "department": "กลุ่มงานทรัพยากรบุคคล",
+    "extension": "1174,1175",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานทรัพยากรบุคคล"
+  },
+  {
+    "id": "uttaradit-tel-0109",
+    "department": "กลุ่มงานสังคมสงเคราะห์",
+    "extension": "1159",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานสังคมสงเคราะห์"
+  },
+  {
+    "id": "uttaradit-tel-0110",
+    "department": "การเงิน ER",
+    "extension": "6307",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานการเงิน"
+  },
+  {
+    "id": "uttaradit-tel-0111",
+    "department": "การเงินผู้ป่วยนอก",
+    "extension": "1156",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานการเงิน"
+  },
+  {
+    "id": "uttaradit-tel-0112",
+    "department": "การเงินผู้ป่วยใน",
+    "extension": "5157",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานการเงิน"
+  },
+  {
+    "id": "uttaradit-tel-0113",
+    "department": "กุมารเวช 2",
+    "extension": "7146,7147",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กุมารเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0114",
+    "department": "กุมารเวช 3",
+    "extension": "2107,2108",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กุมารเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0115",
+    "department": "ขอใบรับรองแพทย์/ประกันชีวิต",
+    "extension": "1109",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชระเบียนฯ"
+  },
+  {
+    "id": "uttaradit-tel-0116",
+    "department": "คลังพัสดุ",
+    "extension": "2136",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัสดุ"
+  },
+  {
+    "id": "uttaradit-tel-0117",
+    "department": "คลังยาย่อย",
+    "extension": "1184",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0118",
+    "department": "คลังเวชภัณฑ์",
+    "extension": "1125,1126",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0119",
+    "department": "คลังเวชภัณฑ์ที่ไม่ใช่ยา",
+    "extension": "2140",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัสดุ"
+  },
+  {
+    "id": "uttaradit-tel-0120",
+    "department": "คลินิก High Risk",
+    "extension": "1143",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กุมารเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0121",
+    "department": "คลินิกพบหมอออนไลน์",
+    "extension": "2323",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชกรรมสังคม"
+  },
+  {
+    "id": "uttaradit-tel-0122",
+    "department": "คลินิกพัฒนาการเด็ก",
+    "extension": "2146",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กุมารเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0123",
+    "department": "คลินิกสุขภาพเด็กดี",
+    "extension": "2147",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กุมารเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0124",
+    "department": "คลินิกโรคจากการทางาน",
+    "extension": "1499",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0125",
+    "department": "งาน IC",
+    "extension": "2155",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานกลุ่มการพยาบาล"
+  },
+  {
+    "id": "uttaradit-tel-0126",
+    "department": "งานซ่อมบำรุงทั่วไป /ประปำ",
+    "extension": "2132",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโครงสร้างพื้นฐาน และวิศวกรรมทางการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0127",
+    "department": "งานธุรการ",
+    "extension": "1102",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชระเบียนฯ"
+  },
+  {
+    "id": "uttaradit-tel-0128",
+    "department": "งานนิติการ",
+    "extension": "1173",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  },
+  {
+    "id": "uttaradit-tel-0129",
+    "department": "งานผลิตน้ำเกลือ",
+    "extension": "3105",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0130",
+    "department": "งานผลิตยาน้ำ",
+    "extension": "3108",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0131",
+    "department": "งานฝำกครรภ์",
+    "extension": "5186,5177",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สูติ- นรีเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0132",
+    "department": "งานอุปกรณ์การแพทย์",
+    "extension": "2131",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโครงสร้างพื้นฐาน และวิศวกรรมทางการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0133",
+    "department": "งานเคมีคลินิกและภูมิคุ้มกัน",
+    "extension": "6342",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0134",
+    "department": "งานเรียกเก็บ",
+    "extension": "2103,2104",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานประกันสุขภาพ"
+  },
+  {
+    "id": "uttaradit-tel-0135",
+    "department": "งานโลหิตวิทยาและจุลทรรศน์",
+    "extension": "6343",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0136",
+    "department": "งานไตเทียมฉุกเฉิน",
+    "extension": "5402,5403",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0137",
+    "department": "งานไฟฟ้า",
+    "extension": "8107",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโครงสร้างพื้นฐาน และวิศวกรรมทางการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0138",
+    "department": "จนท.ศูนย์คอมพิวเตอร์",
+    "extension": "1105",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคโนโลยีสารสนเทศ"
+  },
+  {
+    "id": "uttaradit-tel-0139",
+    "department": "จุดคัดกรอง OPD",
+    "extension": "1131",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0140",
+    "department": "ช่างคอมพิวเตอร์",
+    "extension": "1108",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคโนโลยีสารสนเทศ"
+  },
+  {
+    "id": "uttaradit-tel-0141",
+    "department": "ช่างแอร์",
+    "extension": "2130",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโครงสร้างพื้นฐาน และวิศวกรรมทางการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0142",
+    "department": "ช่างโทรศัพท์",
+    "extension": "2222",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโครงสร้างพื้นฐาน และวิศวกรรมทางการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0143",
+    "department": "ซักฟอก",
+    "extension": "2143,2171",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  },
+  {
+    "id": "uttaradit-tel-0144",
+    "department": "ตรวจสอบสิทธิ ER",
+    "extension": "6314",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานประกันสุขภาพ"
+  },
+  {
+    "id": "uttaradit-tel-0145",
+    "department": "ตรวจสอบสิทธิ OPD",
+    "extension": "1160,1161",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานประกันสุขภาพ"
+  },
+  {
+    "id": "uttaradit-tel-0146",
+    "department": "ตรวจสอบสิทธิผู้ป่วยใน",
+    "extension": "5160",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานประกันสุขภาพ"
+  },
+  {
+    "id": "uttaradit-tel-0147",
+    "department": "ตัดเย็บ",
+    "extension": "2121",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  },
+  {
+    "id": "uttaradit-tel-0148",
+    "department": "ธนาคารโลหิต",
+    "extension": "6336",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0149",
+    "department": "ธุรการกลุ่มการพยาบาล",
+    "extension": "2116",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานกลุ่มการพยาบาล"
+  },
+  {
+    "id": "uttaradit-tel-0150",
+    "department": "ป้อมทางออกประตู 8",
+    "extension": "1191",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์รักษาความปลอดภัย"
+  },
+  {
+    "id": "uttaradit-tel-0151",
+    "department": "ป้อมประตู 1",
+    "extension": "5191",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์รักษาความปลอดภัย"
+  },
+  {
+    "id": "uttaradit-tel-0152",
+    "department": "ป้อมหน้า รพ.",
+    "extension": "6191",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์รักษาความปลอดภัย"
+  },
+  {
+    "id": "uttaradit-tel-0153",
+    "department": "ผช.หน.กลุ่มการฯ",
+    "extension": "2113,2114",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานกลุ่มการพยาบาล"
+  },
+  {
+    "id": "uttaradit-tel-0154",
+    "department": "ผอ.ศูนย์แพทย์",
+    "extension": "2151",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์แพทยศาสตร์ศึกษาฯ"
+  },
+  {
+    "id": "uttaradit-tel-0155",
+    "department": "ผู้อำนวยการ (สำนักงานเลขำฯ)",
+    "extension": "1199",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานผู้บริหาร/สำนักงานเลขำ"
+  },
+  {
+    "id": "uttaradit-tel-0156",
+    "department": "ฝ่ายการศึกษา",
+    "extension": "2149,2150",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์แพทยศาสตร์ศึกษาฯ"
+  },
+  {
+    "id": "uttaradit-tel-0157",
+    "department": "พยาบาลชุมชน",
+    "extension": "2191",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานการพยาบาลชุมชน"
+  },
+  {
+    "id": "uttaradit-tel-0158",
+    "department": "ยานพาหนะ",
+    "extension": "8135",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  },
+  {
+    "id": "uttaradit-tel-0159",
+    "department": "รองผู้อำนวยการด้าน CFO",
+    "extension": "1189",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานผู้บริหาร/สำนักงานเลขำ"
+  },
+  {
+    "id": "uttaradit-tel-0160",
+    "department": "รองผู้อำนวยการด้าน CHRO",
+    "extension": "1194",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานผู้บริหาร/สำนักงานเลขำ"
+  },
+  {
+    "id": "uttaradit-tel-0161",
+    "department": "รองผู้อำนวยการฝ่ายการพยาบาล",
+    "extension": "2112",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานผู้บริหาร/สำนักงานเลขำ"
+  },
+  {
+    "id": "uttaradit-tel-0162",
+    "department": "รองผู้อำนวยการฝ่ายการแพทย์ 1",
+    "extension": "1188",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานผู้บริหาร/สำนักงานเลขำ"
+  },
+  {
+    "id": "uttaradit-tel-0163",
+    "department": "รองผู้อำนวยการฝ่ายการแพทย์ 2",
+    "extension": "1193",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานผู้บริหาร/สำนักงานเลขำ"
+  },
+  {
+    "id": "uttaradit-tel-0164",
+    "department": "รองผู้อำนวยการฝ่ายบริหาร",
+    "extension": "1177",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานผู้บริหาร/สำนักงานเลขำ"
+  },
+  {
+    "id": "uttaradit-tel-0165",
+    "department": "รังสีรักษา",
+    "extension": "5159",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0166",
+    "department": "วิสัญญีชั้น 6",
+    "extension": "9620,9621",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานวิสัญญีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0167",
+    "department": "วิสัญญีชั้น 7 (สูติฯ)",
+    "extension": "9720,9721",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานวิสัญญีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0168",
+    "department": "ศูนย์ข้อมูลทางการแพทย์",
+    "extension": "1101,1104",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชระเบียนฯ"
+  },
+  {
+    "id": "uttaradit-tel-0169",
+    "department": "ศูนย์ข้อมูลยา",
+    "extension": "1124",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0170",
+    "department": "ศูนย์ประสานงาน OPD",
+    "extension": "1130",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0171",
+    "department": "ศูนย์ประสานเครือข่าย",
+    "extension": "2161",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชกรรมสังคม"
+  },
+  {
+    "id": "uttaradit-tel-0172",
+    "department": "ศูนย์รับผู้ป่วยนอนโรงพยาบาล",
+    "extension": "1182",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0173",
+    "department": "ศูนย์อาหาร เรือนรสทิพย์",
+    "extension": "2176",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "อื่นๆ"
+  },
+  {
+    "id": "uttaradit-tel-0174",
+    "department": "ศูนย์เครื่องมือแพทย์",
+    "extension": "5130",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์เครื่องมือแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0175",
+    "department": "ศูนย์เปล ER",
+    "extension": "6322",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์เปล"
+  },
+  {
+    "id": "uttaradit-tel-0176",
+    "department": "ศูนย์เปล OPD",
+    "extension": "1146",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์เปล"
+  },
+  {
+    "id": "uttaradit-tel-0177",
+    "department": "ศูนย์เปลผู้ป่วยใน",
+    "extension": "2119",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์เปล"
+  },
+  {
+    "id": "uttaradit-tel-0178",
+    "department": "ศูนย์เปลหน้า OPD",
+    "extension": "1192",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์เปล"
+  },
+  {
+    "id": "uttaradit-tel-0179",
+    "department": "ศูนย์เพื่อนใจวัยรุ่น",
+    "extension": "7117",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานจิตเวชและยาเสพติด"
+  },
+  {
+    "id": "uttaradit-tel-0180",
+    "department": "สนง.กลุ่มงานจิตเวช",
+    "extension": "2123",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานจิตเวชและยาเสพติด"
+  },
+  {
+    "id": "uttaradit-tel-0181",
+    "department": "สนง.กลุ่มงานบริหารทั่วไป",
+    "extension": "1171,1176",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  },
+  {
+    "id": "uttaradit-tel-0182",
+    "department": "สนง.กลุ่มงานบัญชี",
+    "extension": "1167",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบัญชี"
+  },
+  {
+    "id": "uttaradit-tel-0183",
+    "department": "สนง.กลุ่มงานศัลยกรรม",
+    "extension": "6710,6711",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0184",
+    "department": "สหกรณ์ออมทรัพย์ รพ.อต.",
+    "extension": "2007,2008",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "อื่นๆ"
+  },
+  {
+    "id": "uttaradit-tel-0185",
+    "department": "สำนักงาน",
+    "extension": "2157,2158",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัฒนาทรัพยากรบุคคล"
+  },
+  {
+    "id": "uttaradit-tel-0186",
+    "department": "สำนักงาน (HA)",
+    "extension": "1166",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน"
+  },
+  {
+    "id": "uttaradit-tel-0187",
+    "department": "สำนักงานกลุ่มงานการเงิน",
+    "extension": "1162,1163,1164",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานการเงิน"
+  },
+  {
+    "id": "uttaradit-tel-0188",
+    "department": "สำนักงานกลุ่มงานพัสดุ",
+    "extension": "2133,2134,2135",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัสดุ"
+  },
+  {
+    "id": "uttaradit-tel-0189",
+    "department": "สำนักงานนิติเวช",
+    "extension": "3203",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานนิติเวช"
+  },
+  {
+    "id": "uttaradit-tel-0190",
+    "department": "สำนักงานฝ่ายแผนงาน",
+    "extension": "1190",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานยุทธศาสตร์และแผนงานโครงการ"
+  },
+  {
+    "id": "uttaradit-tel-0191",
+    "department": "สำนักงานศูนย์แพทย์",
+    "extension": "2148",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์แพทยศาสตร์ศึกษาฯ"
+  },
+  {
+    "id": "uttaradit-tel-0192",
+    "department": "สำนักงานศูนย์แพทย์ (Fax)",
+    "extension": "2148",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์แพทยศาสตร์ศึกษาฯ"
+  },
+  {
+    "id": "uttaradit-tel-0193",
+    "department": "สำนักงานสุขศึกษา",
+    "extension": "2159",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานสุขศึกษา"
+  },
+  {
+    "id": "uttaradit-tel-0194",
+    "department": "สำนักงานเวชนิทัศน์",
+    "extension": "2160",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัฒนาทรัพยากรบุคคล"
+  },
+  {
+    "id": "uttaradit-tel-0195",
+    "department": "หน.กลุ่มงานเทคนิคการแพทย์",
+    "extension": "6339",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0196",
+    "department": "หน.กลุ่มงานเภสัช กรรม",
+    "extension": "3101",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0197",
+    "department": "หน่วยเครื่องมือแพทย์ (100ปี)",
+    "extension": "4121",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์เครื่องมือแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0198",
+    "department": "หน่วยให้คำปรึกษา 2",
+    "extension": "1112",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0199",
+    "department": "หอผู้ป่วย ตา หู คอ จมูก",
+    "extension": "6240,6246",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ตำ หู คอ จมูก"
+  },
+  {
+    "id": "uttaradit-tel-0200",
+    "department": "หอผู้ป่วย นรีเวชกรรม",
+    "extension": "7136,7137",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สูติ- นรีเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0201",
+    "department": "หอผู้ป่วย สูติกรรม-หลังคลอด",
+    "extension": "7126,7127",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สูติ- นรีเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0202",
+    "department": "หอผู้ป่วยพิเศษพูนพิพัฒน์ 2",
+    "extension": "4113,4114",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยพิเศษพูนพิพัฒน์"
+  },
+  {
+    "id": "uttaradit-tel-0203",
+    "department": "หอผู้ป่วยพิเศษพูนพิพัฒน์ 3",
+    "extension": "4130,4131",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยพิเศษพูนพิพัฒน์"
+  },
+  {
+    "id": "uttaradit-tel-0204",
+    "department": "หอผู้ป่วยพิเศษพูนพิพัฒน์ 4",
+    "extension": "4140,4141",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยพิเศษพูนพิพัฒน์"
+  },
+  {
+    "id": "uttaradit-tel-0205",
+    "department": "หอผู้ป่วยพิเศษพูนพิพัฒน์ 5",
+    "extension": "4150,4151",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยพิเศษพูนพิพัฒน์"
+  },
+  {
+    "id": "uttaradit-tel-0206",
+    "department": "หอผู้ป่วยพิเศษหัตถการโรคหัวใจ",
+    "extension": "5410",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0207",
+    "department": "หอผู้ป่วยพิเศษอายุกรรมชาย",
+    "extension": "5610",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0208",
+    "department": "หอผู้ป่วยพิเศษอายุกรรมหญิง",
+    "extension": "5503",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0209",
+    "department": "หอผู้ป่วยศัลยกรรมกระดูกชาย",
+    "extension": "6121,6122",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรมกระดูก"
+  },
+  {
+    "id": "uttaradit-tel-0210",
+    "department": "หอผู้ป่วยศัลยกรรมกระดูกหญิง",
+    "extension": "2168,2169",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรมกระดูก"
+  },
+  {
+    "id": "uttaradit-tel-0211",
+    "department": "หอผู้ป่วยศัลยกรรมชาย 1",
+    "extension": "6131,6132",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0212",
+    "department": "หอผู้ป่วยศัลยกรรมชาย 2",
+    "extension": "6364,6601",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0213",
+    "department": "หอผู้ป่วยศัลยกรรมประสาท",
+    "extension": "6230,6236",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0214",
+    "department": "หอผู้ป่วยศัลยกรรมหญิง 1",
+    "extension": "6141,6142",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0215",
+    "department": "หอผู้ป่วยศัลยกรรมหญิง 2",
+    "extension": "6374,6375",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0216",
+    "department": "หอผู้ป่วยศัลยกรรมอุบัติเหตุ",
+    "extension": "6220,6221",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานศัลยกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0217",
+    "department": "หอผู้ป่วยหัตถการโรคหัวใจ (PPC)",
+    "extension": "5401",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0218",
+    "department": "หอผู้ป่วยอินทนิล",
+    "extension": "2111,2174",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานจิตเวชและยาเสพติด"
+  },
+  {
+    "id": "uttaradit-tel-0219",
+    "department": "หอผู้ป่วยแยกโรคติดเชื้อ A",
+    "extension": "4200,4211",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยแยกโรคติดเชื้อ"
+  },
+  {
+    "id": "uttaradit-tel-0220",
+    "department": "หัวหน้ากลุ่มงาน",
+    "extension": "1103",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชระเบียนฯ"
+  },
+  {
+    "id": "uttaradit-tel-0221",
+    "department": "หัวหน้ากลุ่มงาน",
+    "extension": "1106",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคโนโลยีสารสนเทศ"
+  },
+  {
+    "id": "uttaradit-tel-0222",
+    "department": "หัวหน้ากลุ่มงาน",
+    "extension": "2156",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัฒนาทรัพยากรบุคคล"
+  },
+  {
+    "id": "uttaradit-tel-0223",
+    "department": "หัวหน้ากลุ่มงาน",
+    "extension": "2193",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานการพยาบาลชุมชน"
+  },
+  {
+    "id": "uttaradit-tel-0224",
+    "department": "หัวหน้ากลุ่มงาน (HA)",
+    "extension": "1666",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน"
+  },
+  {
+    "id": "uttaradit-tel-0225",
+    "department": "หัวหน้ากลุ่มงานการเงิน",
+    "extension": "1183",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานการเงิน"
+  },
+  {
+    "id": "uttaradit-tel-0226",
+    "department": "หัวหน้ากลุ่มงานทรัพยากรบุคคล",
+    "extension": "1196",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานทรัพยากรบุคคล"
+  },
+  {
+    "id": "uttaradit-tel-0227",
+    "department": "หัวหน้ากลุ่มงานบริหารทั่วไป",
+    "extension": "1170",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  },
+  {
+    "id": "uttaradit-tel-0228",
+    "department": "หัวหน้ากลุ่มงานบัญชี",
+    "extension": "1180",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบัญชี"
+  },
+  {
+    "id": "uttaradit-tel-0229",
+    "department": "หัวหน้ากลุ่มงานพัสดุฯ",
+    "extension": "3177",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัสดุ"
+  },
+  {
+    "id": "uttaradit-tel-0230",
+    "department": "หัวหน้ากลุ่มงานรังสีวิทยา",
+    "extension": "5159",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0231",
+    "department": "หัวหน้ากลุ่มงานสังคมสงเคราะห์",
+    "extension": "1181",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานสังคมสงเคราะห์"
+  },
+  {
+    "id": "uttaradit-tel-0232",
+    "department": "หัวหน้ากลุ่มงานสุขภาพดิจิทัล",
+    "extension": "1107",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มภารกิจดิจิทัล"
+  },
+  {
+    "id": "uttaradit-tel-0233",
+    "department": "หัวหน้ากลุ่มงานอาชีวเวชกรรม",
+    "extension": "5128",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอาชีวเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0234",
+    "department": "หัวหน้ากลุ่มงานเวชกรรมสังคม",
+    "extension": "5163",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชกรรมสังคม"
+  },
+  {
+    "id": "uttaradit-tel-0235",
+    "department": "หัวหน้ากลุ่มงานโครงสร้างฯ",
+    "extension": "2129",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโครงสร้างพื้นฐาน และวิศวกรรมทางการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0236",
+    "department": "หัวหน้ากลุ่มงานโภชนาการ",
+    "extension": "2125",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโภชนศาสตร์"
+  },
+  {
+    "id": "uttaradit-tel-0237",
+    "department": "หัวหน้างานเวชนิทัศน์",
+    "extension": "2162",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานพัฒนาทรัพยากรบุคคล"
+  },
+  {
+    "id": "uttaradit-tel-0238",
+    "department": "หัวหน้าพยาบาล ER",
+    "extension": "6301",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "อุบัติเหตุและฉุกเฉิน"
+  },
+  {
+    "id": "uttaradit-tel-0239",
+    "department": "หัวหน้าพยาบาล OPD",
+    "extension": "1144",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0240",
+    "department": "หัวหน้าศูนย์จ่ายกลาง",
+    "extension": "2172",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์จ่ายกลาง"
+  },
+  {
+    "id": "uttaradit-tel-0241",
+    "department": "หัวหน้าศูนย์เปล",
+    "extension": "2120",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์เปล"
+  },
+  {
+    "id": "uttaradit-tel-0242",
+    "department": "ห้อง Supply OR",
+    "extension": "9521-9523",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องผ่าตัด"
+  },
+  {
+    "id": "uttaradit-tel-0243",
+    "department": "ห้อง TPN",
+    "extension": "3103",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0244",
+    "department": "ห้อง central lab",
+    "extension": "6113",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0245",
+    "department": "ห้อง นพ.อดิศร บุนนาค",
+    "extension": "6340",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0246",
+    "department": "ห้องกายวิภาค (Lab ชิ้นเนื้อ)",
+    "extension": "3205",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานนิติเวช"
+  },
+  {
+    "id": "uttaradit-tel-0247",
+    "department": "ห้องคลอด",
+    "extension": "7110,7111",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สูติ- นรีเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0248",
+    "department": "ห้องควบคุมโทรศัพท์",
+    "extension": "1195",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโครงสร้างพื้นฐาน และวิศวกรรมทางการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0249",
+    "department": "ห้องจ่ายกลาง",
+    "extension": "2118",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์จ่ายกลาง"
+  },
+  {
+    "id": "uttaradit-tel-0250",
+    "department": "ห้องจ่ายยา ER",
+    "extension": "6309,6310",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0251",
+    "department": "ห้องจ่ายยาจิตเวช",
+    "extension": "1110",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0252",
+    "department": "ห้องจ่ายยาผู้ป่วยนอก",
+    "extension": "1154,1155",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0253",
+    "department": "ห้องจ่ายยาในศัลยกรรม",
+    "extension": "6357,6358",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0254",
+    "department": "ห้องจ่ายยาในอายุรกรรม",
+    "extension": "5158,5171",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0255",
+    "department": "ห้องจ่ายอุปกรณ์ปราศจากเชื้อ",
+    "extension": "2179,2180",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์จ่ายกลาง"
+  },
+  {
+    "id": "uttaradit-tel-0256",
+    "department": "ห้องฉีดยา-ทำแผล ER",
+    "extension": "6315",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0257",
+    "department": "ห้องฉีดยา-ทำแผล OPD",
+    "extension": "1148",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0258",
+    "department": "ห้องตรวจกุมารเวชกรรม",
+    "extension": "1117,1118",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0259",
+    "department": "ห้องตรวจคลื่นหัวใจ EKG",
+    "extension": "1135",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0260",
+    "department": "ห้องตรวจคลื่นไฟฟ้าสมอง EEG (ชั้น 4)",
+    "extension": "4138",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "หอผู้ป่วยพิเศษพูนพิพัฒน์"
+  },
+  {
+    "id": "uttaradit-tel-0261",
+    "department": "ห้องตรวจจิตเวช",
+    "extension": "2109,2110",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานจิตเวชและยาเสพติด"
+  },
+  {
+    "id": "uttaradit-tel-0262",
+    "department": "ห้องตรวจตา",
+    "extension": "1120,1121",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0263",
+    "department": "ห้องตรวจมวลกระดูก",
+    "extension": "4321",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0264",
+    "department": "ห้องตรวจวัณโรคและทรวงอก",
+    "extension": "1210",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0265",
+    "department": "ห้องตรวจศัลยกรรมกระดูก",
+    "extension": "1137,1138,1139",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0266",
+    "department": "ห้องตรวจศัลยกรรมประสาท",
+    "extension": "1129",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0267",
+    "department": "ห้องตรวจสมรรถภาพปอด",
+    "extension": "1152",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0268",
+    "department": "ห้องตรวจสุขภาพ",
+    "extension": "1400",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0269",
+    "department": "ห้องตรวจสูติ- นรีเวช",
+    "extension": "1145",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0270",
+    "department": "ห้องตรวจอณูชีวโมเลกุล (โควิด)",
+    "extension": "6326",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0271",
+    "department": "ห้องตรวจอายุรกรรมประสาท",
+    "extension": "1409",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0272",
+    "department": "ห้องทันตกรรม",
+    "extension": "9300,9301",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานทันตกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0273",
+    "department": "ห้องบัตร ER",
+    "extension": "6331",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชระเบียนฯ"
+  },
+  {
+    "id": "uttaradit-tel-0274",
+    "department": "ห้องบัตร OPD",
+    "extension": "1157,1158",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชระเบียนฯ"
+  },
+  {
+    "id": "uttaradit-tel-0275",
+    "department": "ห้องประชุมกลุ่มการพยาบาล",
+    "extension": "2115",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "สำนักงานกลุ่มการพยาบาล"
+  },
+  {
+    "id": "uttaradit-tel-0276",
+    "department": "ห้องประชุมดอกประดู่ (อาคารสูติกรรมฯ)",
+    "extension": "7111",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0277",
+    "department": "ห้องประชุมพาดวารี (อาคารผู้ป่วยนอก)",
+    "extension": "1169",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0278",
+    "department": "ห้องประชุมศรีอุตรา (อาคารผู้ป่วยนอก)",
+    "extension": "1168",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0279",
+    "department": "ห้องประชุมองค์กรแพทย์",
+    "extension": "1415",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "องค์กรแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0280",
+    "department": "ห้องผ่าตัดชั้น 6",
+    "extension": "9600,9611",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องผ่าตัด"
+  },
+  {
+    "id": "uttaradit-tel-0281",
+    "department": "ห้องผ่าตัดชั้น 7 (สูติฯ)",
+    "extension": "9700,9701",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องผ่าตัด"
+  },
+  {
+    "id": "uttaradit-tel-0282",
+    "department": "ห้องผ่าตัดชั้น 8 (CVT)",
+    "extension": "9810,9811",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องผ่าตัด"
+  },
+  {
+    "id": "uttaradit-tel-0283",
+    "department": "ห้องผ่าตัดวันเดียวกลับ (ODS)",
+    "extension": "9400-9402",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องผ่าตัด"
+  },
+  {
+    "id": "uttaradit-tel-0284",
+    "department": "ห้องผ่าตัดเล็ก",
+    "extension": "9220-9222",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องผ่าตัด"
+  },
+  {
+    "id": "uttaradit-tel-0285",
+    "department": "ห้องพักแพทย์",
+    "extension": "1414",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "องค์กรแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0286",
+    "department": "ห้องพักแพทย์",
+    "extension": "6300,6305",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "อุบัติเหตุและฉุกเฉิน"
+  },
+  {
+    "id": "uttaradit-tel-0287",
+    "department": "ห้องพัสดุ lab",
+    "extension": "6347",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0288",
+    "department": "ห้องรังสีแพทย์",
+    "extension": "9114,9115",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานรังสีวิทยา"
+  },
+  {
+    "id": "uttaradit-tel-0289",
+    "department": "ห้องรับบริจาคโลหิต",
+    "extension": "6337",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0290",
+    "department": "ห้องรับ–ส่ง สิ่งส่งตรวจ",
+    "extension": "6341",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0291",
+    "department": "ห้องล้างอุปกรณ์",
+    "extension": "3106",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0292",
+    "department": "ห้องวิเคราะห์เคมีบำบัด",
+    "extension": "3109",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0293",
+    "department": "ห้องสมุด",
+    "extension": "1413",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์แพทยศาสตร์ศึกษาฯ"
+  },
+  {
+    "id": "uttaradit-tel-0294",
+    "department": "ห้องสังเกตอาการ",
+    "extension": "6312",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "อุบัติเหตุและฉุกเฉิน"
+  },
+  {
+    "id": "uttaradit-tel-0295",
+    "department": "ห้องสุขศึกษา (อาคาร 100 ปี)",
+    "extension": "5114",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานสุขศึกษา"
+  },
+  {
+    "id": "uttaradit-tel-0296",
+    "department": "ห้องหัวหน้า OR",
+    "extension": "9616",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องผ่าตัด"
+  },
+  {
+    "id": "uttaradit-tel-0297",
+    "department": "ห้องอนุภาค",
+    "extension": "3104",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0298",
+    "department": "ห้องอบเครื่องมือ",
+    "extension": "2117",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ศูนย์จ่ายกลาง"
+  },
+  {
+    "id": "uttaradit-tel-0299",
+    "department": "ห้องเก็บรักษาศพ (อาคารนิติเวช)",
+    "extension": "3201",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานนิติเวช"
+  },
+  {
+    "id": "uttaradit-tel-0300",
+    "department": "ห้องเก็บรักษาศพ (อาคารเดิม)",
+    "extension": "1333",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานนิติเวช"
+  },
+  {
+    "id": "uttaradit-tel-0301",
+    "department": "ห้องเจษฎาบดินทร์ (อาคารผู้ป่วยนอก)",
+    "extension": "1179",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องประชุม"
+  },
+  {
+    "id": "uttaradit-tel-0302",
+    "department": "ห้องเจาะเลือด ER",
+    "extension": "6308",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0303",
+    "department": "ห้องเจาะเลือด OPD",
+    "extension": "1208",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0304",
+    "department": "ห้องเฝือก",
+    "extension": "1136",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "ห้องตรวจผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0305",
+    "department": "ห้องเภสัชฯ",
+    "extension": "3107",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเภสัชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0306",
+    "department": "ห้องแบคทีเรีย",
+    "extension": "6346",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเทคนิคการแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0307",
+    "department": "องค์กรแพทย์",
+    "extension": "1416",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "องค์กรแพทย์"
+  },
+  {
+    "id": "uttaradit-tel-0308",
+    "department": "อาคารสถานที่และสิ่งแวดล้อม",
+    "extension": "2142",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  },
+  {
+    "id": "uttaradit-tel-0309",
+    "department": "อาชีวเวชกรรม",
+    "extension": "5125",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอาชีวเวชกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0310",
+    "department": "อายุรกรรมชาย 1",
+    "extension": "5601,5602",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0311",
+    "department": "อายุรกรรมชาย 2",
+    "extension": "5605,5606",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0312",
+    "department": "อายุรกรรมหญิง 1",
+    "extension": "5501,5502,5509",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0313",
+    "department": "อายุรกรรมหญิง 2",
+    "extension": "5505,5506",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานอายุรกรรม"
+  },
+  {
+    "id": "uttaradit-tel-0314",
+    "department": "เคาน์เตอร์นัดคลินิกพิเศษ SMC",
+    "extension": "1182",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานผู้ป่วยนอก"
+  },
+  {
+    "id": "uttaradit-tel-0315",
+    "department": "เคาน์เตอร์พยาบาล",
+    "extension": "6303,6304,6306",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "อุบัติเหตุและฉุกเฉิน"
+  },
+  {
+    "id": "uttaradit-tel-0316",
+    "department": "เบอร์กลางโรงพยาบาลอุตรดิตถ์",
+    "extension": "055-409-999",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "เบอร์หลักโรงพยาบาล"
+  },
+  {
+    "id": "uttaradit-tel-0317",
+    "department": "เวชกรรมสังคม",
+    "extension": "5161,5162",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานเวชกรรมสังคม"
+  },
+  {
+    "id": "uttaradit-tel-0318",
+    "department": "แจ้งเหตุฉุกเฉินภายในโรงพยาบาล",
+    "extension": "1234",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "เบอร์ฉุกเฉินภายใน (เรียกทีม CPR และเหตุเร่งด่วน)"
+  },
+  {
+    "id": "uttaradit-tel-0319",
+    "department": "โต๊ะคัดกรอง",
+    "extension": "6302",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "อุบัติเหตุและฉุกเฉิน"
+  },
+  {
+    "id": "uttaradit-tel-0320",
+    "department": "โภชนบำบัด",
+    "extension": "2145",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโภชนศาสตร์"
+  },
+  {
+    "id": "uttaradit-tel-0321",
+    "department": "โภชนาการ",
+    "extension": "2144",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานโภชนศาสตร์"
+  },
+  {
+    "id": "uttaradit-tel-0322",
+    "department": "โลจิสติกส์",
+    "extension": "2190",
+    "location": "โรงพยาบาลอุตรดิตถ์",
+    "note": "กลุ่มงานบริหารทั่วไป"
+  }
+]
