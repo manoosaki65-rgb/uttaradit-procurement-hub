@@ -291,6 +291,7 @@ export default function TelephonePage() {
           <a className={styles.back} href="/" aria-label="กลับหน้ารวมระบบงานพัสดุ">
             <ArrowLeft size={18} /> กลับหน้ารวมระบบงานพัสดุ
           </a>
+          <a href="/personnel-2570/" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-900 hover:bg-blue-100"><UsersRound size={16}/> ค้นรายชื่อบุคลากรปี 2570</a>
           <span className={styles.brand}><Phone size={17} /> UTTARADIT HOSPITAL</span>
         </header>
 
