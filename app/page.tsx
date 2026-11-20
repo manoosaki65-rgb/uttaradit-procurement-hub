@@ -135,8 +135,15 @@ export default function HomePage() {
         <button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="เปิดเมนู" aria-expanded={menuOpen}><Menu size={23} /></button>
         <span className="ministry-emblem mobile-seal" role="img" aria-label="ตรางูพันคบเพลิง กระทรวงสาธารณสุข" />
         <div className="hospital-title"><div><h1>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์</h1><p>Uttaradit Hospital Procurement System</p><strong>“พัสดุคุ้มค่า • ราคามาตรฐาน • บริการด้วยใจ • ทันสมัยด้วยเทคโนโลยี”</strong></div></div>
-        <div className="topbar-right"><div className="date-box"><span>{today}</span><small>{timeNow} น.</small></div><a className="top-icon" href="/telephone/" aria-label="สมุดโทรศัพท์ภายใน" title="สมุดโทรศัพท์ภายใน"><PhoneCall size={23} /></a><a className="top-icon" href="/personnel-2570/" aria-label="รายชื่อบุคลากร ปี 2570" title="รายชื่อบุคลากร ปี 2570"><UsersRound size={23} /></a><a className="top-icon" href="#quick-menu" aria-label="ค้นหาเมนู"><Search size={23} /></a><a className="top-icon notification" href="#notice-title" aria-label="ประกาศและแจ้งเตือน"><Bell size={23} /></a><div className="user-box"><span><UserRound size={24} /></span><div><strong>สวัสดีครับ</strong><small>กลุ่มงานพัสดุ</small></div></div></div>
+        <div className="topbar-right"><div className="date-box"><span>{today}</span><small>{timeNow} น.</small></div><a className="top-icon" href="/telephone/" aria-label="สมุดโทรศัพท์ภายใน" title="สมุดโทรศัพท์ภายใน"><PhoneCall size={23} /></a><a className="top-icon" href="#quick-menu" aria-label="ค้นหาเมนู"><Search size={23} /></a><a className="top-icon notification" href="#notice-title" aria-label="ประกาศและแจ้งเตือน"><Bell size={23} /></a><div className="user-box"><span><UserRound size={24} /></span><div><strong>สวัสดีครับ</strong><small>กลุ่มงานพัสดุ</small></div></div></div>
       </header>
+      <nav className="top-shortcuts" aria-label="ทางลัดด้านบน">
+        <span className="top-shortcuts-label">เมนูทางลัด</span>
+        <a className="top-shortcut" href="/forgot-scan"><Clock3 size={18} /> ลืมสแกนเวลา</a>
+        <a className="top-shortcut" href="/telephone/"><PhoneCall size={18} /> เบอร์โทรและบุคลากร</a>
+        <a className="top-shortcut needs" href="/requirements/"><ClipboardCheck size={18} /> ความต้องการพัสดุ <span aria-label="โหมดทดลอง" title="โหมดทดลอง" style={{ fontSize: 11, opacity: .85 }}>ทดลอง</span></a>
+      </nav>
+
 
       <section className="hero-banner" aria-label="อาคารพัสดุและสภาพอากาศ" style={{ position: "relative" }}>
         <div className="hero-slide hero-original is-active" aria-hidden="false"><img src="https://uttaradit-procurement-hub.manoosaki65.chatgpt.site/procurement-home-design.jpg" alt="อาคารพัสดุ โรงพยาบาลอุตรดิตถ์" /><div className="mobile-hero-copy"><span>SMART PROCUREMENT</span><h2>อาคารพัสดุ โรงพยาบาลอุตรดิตถ์</h2></div></div>
