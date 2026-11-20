@@ -265,3 +265,54 @@ footer { display: flex; justify-content: space-between; gap: 20px; padding: 12px
   .hero-weather-card > div:first-child > div:last-child > div:nth-child(2) { font-size:22px !important; }
   .hero-weather-card > div:first-child > div:last-child > div:nth-child(3) { font-size:11px !important; }
 }
+
+
+/* Extra horizontal shortcuts: retains the existing left sidebar untouched. */
+.top-shortcuts {
+  position: relative;
+  z-index: 19;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 25px;
+  border-bottom: 1px solid #d7e6f2;
+  background: #f8fbff;
+  box-shadow: 0 2px 6px rgba(15, 63, 102, .04);
+  scrollbar-width: thin;
+}
+.top-shortcuts-label {
+  flex: 0 0 auto;
+  margin-right: 4px;
+  color: #617e98;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.top-shortcut {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #ccdef0;
+  border-radius: 11px;
+  background: #fff;
+  padding: 9px 13px;
+  color: #0a477e;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: border-color .14s ease, background .14s ease, transform .14s ease;
+}
+.top-shortcut:hover { background: #eaf5ff; border-color: #7ab5e5; transform: translateY(-1px); }
+.top-shortcut:focus-visible { outline: 3px solid #238df0; outline-offset: 2px; }
+.top-shortcut.needs { background: #0a579a; border-color: #0a579a; color: white; }
+.top-shortcut.needs:hover { background: #063e72; }
+@media (max-width: 640px) {
+  .top-shortcuts { gap: 7px; padding: 8px 10px; }
+  .top-shortcuts-label { display: none; }
+  .top-shortcut { min-height: 40px; padding: 8px 11px; font-size: 12px; }
+}
