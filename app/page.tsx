@@ -3,7 +3,7 @@
 import {
   Bell, BookOpen, CalendarDays, ChartNoAxesCombined, ChevronRight, CircleCheckBig,
   ClipboardCheck, Clock3, FileCheck2, FilePlus2, FileSearch2, FolderKanban,
-  Home, Landmark, Mail, Menu, Search, ShieldCheck, UserRound,
+  Home, Landmark, Mail, Menu, PhoneCall, Search, ShieldCheck, UserRound,
   WalletCards, X, type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -31,6 +31,7 @@ const modules: ModuleItem[] = [
   { title: "ทะเบียนส่งจดหมาย / BMS", subtitle: "ทะเบียนจดหมาย / พิมพ์ซอง", href: "https://bms.hatchable.site/", icon: Mail, tone: "violet" },
   { title: "รายงานการประชุม", subtitle: "ปฏิทินประชุม / รายงานและไฟล์แนบ", icon: CalendarDays, tone: "blue", href: "https://uttaradit-meeting-report.manoosaki65.workers.dev/" },
   { title: "รายงานความเสี่ยง / HA", subtitle: "ทบทวนความเสี่ยงและเอกสารคุณภาพ", icon: ShieldCheck, tone: "orange", href: "https://uttaradit-risk-report.manoosaki65.workers.dev/" },
+  { title: "สมุดโทรศัพท์ภายใน", subtitle: "ค้นหาเบอร์โทรและหน่วยงานในโรงพยาบาล", icon: PhoneCall, tone: "cyan", href: "/telephone/" },
   { title: "ข่าวพัสดุและ AI", subtitle: "Smart Procurement News", icon: BookOpen, tone: "indigo", href: "https://smart-procurement.hatchable.site/" },
   { title: "รับสัญญา / ทำสันแฟ้ม", subtitle: "ระบบทดสอบ — ยังไม่อ่าน PDF จริง", icon: FilePlus2, tone: "pink", href: "https://app-ce706q.v2.appdeploy.ai/" },
   { title: "ทะเบียนเลขประกาศจังหวัด", subtitle: "เปิดทะเบียนเลขประกาศจังหวัด", icon: FileCheck2, tone: "sky", href: "https://uttaradit-announcement-register.onrender.com/", menuOnly: true },
@@ -133,7 +134,7 @@ export default function HomePage() {
         <button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="เปิดเมนู" aria-expanded={menuOpen}><Menu size={23} /></button>
         <span className="ministry-emblem mobile-seal" role="img" aria-label="ตรางูพันคบเพลิง กระทรวงสาธารณสุข" />
         <div className="hospital-title"><div><h1>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์</h1><p>Uttaradit Hospital Procurement System</p><strong>“พัสดุคุ้มค่า • ราคามาตรฐาน • บริการด้วยใจ • ทันสมัยด้วยเทคโนโลยี”</strong></div></div>
-        <div className="topbar-right"><div className="date-box"><span>{today}</span><small>{timeNow} น.</small></div><a className="top-icon" href="#quick-menu" aria-label="ค้นหาเมนู"><Search size={23} /></a><a className="top-icon notification" href="#notice-title" aria-label="ประกาศและแจ้งเตือน"><Bell size={23} /></a><div className="user-box"><span><UserRound size={24} /></span><div><strong>สวัสดีครับ</strong><small>กลุ่มงานพัสดุ</small></div></div></div>
+        <div className="topbar-right"><div className="date-box"><span>{today}</span><small>{timeNow} น.</small></div><a className="top-icon" href="/telephone/" aria-label="สมุดโทรศัพท์ภายใน" title="สมุดโทรศัพท์ภายใน"><PhoneCall size={23} /></a><a className="top-icon" href="#quick-menu" aria-label="ค้นหาเมนู"><Search size={23} /></a><a className="top-icon notification" href="#notice-title" aria-label="ประกาศและแจ้งเตือน"><Bell size={23} /></a><div className="user-box"><span><UserRound size={24} /></span><div><strong>สวัสดีครับ</strong><small>กลุ่มงานพัสดุ</small></div></div></div>
       </header>
 
       <section className="hero-banner" aria-label="อาคารพัสดุและสภาพอากาศ" style={{ position: "relative" }}>
