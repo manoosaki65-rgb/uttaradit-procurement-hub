@@ -115,3 +115,12 @@
   .footTools { display: block; }
   .dataActions { margin-top: 15px; }
 }
+
+.pastePanel { display: flex; flex-direction: column; gap: 11px; padding: 20px 24px; margin: 0 0 18px; border: 1px solid #d9e9f2; border-radius: 13px; background: #fff; box-shadow: 0 3px 14px #174c6b0c; }
+.pasteTitle { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.pasteTitle strong { color: #174563; font-size: 15px; }
+.pasteTitle button { border: 0; background: none; color: #819caf; cursor: pointer; }
+.pastePanel p { margin: 0; color: #6c879b; font-size: 12px; line-height: 1.8; }
+.pastePanel textarea { width: 100%; resize: vertical; min-height: 95px; padding: 13px; border: 1px solid #cddfeb; outline-color: #1492c2; border-radius: 9px; color: #284a60; background: #f9fcfe; font-family: inherit; font-size: 12px; }
+.pastePanel > button { align-self: flex-start; }
+.pastePanel > button:disabled { opacity: .5; cursor: not-allowed; }
