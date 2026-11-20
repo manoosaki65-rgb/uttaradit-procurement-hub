@@ -142,6 +142,8 @@ export default function TelephonePage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [showAdd, setShowAdd] = useState(false);
+  const [showPaste, setShowPaste] = useState(false);
+  const [pastedText, setPastedText] = useState("");
   const [department, setDepartment] = useState("");
   const [extension, setExtension] = useState("");
   const [location, setLocation] = useState("");
@@ -156,8 +158,8 @@ export default function TelephonePage() {
       try {
         const local = validContacts(JSON.parse(saved));
         if (active) { setContacts(local); setMode(local.length ? "local" : "empty"); }
+        return () => { active = false; };
       } catch { window.localStorage.removeItem(STORE); }
-      if (saved !== null) return () => { active = false; };
     }
     fetch("/telephone-directory.json", { cache: "no-store" })
       .then((response) => response.ok ? response.json() : [])
@@ -226,6 +228,19 @@ export default function TelephonePage() {
     } finally {
       if (fileInput.current) fileInput.current.value = "";
     }
+  }
+
+  function importPasted() {
+    setError("");
+    const parsed = parseDirectory(pastedText);
+    if (!parsed.length) {
+      setError("ยังไม่พบตารางเบอร์โทร กรุณาคัดลอกแถวข้อมูลจากหน้า Intranet แล้ววางอีกครั้ง");
+      return;
+    }
+    saveLocal(parsed, "รับข้อมูลจากตาราง " + parsed.length.toLocaleString("th-TH") + " รายการแล้ว (เฉพาะเครื่องนี้)");
+    setQuery("");
+    setPastedText("");
+    setShowPaste(false);
   }
 
   function addContact(event: React.FormEvent<HTMLFormElement>) {
@@ -320,6 +335,9 @@ export default function TelephonePage() {
             <a href={INTRANET_URL} target="_blank" rel="noopener noreferrer" className={styles.outlineBtn}>
               <ExternalLink size={16} /> เปิดต้นฉบับ Intranet
             </a>
+            <button className={styles.outlineBtn} type="button" onClick={() => setShowPaste((open) => !open)}>
+              <ClipboardCopy size={16} /> วางตาราง
+            </button>
             <input ref={fileInput} className={styles.hiddenInput} type="file" accept=".html,.htm,.csv,.txt,.json,text/html,text/csv"
               onChange={(event) => { const file = event.target.files?.[0]; if (file) void importFile(file); }} />
             <button className={styles.primaryBtn} type="button" onClick={() => fileInput.current?.click()}>
@@ -328,6 +346,21 @@ export default function TelephonePage() {
           </div>
         </section>
 
+        {showPaste && <section className={styles.pastePanel} aria-label="วางตารางเบอร์โทร">
+          <div className={styles.pasteTitle}><strong>วางตารางเบอร์โทรจาก Intranet</strong>
+            <button type="button" onClick={() => setShowPaste(false)} aria-label="ปิด"><X size={18}/></button>
+          </div>
+          <p>เปิดหน้า Intranet เลือกตารางรายชื่อแล้วกด Ctrl+C กลับมาหน้านี้และกด Ctrl+V ระบบจะอ่านตาราง HTML หรือข้อความที่แบ่งคอลัมน์ให้อัตโนมัติ</p>
+          <textarea value={pastedText} onChange={(event) => setPastedText(event.target.value)}
+            onPaste={(event) => {
+              const html = event.clipboardData.getData("text/html");
+              if (/<table[\\s>]/i.test(html)) { event.preventDefault(); setPastedText(html); }
+            }}
+            rows={5} placeholder="คลิกที่นี่ แล้วกด Ctrl+V เพื่อวางข้อมูลเบอร์โทรศัพท์" />
+          <button className={styles.primaryBtn} type="button" onClick={importPasted} disabled={!pastedText.trim()}>
+            <Check size={16}/> นำเข้าตารางที่วาง
+          </button>
+        </section>}
         {error && <div className={styles.error} role="alert">{error}</div>}
         {notice && <div className={styles.notice} role="status">{notice}<button type="button" onClick={() => setNotice("")} aria-label="ปิดข้อความ"><X size={15}/></button></div>}
 
