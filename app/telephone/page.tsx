@@ -354,7 +354,7 @@ export default function TelephonePage() {
           <textarea value={pastedText} onChange={(event) => setPastedText(event.target.value)}
             onPaste={(event) => {
               const html = event.clipboardData.getData("text/html");
-              if (/<table[\\s>]/i.test(html)) { event.preventDefault(); setPastedText(html); }
+              if (/<table[\s>]/i.test(html)) { event.preventDefault(); setPastedText(html); }
             }}
             rows={5} placeholder="คลิกที่นี่ แล้วกด Ctrl+V เพื่อวางข้อมูลเบอร์โทรศัพท์" />
           <button className={styles.primaryBtn} type="button" onClick={importPasted} disabled={!pastedText.trim()}>
