@@ -1,220 +1,62 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ArrowLeft, Building2, CheckCircle2, Download, FileUp, Search,
-  ShieldCheck, Trash2, UserRound, UsersRound, X
-} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, Building2, Search, ShieldCheck, UserRound, UsersRound, X } from "lucide-react";
 import styles from "./personnel.module.css";
 
 type Staff = { name: string; position: string; workplace: string };
-const STORAGE_KEY = "uttaradit_staff2570_private_local_v1";
-const REQUIRED_COLUMNS = ["คำนำหน้า", "ชื่อ", "สกุล", "ตำแหน่ง", "หน่วยงาน (ปฏิบัติจริง)", "กลุ่มงาน"];
-
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let cell = "";
-  let quoted = false;
-  const source = text.replace(/^\uFEFF/, "");
-  for (let i = 0; i < source.length; i++) {
-    const char = source[i];
-    if (char === '"') {
-      if (quoted && source[i + 1] === '"') { cell += '"'; i++; }
-      else { quoted = !quoted; }
-    } else if (!quoted && char === ",") {
-      row.push(cell); cell = "";
-    } else if (!quoted && (char === "\n" || char === "\r")) {
-      if (char === "\r" && source[i + 1] === "\n") i++;
-      row.push(cell); rows.push(row); row = []; cell = "";
-    } else {
-      cell += char;
-    }
-  }
-  if (cell || row.length) { row.push(cell); rows.push(row); }
-  return rows;
-}
-function safeField(value: unknown): string {
+const DIRECTORY = "/personnel-2570-directory.json";
+function clean(value: unknown): string {
   return typeof value === "string" ? value.replace(/\s+/g, " ").trim().slice(0, 190) : "";
 }
-function staffFromCsv(text: string): Staff[] {
-  const rows = parseCsv(text);
-  if (!rows.length) throw new Error("ไม่พบข้อมูลในไฟล์");
-  const headers = rows[0].map((item) => safeField(item).replace(/^\uFEFF/, ""));
-  for (const col of REQUIRED_COLUMNS) {
-    if (!headers.includes(col)) throw new Error("ไฟล์นี้ไม่มีคอลัมน์ “" + col + "” กรุณาใช้ไฟล์บุคลากรปี 2570");
-  }
-  const indexes = REQUIRED_COLUMNS.map((col) => headers.indexOf(col));
-  const records: Staff[] = [];
-  for (const row of rows.slice(1)) {
-    const [prefix, first, surname, position, actualUnit, group] =
-      indexes.map((index) => safeField(row[index] ?? ""));
-    if (!first || !surname || !position) continue;
-    const name = [prefix + first, surname].filter(Boolean).join(" ");
-    // Only these three fields leave the parser. No ID, DOB, employment number or dates are stored.
-    records.push({ name, position, workplace: actualUnit || group || "ไม่ระบุหน่วยงาน" });
-  }
-  if (!records.length) throw new Error("ไฟล์ไม่มีรายชื่อที่อ่านได้");
-  if (records.length > 10000) throw new Error("ไฟล์มีรายการมากกว่าขนาดที่รองรับ");
-  return records;
+function parseStaff(input: unknown): Staff[] {
+  if (!Array.isArray(input) || input.length > 10000) throw new Error("รูปแบบข้อมูลไม่ถูกต้อง");
+  return input.map((entry) => {
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) throw new Error("รายการบุคลากรไม่ถูกต้อง");
+    const row = entry as Record<string, unknown>;
+    const name = clean(row.name), position = clean(row.position), workplace = clean(row.workplace);
+    if (!name || !position || !workplace || Object.keys(row).some(k => !["name", "position", "workplace"].includes(k))) {
+      throw new Error("รายการบุคลากรมีข้อมูลผิดรูปแบบ");
+    }
+    return { name, position, workplace };
+  });
 }
-function readSafeCache(value: unknown): Staff[] {
-  if (!Array.isArray(value) || value.length > 10000) return [];
-  return value.map((item) => {
-    if (!item || typeof item !== "object") return null;
-    const entry = item as Partial<Staff>;
-    const name = safeField(entry.name);
-    const position = safeField(entry.position);
-    const workplace = safeField(entry.workplace);
-    return name && position && workplace ? { name, position, workplace } : null;
-  }).filter((item): item is Staff => item !== null);
-}
-function normalized(value: string): string {
+function key(value: string): string {
   return value.toLocaleLowerCase("th").replace(/\s+/g, "").trim();
 }
+
 export default function Personnel2570() {
   const [records, setRecords] = useState<Staff[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [query, setQuery] = useState("");
   const [workplace, setWorkplace] = useState("");
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
-  const [remember, setRemember] = useState(false);
-  const [centralStatus, setCentralStatus] = useState<"checking" | "ready" | "empty" | "pending" | "denied" | "error">("checking");
-  const [canPublish, setCanPublish] = useState(false);
-  const [publishing, setPublishing] = useState(false);
-  const fileInput = useRef<HTMLInputElement>(null);
-  const searchInput = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    try {
-      const cache = window.localStorage.getItem(STORAGE_KEY);
-      if (cache) {
-        const data = readSafeCache(JSON.parse(cache));
-        if (data.length) {
-          setRecords(data);
-          setRemember(true);
-        } else {
-          window.localStorage.removeItem(STORAGE_KEY);
-        }
-      }
-    } catch { /* Ignore inaccessible browser storage. */ }
-    setLoaded(true);
-  }, []);
-
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/personnel-2570", { credentials: "same-origin", cache: "no-store", signal: controller.signal })
-      .then(async (response) => {
-        if (response.status === 503) { setCentralStatus("pending"); return; }
-        if (response.status === 403 || response.status === 401) { setCentralStatus("denied"); return; }
-        if (!response.ok) throw new Error("Could not load private directory");
-        const payload = await response.json() as {
-          status?: string; records?: Staff[]; canPublish?: boolean;
-        };
-        if (controller.signal.aborted) return;
-        setCanPublish(payload.canPublish === true);
-        if (payload.status === "ready" && Array.isArray(payload.records)) {
-          const valid = readSafeCache(payload.records);
-          if (valid.length) setRecords(valid);
-          setCentralStatus("ready");
-        } else {
-          setCentralStatus("empty");
-        }
+    fetch(DIRECTORY, { signal: controller.signal, cache: "no-store" })
+      .then(async response => {
+        if (!response.ok) throw new Error("Directory unavailable");
+        return response.json();
       })
-      .catch((err) => {
-        if (controller.signal.aborted || err?.name === "AbortError") return;
-        setCentralStatus("error");
+      .then(data => {
+        if (controller.signal.aborted) return;
+        const staff = parseStaff(data);
+        if (!staff.length) throw new Error("Directory is empty");
+        setRecords(staff);
+        setStatus("ready");
+      })
+      .catch(error => {
+        if (!controller.signal.aborted && error?.name !== "AbortError") setStatus("error");
       });
     return () => controller.abort();
   }, []);
-
-  async function publishCentral() {
-    if (!canPublish || !records.length || publishing) return;
-    if (!window.confirm("บันทึกเฉพาะชื่อ–นามสกุล ตำแหน่ง และหน่วยงาน " +
-      records.length.toLocaleString("th-TH") +
-      " คน ลงฐานข้อมูลส่วนกลางสำหรับผู้ที่ได้รับสิทธิ์ใช่หรือไม่?")) return;
-    setPublishing(true); setNotice(""); setError("");
-    try {
-      const response = await fetch("/api/personnel-2570", {
-        method: "POST", credentials: "same-origin", cache: "no-store",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ records })
-      });
-      const result = await response.json();
-      if (!response.ok || result.status !== "saved") throw new Error(
-        "บันทึกฐานข้อมูลส่วนกลางไม่สำเร็จ (" + String(result.error || response.status) + ")"
-      );
-      setCentralStatus("ready");
-      setNotice("บันทึกข้อมูลส่วนกลางแล้ว " + result.count.toLocaleString("th-TH") +
-        " คน ผู้ได้รับสิทธิ์สามารถค้นหาได้จากหลายเครื่อง");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "บันทึกข้อมูลส่วนกลางไม่สำเร็จ");
-    } finally { setPublishing(false); }
-  }
-
-  const workplaces = useMemo(() => Array.from(new Set(records.map((r) => r.workplace)))
-    .sort((a,b) => a.localeCompare(b, "th")), [records]);
-  const matching = useMemo(() => {
-    const search = normalized(query);
-    if (!search) return [];
-    return records.filter((r) =>
-      (!workplace || r.workplace === workplace) &&
-      normalized(r.name + " " + r.position + " " + r.workplace).includes(search)
-    ).sort((a,b) => a.name.localeCompare(b.name, "th")).slice(0, 200);
+  const workplaces = useMemo(() => Array.from(new Set(records.map(r => r.workplace))).sort((a,b) => a.localeCompare(b,"th")), [records]);
+  const matches = useMemo(() => {
+    const q = key(query);
+    if (!q) return [];
+    return records.filter(r => (!workplace || r.workplace === workplace) &&
+      key(r.name + " " + r.position + " " + r.workplace).includes(q)).sort((a,b) => a.name.localeCompare(b.name,"th"));
   }, [records, query, workplace]);
-  const totalMatching = useMemo(() => {
-    const search = normalized(query);
-    if (!search) return 0;
-    return records.reduce((total, r) =>
-      total + Number((!workplace || r.workplace === workplace) &&
-        normalized(r.name + " " + r.position + " " + r.workplace).includes(search)), 0);
-  }, [records, query, workplace]);
-
-  async function importCsv(file?: File) {
-    if (!file) return;
-    setError(""); setNotice("");
-    if (file.size > 5 * 1024 * 1024) {
-      setError("ไฟล์เกิน 5 MB กรุณาเลือกไฟล์ CSV ที่มีขนาดเล็กกว่า");
-      return;
-    }
-    try {
-      const bytes = await file.arrayBuffer();
-      let raw: string;
-      try { raw = new TextDecoder("utf-8", { fatal: true }).decode(bytes); }
-      catch { raw = new TextDecoder("windows-874").decode(bytes); }
-      const clean = staffFromCsv(raw);
-      setRecords(clean);
-      setQuery(""); setWorkplace("");
-      if (remember) {
-        try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(clean)); }
-        catch { setError("ไม่สามารถจดจำในเบราว์เซอร์ได้ แต่ค้นหาในหน้านี้ได้ตามปกติ"); }
-      } else {
-        try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
-      }
-      setNotice("นำเข้ารายชื่อ " + clean.length.toLocaleString("th-TH") + " คนแล้ว — เก็บเฉพาะชื่อ ตำแหน่ง และหน่วยงาน");
-      searchInput.current?.focus();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "อ่านไฟล์ CSV ไม่สำเร็จ");
-    } finally {
-      if (fileInput.current) fileInput.current.value = "";
-    }
-  }
-
-  function toggleRemember(checked: boolean) {
-    setRemember(checked);
-    try {
-      if (checked && records.length) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-      if (!checked) window.localStorage.removeItem(STORAGE_KEY);
-    } catch { setError("ไม่สามารถเปลี่ยนการจดจำบนเครื่องนี้ได้"); }
-  }
-  function clearData() {
-    if (!window.confirm("ล้างข้อมูลรายชื่อที่เก็บไว้ในเบราว์เซอร์เครื่องนี้หรือไม่?")) return;
-    setRecords([]);
-    setQuery(""); setWorkplace(""); setError(""); setNotice("");
-    try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
-  }
-
+  const shown = matches.slice(0, 150);
   return <main className={styles.page}>
     <div className={styles.container}>
       <nav className={styles.breadcrumb}>
@@ -226,60 +68,65 @@ export default function Personnel2570() {
           <span className={styles.eyebrow}><UsersRound size={17} /> PERSONNEL DIRECTORY 2570</span>
           <h1>รายชื่อบุคลากร <span>ปี 2570</span></h1>
           <p>โรงพยาบาลอุตรดิตถ์ · ค้นหาชื่อ–นามสกุล ตำแหน่ง และหน่วยงานที่ปฏิบัติงาน</p>
-          <div className={styles.heroTags}><span><ShieldCheck size={15}/> ไม่แสดงเลขบัตรประชาชนหรือวันเกิด</span><span><Search size={15}/> ค้นหาอัตโนมัติขณะพิมพ์</span></div>
+          <div className={styles.heroTags}>
+            <span><Search size={15} /> ค้นหาอัตโนมัติ ไม่ต้องกด Enter</span>
+            <span><ShieldCheck size={15} /> แสดงเฉพาะ 3 ข้อมูลที่กำหนด</span>
+          </div>
         </div>
-        <div className={styles.heroIcon}><UsersRound size={86} strokeWidth={1.3}/></div>
+        <div className={styles.heroIcon}><UsersRound size={86} strokeWidth={1.3} /></div>
       </header>
 
-      <section className={styles.notice} aria-label="ความเป็นส่วนตัว">
+      <section className={styles.notice}>
         <ShieldCheck size={20} />
-        <div><strong>ระบบรายชื่อสำหรับผู้ได้รับสิทธิ์เท่านั้น</strong><p>สถานะฐานข้อมูลส่วนกลาง: {centralStatus === "checking" ? "กำลังตรวจสอบ…" : centralStatus === "ready" ? "เชื่อมต่อแล้ว" : centralStatus === "empty" ? "พร้อมใช้งาน รอผู้ดูแลนำเข้ารายชื่อ" : centralStatus === "pending" ? "รอตั้งค่า Cloudflare Access และที่เก็บข้อมูล" : centralStatus === "denied" ? "ยังไม่ได้รับสิทธิ์เข้าถึง" : "ไม่สามารถเชื่อมต่อได้"} · ข้อมูลจาก CSV จะถูกเลือกเฉพาะชื่อ ตำแหน่ง และหน่วยงาน โดยไม่ส่งเลขบัตรประชาชนหรือวันเกิดขึ้นเซิร์ฟเวอร์</p></div>
+        <div><strong>สมุดรายชื่อบุคลากรสำหรับค้นหา</strong>
+          <p>ทุกคนสามารถค้นหาได้โดยไม่ต้องเข้าสู่ระบบ แสดงเฉพาะชื่อ–นามสกุล ตำแหน่ง และหน่วยงาน · ไม่เผยแพร่เลขบัตรประชาชน วันเกิด และข้อมูลอื่นจากไฟล์ต้นฉบับ</p>
+        </div>
       </section>
 
       <section className={styles.searchBox}>
         <label htmlFor="staff-query">ค้นหาบุคลากร</label>
         <div className={styles.searchRow}>
           <div className={styles.searchInput}>
-            <Search size={21}/>
-            <input id="staff-query" ref={searchInput} value={query}
-              disabled={!records.length}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={records.length ? "พิมพ์ชื่อ–นามสกุล ตำแหน่ง หรือหน่วยงาน..." : "นำเข้าไฟล์ CSV ก่อนเริ่มค้นหา"}
+            <Search size={21} />
+            <input id="staff-query" value={query} onChange={e => setQuery(e.target.value)}
+              disabled={status !== "ready"}
+              placeholder={status === "loading" ? "กำลังโหลดรายชื่อ…" : "พิมพ์ชื่อ–นามสกุล ตำแหน่ง หรือหน่วยงาน"}
               autoComplete="off" />
-            {query && <button aria-label="ล้างคำค้นหา" onClick={() => setQuery("")}><X size={17}/></button>}
+            {query && <button aria-label="ล้างคำค้นหา" onClick={() => setQuery("")}><X size={17} /></button>}
           </div>
-          <select value={workplace} disabled={!records.length} aria-label="กรองหน่วยงาน"
-            onChange={(event) => setWorkplace(event.target.value)}>
+          <select value={workplace} onChange={e => setWorkplace(e.target.value)} disabled={status !== "ready"} aria-label="เลือกหน่วยงาน">
             <option value="">ทุกหน่วยงาน</option>
-            {workplaces.map((name) => <option key={name} value={name}>{name}</option>)}
+            {workplaces.map(item => <option key={item} value={item}>{item}</option>)}
           </select>
         </div>
-        <p className={styles.hint}>พิมพ์แล้วแสดงผลทันที ไม่ต้องกด Enter · ไม่แสดงรายชื่อทั้งหมดก่อนค้นหา</p>
+        <p className={styles.hint}>เริ่มพิมพ์ชื่อเพื่อแสดงผลทันที · เปิดได้จากทุกเครื่องโดยไม่ต้องนำเข้าไฟล์</p>
       </section>
 
       <div className={styles.toolbar}>
-        <div className={styles.counter}><span className={styles.counterIcon}><UserRound size={22}/></span><div><strong>{loaded ? records.length.toLocaleString("th-TH") : "…"} <small>คน</small></strong><span>{centralStatus === "ready" ? "บุคลากรจากฐานข้อมูลสำหรับผู้ได้รับสิทธิ์" : "บุคลากรที่พร้อมค้นหาในเครื่องนี้"}</span></div></div>
-        <div className={styles.actions}>
-          <label className={styles.remember}><input type="checkbox" checked={remember} onChange={(event) => toggleRemember(event.target.checked)}/><span>จดจำเฉพาะในเครื่องนี้</span></label>
-          {canPublish && records.length > 0 && <button type="button" className={styles.primary} disabled={publishing} onClick={() => void publishCentral()}><ShieldCheck size={17}/>{publishing ? "กำลังบันทึก…" : "บันทึกฐานข้อมูลส่วนกลาง"}</button>}
-          {records.length > 0 && <button type="button" className={styles.secondary} onClick={clearData}><Trash2 size={16}/> ล้างข้อมูล</button>}
-          <input type="file" className={styles.hidden} ref={fileInput} accept=".csv,text/csv" onChange={(e) => void importCsv(e.target.files?.[0])}/>
-          <button type="button" className={styles.primary} onClick={() => fileInput.current?.click()}><FileUp size={17}/> {records.length ? "เปลี่ยนไฟล์ CSV" : "นำเข้ารายชื่อ CSV"}</button>
+        <div className={styles.counter}><span className={styles.counterIcon}><UserRound size={22} /></span>
+          <div><strong>{status === "ready" ? records.length.toLocaleString("th-TH") : "…"} <small>คน</small></strong>
+            <span>{status === "ready" ? "บุคลากรพร้อมค้นหา" : "กำลังตรวจสอบข้อมูลบุคลากร"}</span></div>
         </div>
       </div>
-      {error && <div className={styles.error} role="alert">{error}</div>}
-      {notice && <div className={styles.success} role="status"><CheckCircle2 size={17}/>{notice}</div>}
 
       <section className={styles.results} aria-label="ผลการค้นหาบุคลากร">
-        <div className={styles.tableTitle}><h2>รายชื่อบุคลากร</h2><span>{query ? "พบ " + totalMatching.toLocaleString("th-TH") + " รายการ" : "ค้นหาเพื่อแสดงผล"}</span></div>
-        {!records.length ? <div className={styles.empty}><UsersRound size={40}/><h3>พร้อมใช้งานเมื่อเลือกไฟล์ข้อมูล</h3><p>ใช้ไฟล์ “ดึงข้อมูลบุคลากร (19).csv” ที่ได้รับมา ข้อมูลจะถูกอ่านบนเครื่องของคุณเท่านั้น</p><button type="button" className={styles.primary} onClick={() => fileInput.current?.click()}><FileUp size={17}/> เลือกไฟล์ CSV</button></div>
-        : !query.trim() ? <div className={styles.empty}><Search size={41}/><h3>พิมพ์ชื่อเพื่อเริ่มค้นหา</h3><p>ระบบจะค้นหาทันทีและแสดงเฉพาะชื่อ ตำแหน่ง และหน่วยงาน</p></div>
-        : totalMatching === 0 ? <div className={styles.empty}><Search size={39}/><h3>ไม่พบรายชื่อที่ค้นหา</h3><p>ลองค้นหาด้วยชื่อ นามสกุลบางส่วน หรือชื่อหน่วยงาน</p></div>
-        : <div className={styles.tableScroll}><table><thead><tr><th>ชื่อ–นามสกุล</th><th>ตำแหน่ง</th><th>หน่วยงานที่ปฏิบัติงาน</th></tr></thead>
-          <tbody>{matching.map((item, i) => <tr key={item.name + "|" + item.position + "|" + item.workplace + "-" + i}><td className={styles.name}><UserRound size={16}/>{item.name}</td><td>{item.position}</td><td className={styles.workplace}><Building2 size={15}/>{item.workplace}</td></tr>)}</tbody>
-          </table>{totalMatching > 200 && <p className={styles.limit}>แสดง 200 รายการแรก กรุณาเพิ่มคำค้นหาเพื่อจำกัดผลลัพธ์</p>}</div>}
+        <div className={styles.tableTitle}><h2>รายชื่อบุคลากร</h2>
+          <span>{query.trim() ? "พบ " + matches.length.toLocaleString("th-TH") + " รายการ" : "ค้นหาเพื่อแสดงผล"}</span>
+        </div>
+        {status === "loading" ? <div className={styles.empty}><UsersRound size={40} /><h3>กำลังโหลดรายชื่อบุคลากร…</h3></div>
+        : status === "error" ? <div className={styles.empty}><UsersRound size={40} /><h3>ไม่สามารถโหลดรายชื่อได้</h3><p>กรุณาลองรีเฟรชหน้าเว็บอีกครั้ง</p></div>
+        : !query.trim() ? <div className={styles.empty}><Search size={41} /><h3>พิมพ์ชื่อเพื่อเริ่มค้นหา</h3><p>ระบบจะแสดงเฉพาะชื่อ–นามสกุล ตำแหน่ง และหน่วยงาน</p></div>
+        : !matches.length ? <div className={styles.empty}><Search size={39} /><h3>ไม่พบรายชื่อที่ค้นหา</h3><p>ลองค้นหาชื่อ นามสกุลบางส่วน หรือตำแหน่งงาน</p></div>
+        : <div className={styles.tableScroll}><table>
+            <thead><tr><th>ชื่อ–นามสกุล</th><th>ตำแหน่ง</th><th>หน่วยงานที่ปฏิบัติงาน</th></tr></thead>
+            <tbody>{shown.map((item, i) => <tr key={item.name + "|" + item.position + "|" + i}>
+              <td className={styles.name}><UserRound size={16} />{item.name}</td>
+              <td>{item.position}</td>
+              <td className={styles.workplace}><Building2 size={15} />{item.workplace}</td>
+            </tr>)}</tbody>
+          </table>{matches.length > shown.length && <p className={styles.limit}>แสดง 150 รายการแรก กรุณาระบุคำค้นหาให้ละเอียดขึ้น</p>}</div>}
       </section>
-      <footer>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์ · ทะเบียนบุคลากรปีงบประมาณ 2570 · ข้อมูลสำหรับผู้ได้รับสิทธิ์</footer>
+      <footer>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์ · ทะเบียนบุคลากร ปี 2570</footer>
     </div>
   </main>;
 }
