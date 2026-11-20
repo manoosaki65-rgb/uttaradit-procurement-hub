@@ -80,6 +80,9 @@ export default function Personnel2570() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [remember, setRemember] = useState(false);
+  const [centralStatus, setCentralStatus] = useState<"checking" | "ready" | "empty" | "pending" | "denied" | "error">("checking");
+  const [canPublish, setCanPublish] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
 
@@ -98,6 +101,57 @@ export default function Personnel2570() {
     } catch { /* Ignore inaccessible browser storage. */ }
     setLoaded(true);
   }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/personnel-2570", { credentials: "same-origin", cache: "no-store", signal: controller.signal })
+      .then(async (response) => {
+        if (response.status === 503) { setCentralStatus("pending"); return; }
+        if (response.status === 403 || response.status === 401) { setCentralStatus("denied"); return; }
+        if (!response.ok) throw new Error("Could not load private directory");
+        const payload = await response.json() as {
+          status?: string; records?: Staff[]; canPublish?: boolean;
+        };
+        if (controller.signal.aborted) return;
+        setCanPublish(payload.canPublish === true);
+        if (payload.status === "ready" && Array.isArray(payload.records)) {
+          const valid = readSafeCache(payload.records);
+          if (valid.length) setRecords(valid);
+          setCentralStatus("ready");
+        } else {
+          setCentralStatus("empty");
+        }
+      })
+      .catch((err) => {
+        if (controller.signal.aborted || err?.name === "AbortError") return;
+        setCentralStatus("error");
+      });
+    return () => controller.abort();
+  }, []);
+
+  async function publishCentral() {
+    if (!canPublish || !records.length || publishing) return;
+    if (!window.confirm("บันทึกเฉพาะชื่อ–นามสกุล ตำแหน่ง และหน่วยงาน " +
+      records.length.toLocaleString("th-TH") +
+      " คน ลงฐานข้อมูลส่วนกลางสำหรับผู้ที่ได้รับสิทธิ์ใช่หรือไม่?")) return;
+    setPublishing(true); setNotice(""); setError("");
+    try {
+      const response = await fetch("/api/personnel-2570", {
+        method: "POST", credentials: "same-origin", cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ records })
+      });
+      const result = await response.json();
+      if (!response.ok || result.status !== "saved") throw new Error(
+        "บันทึกฐานข้อมูลส่วนกลางไม่สำเร็จ (" + String(result.error || response.status) + ")"
+      );
+      setCentralStatus("ready");
+      setNotice("บันทึกข้อมูลส่วนกลางแล้ว " + result.count.toLocaleString("th-TH") +
+        " คน ผู้ได้รับสิทธิ์สามารถค้นหาได้จากหลายเครื่อง");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "บันทึกข้อมูลส่วนกลางไม่สำเร็จ");
+    } finally { setPublishing(false); }
+  }
 
   const workplaces = useMemo(() => Array.from(new Set(records.map((r) => r.workplace)))
     .sort((a,b) => a.localeCompare(b, "th")), [records]);
@@ -179,7 +233,7 @@ export default function Personnel2570() {
 
       <section className={styles.notice} aria-label="ความเป็นส่วนตัว">
         <ShieldCheck size={20} />
-        <div><strong>รายชื่อยังไม่ถูกเผยแพร่บนเว็บไซต์สาธารณะ</strong><p>นำเข้า CSV จากคอมพิวเตอร์ของคุณเพื่อค้นหาเฉพาะในเบราว์เซอร์นี้ ข้อมูลไม่ได้ส่งขึ้นเซิร์ฟเวอร์ เลขบัตรประชาชน วันเกิด และคอลัมน์อื่นในไฟล์ต้นทางจะถูกละเว้นทั้งหมด</p></div>
+        <div><strong>ระบบรายชื่อสำหรับผู้ได้รับสิทธิ์เท่านั้น</strong><p>สถานะฐานข้อมูลส่วนกลาง: {centralStatus === "checking" ? "กำลังตรวจสอบ…" : centralStatus === "ready" ? "เชื่อมต่อแล้ว" : centralStatus === "empty" ? "พร้อมใช้งาน รอผู้ดูแลนำเข้ารายชื่อ" : centralStatus === "pending" ? "รอตั้งค่า Cloudflare Access และที่เก็บข้อมูล" : centralStatus === "denied" ? "ยังไม่ได้รับสิทธิ์เข้าถึง" : "ไม่สามารถเชื่อมต่อได้"} · ข้อมูลจาก CSV จะถูกเลือกเฉพาะชื่อ ตำแหน่ง และหน่วยงาน โดยไม่ส่งเลขบัตรประชาชนหรือวันเกิดขึ้นเซิร์ฟเวอร์</p></div>
       </section>
 
       <section className={styles.searchBox}>
@@ -204,9 +258,10 @@ export default function Personnel2570() {
       </section>
 
       <div className={styles.toolbar}>
-        <div className={styles.counter}><span className={styles.counterIcon}><UserRound size={22}/></span><div><strong>{loaded ? records.length.toLocaleString("th-TH") : "…"} <small>คน</small></strong><span>บุคลากรที่พร้อมค้นหาในเครื่องนี้</span></div></div>
+        <div className={styles.counter}><span className={styles.counterIcon}><UserRound size={22}/></span><div><strong>{loaded ? records.length.toLocaleString("th-TH") : "…"} <small>คน</small></strong><span>{centralStatus === "ready" ? "บุคลากรจากฐานข้อมูลสำหรับผู้ได้รับสิทธิ์" : "บุคลากรที่พร้อมค้นหาในเครื่องนี้"}</span></div></div>
         <div className={styles.actions}>
           <label className={styles.remember}><input type="checkbox" checked={remember} onChange={(event) => toggleRemember(event.target.checked)}/><span>จดจำเฉพาะในเครื่องนี้</span></label>
+          {canPublish && records.length > 0 && <button type="button" className={styles.primary} disabled={publishing} onClick={() => void publishCentral()}><ShieldCheck size={17}/>{publishing ? "กำลังบันทึก…" : "บันทึกฐานข้อมูลส่วนกลาง"}</button>}
           {records.length > 0 && <button type="button" className={styles.secondary} onClick={clearData}><Trash2 size={16}/> ล้างข้อมูล</button>}
           <input type="file" className={styles.hidden} ref={fileInput} accept=".csv,text/csv" onChange={(e) => void importCsv(e.target.files?.[0])}/>
           <button type="button" className={styles.primary} onClick={() => fileInput.current?.click()}><FileUp size={17}/> {records.length ? "เปลี่ยนไฟล์ CSV" : "นำเข้ารายชื่อ CSV"}</button>
@@ -224,7 +279,7 @@ export default function Personnel2570() {
           <tbody>{matching.map((item, i) => <tr key={item.name + "|" + item.position + "|" + item.workplace + "-" + i}><td className={styles.name}><UserRound size={16}/>{item.name}</td><td>{item.position}</td><td className={styles.workplace}><Building2 size={15}/>{item.workplace}</td></tr>)}</tbody>
           </table>{totalMatching > 200 && <p className={styles.limit}>แสดง 200 รายการแรก กรุณาเพิ่มคำค้นหาเพื่อจำกัดผลลัพธ์</p>}</div>}
       </section>
-      <footer>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์ · ทะเบียนบุคลากรปีงบประมาณ 2570</footer>
+      <footer>กลุ่มงานพัสดุ โรงพยาบาลอุตรดิตถ์ · ทะเบียนบุคลากรปีงบประมาณ 2570 · ข้อมูลสำหรับผู้ได้รับสิทธิ์</footer>
     </div>
   </main>;
 }
